@@ -1,0 +1,52 @@
+{
+  "name": "handbook",
+  "version": "0.1.0",
+  "description": "Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use. Its primary goal is to assist in managing RAM memory efficiently while providing quick access to essential information. With Handbook, users can seamlessly optimize their workflow by accessing necessary data without cluttering their screen space.",
+  "author": "ECRomaneli",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ECRomaneli/Handbook.git"
+  },
+  "homepage": "https://github.com/ECRomaneli/Handbook#readme",
+  "bugs": { "url": "https://github.com/ECRomaneli/Handbook/issues" },
+  "keywords": [
+    "handbook",
+    "browser",
+    "electron",
+    "chromium",
+    "ecromaneli"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "make:darwin-x64-dmg":   "electron-forge make -a x64   -p darwin --targets=@electron-forge/maker-dmg",
+    "make:darwin-arm64-dmg": "electron-forge make -a arm64 -p darwin --targets=@electron-forge/maker-dmg",
+    "make:darwin-x64":       "electron-forge make -a x64   -p darwin --targets=@electron-forge/maker-zip",
+    "make:darwin-arm64":     "electron-forge make -a arm64 -p darwin --targets=@electron-forge/maker-zip",
+    "make:linux-x64":        "electron-forge make -a x64   -p linux",
+    "make:linux-x64-deb":    "electron-forge make -a x64   -p linux  --targets=@electron-forge/maker-deb",
+    "make:linux-x64-rpm":    "electron-forge make -a x64   -p linux  --targets=@electron-forge/maker-rpm",
+    "make:win32-x64":        "electron-forge make -a x64   -p win32"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-dmg": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
+    "electron": "^28.2.1",
+    "gh-release": "^7.0.2"
+  },
+  "dependencies": {
+    "electron-context-menu": "^3.6.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.1.0",
+    "vue": "^3.4.18"
+  }
+}
