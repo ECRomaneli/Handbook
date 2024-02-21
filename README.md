@@ -28,7 +28,7 @@
 
 Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use. Its primary goal is to assist in managing RAM memory efficiently while providing quick access to essential information. With Handbook, users can seamlessly optimize their workflow by accessing necessary data without cluttering their screen space.
 
-        "Handbook was created to assist me in my development process, providing quick-access tools in the most efficient manner while coding. Some of my favorites include ChatGPT, Copilot, Notion, and even Youtube."
+> "Handbook was created to assist me in my development process, providing quick-access tools in the most efficient manner while coding. Some of my favorites include ChatGPT, Copilot, Notion, and even Youtube."
 
 ### Some advantages
 
@@ -40,9 +40,9 @@ Handbook is a versatile app designed to create small, movable, and easily concea
 
 ## Installing
 
-Download the right version for the OS on [releases](/releases) section and install it.
+Download the right version for the OS on [releases](https://github.com/ECRomaneli/Handbook/releases) section and follow the instructions below.
 
-Read about the app signature on "[About App Signature](#about-app-signature)"
+Read about the app signature on "[About App Signature](#about-app-signature)".
 
 ### Mac OS
 
