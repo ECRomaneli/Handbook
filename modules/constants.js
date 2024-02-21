@@ -10,7 +10,7 @@ const WindowSettings = {
     GLOBAL_SHORTCUT: 'global_shortcut',
     FOCUS_OPACITY: 'focus_opacity',
     BLUR_OPACITY: 'blur_opacity',
-    MOVABLE_AREA: 'movable_area'
+    ACTION_AREA: 'action_area'
 }
 
 const Positions = {

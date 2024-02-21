@@ -15,7 +15,7 @@ defaultSettings[WindowSettings.SHARE_BOUNDS] = true
 defaultSettings[WindowSettings.DEFAULT_POSITION] = 'top-right'
 defaultSettings[WindowSettings.DEFAULT_WIDTH] = 1060
 defaultSettings[WindowSettings.DEFAULT_HEIGHT] = 640
-defaultSettings[WindowSettings.MOVABLE_AREA] = 20
+defaultSettings[WindowSettings.ACTION_AREA] = 20
 defaultSettings[WindowSettings.HIDE_SHORTCUT] = ''
 defaultSettings[WindowSettings.GLOBAL_SHORTCUT] = ''
 

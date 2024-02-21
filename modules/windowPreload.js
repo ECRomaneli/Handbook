@@ -15,15 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 async function registerWindowMoveListeners() {
-    let movableArea = await getSettings('movable_area')
-    onSettingsUpdated('movable_area', (value) => movableArea = value)
+    let movableArea = await getSettings('action_area'), dismissClick = null
+    onSettingsUpdated('action_area', (value) => movableArea = value)
 
     const originalCursor = document.body.style.cursor
+
+    document.addEventListener('dblclick', (e) => {
+        if (e.button !== 0 || e.pageY > movableArea) { return }
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        ipcRenderer.send('manager.currentPage.toggleMaximize')
+    }, true)
 
     document.addEventListener('mousedown', (e) => {
         if (e.button !== 0 || e.pageY > movableArea) { return }
 
-        ipcRenderer.send('window.dragstart')
+        ipcRenderer.send('manager.currentPage.dragStart')
 
         const offsetX = e.screenX
         const offsetY = e.screenY
@@ -32,7 +39,7 @@ async function registerWindowMoveListeners() {
     
         const onMouseMove = (e) => {
             e.preventDefault()
-            ipcRenderer.send('window.dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
+            ipcRenderer.send('manager.currentPage.dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
         }
     
         const onMouseUp = () => {
