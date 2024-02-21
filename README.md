@@ -57,9 +57,9 @@ As the Handbook has no signature, it may not open directly and trigger a securit
 3. Select "Open" in the context menu;
 4. Proceed to "Open" the app in the security warning screen.
 
-After these few steps, the app will no longer present the message.
+After these few steps, the app will no longer present the warning.
 
-Source: [Apple Support](https://support.apple.com/pt-br/guide/mac-help/mh40616/mac).
+Source: [Apple Support](https://support.apple.com/en-us/guide/mac-help/mh40616/mac).
 
 ### Debian-based distributions
 
@@ -106,7 +106,7 @@ To access the settings, simply right-click on the tray icon and select **"Settin
 The **"Pages"** tab enables users to add, sort, customize, or remove pages. The user can also import or export the pages as JSON.
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/9fqq0rZh/settings-page.png" alt='Pages'>
+    <img width="600" src="https://i.postimg.cc/qRN17XrV/settings-page.png" alt='Pages'>
 </p>
 
 #### Persistent pages
@@ -185,9 +185,7 @@ There are some scripts configured to package the application:
 
 ## Next Steps
 
-- Settings to configure auto close inactive windows;
 - Create tests structure;
-- Automated build process;
 - Implement a Speech-to-Text and a Text-to-Speech at least in english (v2.0 probably);
 - Who knows...
 
