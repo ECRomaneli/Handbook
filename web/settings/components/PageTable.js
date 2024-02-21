@@ -6,7 +6,7 @@ app.component('PageTable', {
                     <th scope="col" role="column:drag"></th>
                     <th scope="col" role="column:label">Label</th>
                     <th scope="col" role="column:url">URL</th>
-                    <th scope="col" role="column:isolated">Isolated</th>
+                    <th scope="col" role="column:persist" title="Persistent pages will not close when another page is selected">Persist</th>
                     <th scope="col" role="column:remove"></th>
                 </tr>
             </thead>
@@ -17,7 +17,7 @@ app.component('PageTable', {
                     <td><input type="text" name="url"   v-model="page.url"   placeholder="URL"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" name="isolated" v-model="page.isolated" @change="emitUpdate(page)">
+                            <input class="form-check-input" type="checkbox" role="switch" name="persist" v-model="page.persist" @change="emitUpdate(page)">
                         </div>
                     </td>
                     <td class="c-pointer" @click="removePage(index)"><img class="svg-icon square-24" :src="$image.src('trash')" alt="remove page" title="Remove"></td>
@@ -45,7 +45,7 @@ app.component('PageTable', {
                 const last = this.list[this.list.length - 1]
                 if (!last.label && !last.url) { return }
             }
-            this.list.push({ label: '', url: '', isolated: false })
+            this.list.push({ label: '', url: '', persist: false })
         },
 
         removePage(index) { this.$emit('remove', this.$clone(this.list.splice(index, 1)[0])) },
