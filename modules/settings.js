@@ -38,7 +38,7 @@ class Settings {
     static registerWindowMoveListeners() {
         let position
 
-        ipcMain.on('settings.dragstart', () => {
+        ipcMain.on('settings.dragStart', () => {
             position = Settings.window.getPosition()
         })
 

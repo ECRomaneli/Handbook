@@ -23,13 +23,15 @@ class HandbookWindow extends BrowserWindow {
 
     /** @type {Function} */
     boundsListener = () => {
-        const windowBounds = this.getBounds()
-        Storage.setSharedBounds(windowBounds)
-        Storage.setWindowBounds(this.getExternalId(), windowBounds)
+        if (!this.isMaximized()) {
+            const windowBounds = this.getBounds()
+            Storage.setSharedBounds(windowBounds)
+            Storage.setWindowBounds(this.getExternalId(), windowBounds)
+        }
     }
 
     /** @type {Function} */
-    preventCloseListener = (e) => {
+    preventAndHideListener = (e) => {
         e.preventDefault()
         this.isVisible() && this.hide()
     }
@@ -53,7 +55,7 @@ class HandbookWindow extends BrowserWindow {
      */
     close(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.off('close', this.preventCloseListener)
+            super.off('close', this.preventAndHideListener)
             super.close()
         }
     }
@@ -200,7 +202,7 @@ class HandbookWindow extends BrowserWindow {
         super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
         super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
 
-        super.on('close', this.preventCloseListener)
+        super.on('close', this.preventAndHideListener)
 
         super.on('custom-moved', this.boundsListener)
         super.on('custom-resized', this.boundsListener)
@@ -258,6 +260,8 @@ function setStandardOptions(options) {
     options.frame = Storage.getSettings(WindowSettings.SHOW_FRAME)
     options.alwaysOnTop = true
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
+    options.fullscreenable = false
+    options.minimizable = false
     options.webPreferences = { preload: path.join(__dirname, 'windowPreload.js') }
     return options
 }

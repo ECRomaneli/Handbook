@@ -39,7 +39,7 @@ class Manager {
         this.updatePages()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
-        this.registerWindowMoveListeners()
+        this.registerWindowActionAreaListeners()
     }
 
     registerDefaultEventListeners() {
@@ -49,16 +49,27 @@ class Manager {
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
-    registerWindowMoveListeners() {
-        let position, window
+    registerWindowActionAreaListeners() {
+        let position, window, unmaximizedBounds
 
-        ipcMain.on('window.dragstart', (e) => {
+        ipcMain.on('manager.currentPage.dragStart', (e) => {
             window = BrowserWindow.fromWebContents(e.sender)
             position = window.getPosition()
         })
 
-        ipcMain.on('window.dragging', (_e, offset) => {
+        ipcMain.on('manager.currentPage.dragging', (_e, offset) => {
             window.setPosition(position[0] + offset.x, position[1] + offset.y)
+        })
+
+        ipcMain.on('manager.currentPage.toggleMaximize', () => {
+            const window = this.currentPage.window
+            if (unmaximizedBounds) {
+                    window.setBounds(unmaximizedBounds, true)
+                    unmaximizedBounds = void 0
+            } else {
+                unmaximizedBounds = window.getBounds()
+                window.maximize()
+            }
         })
     }
 
@@ -227,7 +238,7 @@ class Manager {
             case WindowSettings.BLUR_OPACITY:
                 if (this.currentPage.window.isVisible()) { this.currentPage.window.setOpacity(value / 100) }
                 break
-            case WindowSettings.MOVABLE_AREA:
+            case WindowSettings.ACTION_AREA:
             case WindowSettings.HIDE_SHORTCUT:
                 this.sendToAllWindows('storage.settings.updated', id, value)
                 break

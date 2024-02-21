@@ -52,10 +52,10 @@ app.component('WindowSettings', {
                         data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
                     },
                     {
-                        id: this.$const.WindowSettings.MOVABLE_AREA,
-                        label: 'Movable area height',
-                        description: 'Denotes the height, in pixels, of the region situated atop the window, designated for moving frameless windows. Automatically disabled when the frame is enabled.',
-                        data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.WindowSettings.MOVABLE_AREA), unit: 'px' }
+                        id: this.$const.WindowSettings.ACTION_AREA,
+                        label: 'Action area height',
+                        description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
+                        data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.WindowSettings.ACTION_AREA), unit: 'px' }
                     },
                     {
                         id: this.$const.WindowSettings.BACKGROUND_COLOR,

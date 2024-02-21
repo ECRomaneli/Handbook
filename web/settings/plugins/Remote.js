@@ -13,7 +13,7 @@ app.use({
             },
 
             window: {
-                dragstart: () => { ipcRenderer.send('settings.dragstart') },
+                dragstart: () => { ipcRenderer.send('settings.dragStart') },
                 dragging: (offset) => { ipcRenderer.send('settings.dragging', offset) },
                 close: () => { ipcRenderer.send('settings.close') }
             }
