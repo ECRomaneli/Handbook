@@ -32,10 +32,10 @@ Handbook is a versatile app designed to create small, movable, and easily concea
 
 ### Some advantages
 
-- Always-on-top windows, even atop fullscreen content, allowing quick retrieval of information.
-- Increased focus, avoiding the need to navigate to a web browser for quick searches.
-- Reduction in the number of tabs by adding pages that are typically used once but are often forgotten, leading to the opening of new instances.
-- Low RAM usage, despite using Chromium. There is only one instance shared by all non-isolated pages and one instance per isolated page.
+- Always-on-top windows, even atop fullscreen content, allowing quick retrieval of information;
+- Increased focus, avoiding the need to navigate to a web browser for quick searches;
+- Reduction in the number of tabs by adding pages that are typically used once but are often forgotten, leading to the opening of new instances;
+- Low RAM usage, despite using Chromium. There is only one instance per page;
 - Configurability, allowing transparent windows when blurred, customization of default size, position, and shortcuts to show and hide anywhere, among other options.
 
 ## Installing
@@ -109,17 +109,13 @@ The **"Pages"** tab enables users to add, sort, customize, or remove pages. The 
     <img width="600" src="https://i.postimg.cc/9fqq0rZh/settings-page.png" alt='Pages'>
 </p>
 
-#### Isolated pages
+#### Persistent pages
 
-Isolated pages has its own window. This means that if there are any unfinished tasks still loading, the user can change the page and come back later without lose it or reload the URL.
-
-#### Non-isolated pages
-
-On the other hand, non-isolated pages will always share the same window, meaning that once the user changes the page, the content will be reloaded, and all progress will be lost.
+Persistent pages are not destroyed once the page is changed. This means that if there are any unfinished tasks still loading, the user can change the page and come back later without lose it or reload the URL.
 
 #### Session
 
-The session is maintained according to Electron/Chromium standards, which means it is not lost upon restarting the app or when using a non-isolated page. This functionality is particularly useful for keeping users logged in. However, it's important to note that if the application path is changed, the session will be lost as well.
+The session is maintained according to Electron/Chromium standards, which means it is not lost upon restarting the app or when a page is closed. This functionality is particularly useful for keeping users logged in. However, it's important to note that if the application path is changed, the session will be lost as well.
 
 ### Window Settings
 
@@ -186,8 +182,6 @@ There are some scripts configured to package the application:
 | Make for Linux x64 DEB                                 | `npm run make:linux-x64-deb`      |
 | Make for Linux x64 RPM                                 | `npm run make:linux-x64-rpm`      |
 | Make for Windows x64                                   | `npm run make:win32-x64`          |
-
-
 
 ## Next Steps
 

@@ -9,7 +9,7 @@ const path = require('node:path')
  * @typedef {object} Page
  * @property {string} label
  * @property {string} url
- * @property {boolean} isolated
+ * @property {boolean} persist
  * @property {HandbookWindow} window
  */
 
@@ -25,9 +25,6 @@ class Manager {
 
     /** @type {Page} */
     currentPage
-
-    /** @type {HandbookWindow}  */
-    sharedWindow
 
     /** @type {string} */
     globalShortcut
@@ -103,7 +100,7 @@ class Manager {
             else { return }
         }
 
-       this.currentPage.window.toggle(true)
+       this.currentPage.window.toggle()
     }
 
     /**
@@ -129,7 +126,7 @@ class Manager {
 
         this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
             type: 'radio', 
-            checked: this.currentPage && this.currentPage === p,
+            checked: this.isCurrentPage(p),
             label: p.label, 
             click: () => this.selectPage(p, true)
         }))
@@ -160,61 +157,39 @@ class Manager {
      * only toggle the visibility.
      * @param {Page} page Page to be selected.
      * @param {boolean} show If true, the page is shown. Otherwise, the page visibility will not be changed.
-     * @returns 
      */
     selectPage(page, show) {
-        if (this.isCurrentPage(page)) {
-            this.toggleWindow()
-            return
-        }
+        if (this.isCurrentPage(page)) { return this.toggleWindow() }
 
         this.setupWindow(page)
 
-        const oldWindow = this.currentPage?.window
+        const oldPage = this.currentPage
         this.currentPage = page
 
         show && !page.window.isVisible() && this.toggleWindow()
-        oldWindow && oldWindow !== page.window && oldWindow.hide()
+
+        if (oldPage?.window) {
+            if (oldPage.persist) {
+                oldPage.window.hide()
+            } else {
+                oldPage.window.close()
+                delete oldPage.window
+            }
+        }
     }
 
     /**
-     * Setup window page creating it if not exists and validating "isolated" status.
+     * Set up the window page creating it if not exist and set the window bounds.
      * @param {Page} page 
      */
     setupWindow(page) {
         // Note: Must be done before set window to calculate first time
         const bounds = this.getPageBounds(page)
 
-        if (page.isolated) {
-            // When changed from !isolated to isolated
-            if (this.isSharedWindow(page)) { page.window = null }
-
-            if (!page.window) {
-                page.window = new HandbookWindow()
-                page.window.on('show', () => this.updateTrayIcon())
-                page.window.on('hide', () => this.updateTrayIcon())
-                page.window.setExternalId(page.label)
-                page.window.loadURL(page.url)
-            }
-
-            this.isSharedWindow(this.currentPage) && this.sharedWindow.unload()
-
-        } else {
-            // When changed from isolated to !isolated
-            if (page.window && !this.isSharedWindow(page)) {
-                page.window.close()
-                page.window = null
-            }
-
-            if (!page.window) {
-                if (!this.sharedWindow) {
-                    this.sharedWindow = new HandbookWindow()
-                    this.sharedWindow.on('show', () => this.updateTrayIcon())
-                    this.sharedWindow.on('hide', () => this.updateTrayIcon())
-                }
-                page.window = this.sharedWindow
-            }
-
+        if (!page.window) {
+            page.window = new HandbookWindow()
+            page.window.on('show', () => this.updateTrayIcon())
+            page.window.on('hide', () => this.updateTrayIcon())
             page.window.setExternalId(page.label)
             page.window.loadURL(page.url)
         }
@@ -256,21 +231,8 @@ class Manager {
      * Clone all windows closing the old ones. Useful when changing window specs that cannot be updated.
      */
     recreateAllWindows() {
-        const pages = this.pages
-            .filter(p => p.window)
-            .reduce((map, p) => {
-                map[p.isolated ? 'isolated' : 'shared'].push(p)
-                return map
-            }, { isolated: [], shared: [] })
-
-        pages.isolated.forEach(p => p.window = p.window.clone())
-
-        if (this.sharedWindow) {
-            this.sharedWindow = this.sharedWindow.clone()
-            pages.shared.forEach(p => p.window = this.sharedWindow)
-        }
+        this.pages.filter(p => p.window).forEach(p => p.window = p.window.clone())
     }
-
 
     /**
      * If the window already exists, return its bounds. Otherwise, calculate the bounds based on user settings.
@@ -343,15 +305,11 @@ class Manager {
     }
 
     isCurrentPage(page) {
-        return this.currentPage === page
+        return page && this.currentPage === page
     }
 
     isCurrentWindow(page) {
         return this.currentPage?.window && this.currentPage.window === page?.window
-    }
-
-    isSharedWindow(page) {
-        return page?.window && this.sharedWindow === page.window
     }
 
     /**
@@ -366,14 +324,8 @@ class Manager {
             const newPage = this.pages.filter(newPage => newPage.label === oldPage.label)[0]
             
             if (!newPage) {
-                if (this.isSharedWindow(oldPage)) {
-                    oldPage.window.isVisible() && oldPage.window.hide()
-                    oldPage.window.unload()
+                oldPage.window.close(true)
 
-                } else {
-                    oldPage.window.close(true)
-                }
-    
                 if (this.isCurrentPage(oldPage)) {
                     this.currentPage = null
                     this.updateTrayIcon()
@@ -382,20 +334,12 @@ class Manager {
                 return
             }
 
-            if (this.isCurrentPage(oldPage)) {
-                if (oldPage.isolated !== newPage.isolated) {
-                    this.selectPage(newPage, oldPage.window.isVisible())
-                    return
-                }
-
-                this.currentPage = newPage
-            }
-
+            this.isCurrentPage(oldPage) && (this.currentPage = newPage)
             newPage.window = oldPage.window
         
             if (oldPage.url !== newPage.url) {
                 newPage.window.loadURL(newPage.url)
-            }    
+            }
         })
     }
 }
