@@ -75,6 +75,12 @@ app.component('WindowSettings', {
                         description: 'Opacity when window is blurred. Linux is not supported.',
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.WindowSettings.BLUR_OPACITY), unit: '%' }
                     },
+                    {
+                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
+                        label: 'Tray icon long-press timeout',
+                        description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
+                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
+                    },
                 ],
                 bounds: [
                     {
