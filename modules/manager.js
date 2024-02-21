@@ -47,7 +47,7 @@ class Manager {
     }
 
     registerWindowActionAreaListeners() {
-        let position, window, unmaximizedBounds
+        let position, window
 
         ipcMain.on('manager.currentPage.dragStart', (e) => {
             window = BrowserWindow.fromWebContents(e.sender)
@@ -60,13 +60,7 @@ class Manager {
 
         ipcMain.on('manager.currentPage.toggleMaximize', () => {
             const window = this.currentPage.window
-            if (unmaximizedBounds) {
-                    window.setBounds(unmaximizedBounds, true)
-                    unmaximizedBounds = void 0
-            } else {
-                unmaximizedBounds = window.getBounds()
-                window.maximize()
-            }
+            window.isMaximized() ? window.unmaximize() : window.maximize()
         })
     }
 
@@ -244,7 +238,12 @@ class Manager {
         const currentWindow = this.currentPage?.window
 
         if (isSharedBounds) {
-            if (currentWindow) { return currentWindow.getBounds() }
+            if (currentWindow) {
+                if (currentWindow.isMaximized()) {
+                    currentWindow.unmaximize()
+                }
+                return currentWindow.getBounds()
+            }
         } else {
             if (page.window) { return page.window.getBounds() }
         }
