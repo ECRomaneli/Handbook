@@ -1,0 +1,46 @@
+#app {
+    color-scheme: light;
+    --background-color: #f6f8fa;
+    --color: #1F2328;
+    --divider-border-color: #d8dee4;
+    --scrollbar-background-color: #969696;
+    --scrollbar-track-color: #e8e8e8;
+}
+
+#app #body {
+    --background-color: #fff;
+    --background-w-alpha-color: #fffffffa;
+    --border-color: #d0d7de;
+    --active-background-color: #e8ecef;
+    --active-border-color: #919191;
+}
+
+#app #sidebar {
+    --search-color: #858e98;
+    --hover-search-background-color: #ad884611;
+    --hover-search-border-color: #ad8846;
+}
+
+#app .inline-tabs {
+    --active-tab-border-color: #f78166;
+    --tab-color: var(--color);
+}
+
+#app .table {
+    --border-color: #e5e5e5;
+    --body-color: #555;
+}
+
+#app .svg-icon {
+    filter: brightness(.7);
+}
+
+#app .btn-secondary {
+    background-color: var(--bs-border-color);
+    color: var(--bs-black);
+    border-color: var(--bs-gray-400);
+}
+
+#app .btn-secondary:hover {
+    background-color: var(--bs-gray-500);
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" href="../assets/images/dashboard.min.svg" type="image/svg+xml">
+
+    <title>Dashboard</title>
+    
+    <link href="../assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/styles/app.css" rel="stylesheet">
+    <link href="../assets/styles/lighttheme.css" rel="stylesheet">
+<body>
+    <main id="app" data-theme="light"></main>
+    
+    <!-- App -->
+    <script src="settings.js"></script>
+
+    <!-- Providers -->
+    <script src="../assets/scripts/providers/Image.js"></script>
+
+    <!-- Plugins -->
+    <script src="../assets/scripts/plugins/Clone.js"></script>
+    <script src="../assets/scripts/plugins/Exporter.js"></script>
+    <script src="plugins/Remote.js"></script>
+    <script src="plugins/Constants.js"></script>
+
+    <!-- Components -->
+    <script src="components/PageTable.js"></script>
+    <script src="components/PageSettings.js"></script>
+    <script src="components/WindowSettings.js"></script>
+    <script src="components/InlineInput.js"></script>
+
+    <!-- Mount App -->
+    <script>app.mount('#app')</script>
+</body>
+
+</html>

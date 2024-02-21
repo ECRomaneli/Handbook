@@ -1,0 +1,75 @@
+name: Build version
+
+on:
+  push:
+    tags: [ '*' ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      
+    - name: Use Node.js 21.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 21.x
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Make darwin-x64
+      run: npm run make:darwin-x64
+
+    - name: Make darwin-arm64
+      run: npm run make:darwin-arm64
+
+    - name: Make linux-x64
+      run: npm run make:linux-x64
+
+    - name: Install Wine
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt update
+        sudo apt install -y wine32 wine64
+
+    - name: Make win32-x64
+      run: npm run make:win32-x64
+
+    - name: List Binaries
+      run: find out/make -type f
+
+    - name: Rename Binaries
+      run: |
+        mv out/make/rpm/x64/handbook*.rpm out/make/handbook-x64.rpm
+        mv out/make/deb/x64/handbook*.deb out/make/handbook-x64.deb
+        mv out/make/zip/darwin/x64/handbook*.zip out/make/handbook-darwin-x64.zip
+        mv out/make/zip/darwin/arm64/handbook*.zip out/make/handbook-darwin-arm64.zip
+        mv out/make/squirrel.windows/x64/handbook*.exe out/make/handbook-x64.exe
+
+    - name: Upload files to a GitHub release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: out/make/handbook-x64.rpm
+
+    - uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: out/make/handbook-x64.deb
+
+    - uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: out/make/handbook-darwin-x64.zip
+
+    - uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: out/make/handbook-darwin-arm64.zip
+
+    - uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: out/make/handbook-x64.exe
