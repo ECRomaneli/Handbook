@@ -54,7 +54,8 @@ As the Handbook has no signature, it may not open directly and trigger a securit
 
 1. Open the "Application" folder;
 2. Press Ctrl+{Left Click} on the handbook icon;
-3. Select open in the context menu.
+3. Select "Open" in the context menu;
+4. Proceed to "Open" the app in the security warning screen.
 
 After these few steps, the app will no longer present the message.
 
@@ -71,7 +72,7 @@ Source: [Apple Support](https://support.apple.com/pt-br/guide/mac-help/mh40616/m
 
 ### Red Hat-based distributions
 
-1. Download the .deb package;
+1. Download the .rpm package;
 2. Open a terminal window;
 3. Navigate to the directory where the .deb package is located using the `cd` command;
 4. Run the command `sudo rpm -i handbook-x64.rpm`;
@@ -176,15 +177,15 @@ That's it! The Electron application should launch, and you can explore and modif
 
 There are some scripts configured to package the application:
 
-| Description                                            | Command                   |
-|--------------------------------------------------------|---------------------------|
-| Make for macOS x64 DMG (Only Available on MacOS)       | `make:darwin-x64-dmg`     |
-| Make for macOS arm64 DMG (Only Available on MacOS)     | `make:darwin-arm64-dmg`   |
-| Make for macOS x64 APP                                 | `make:darwin-x64`         |
-| Make for macOS arm64 APP                               | `make:darwin-arm64`       |
-| Make for Linux x64 DEB                                 | `make:linux-x64-deb`      |
-| Make for Linux x64 RPM                                 | `make:linux-x64-rpm`      |
-| Make for Windows x64                                   | `make:win32-x64`          |
+| Description                                            | Command                           |
+|--------------------------------------------------------|-----------------------------------|
+| Make for macOS x64 DMG (Only Available on MacOS)       | `npm run make:darwin-x64-dmg`     |
+| Make for macOS arm64 DMG (Only Available on MacOS)     | `npm run make:darwin-arm64-dmg`   |
+| Make for macOS x64 APP                                 | `npm run make:darwin-x64`         |
+| Make for macOS arm64 APP                               | `npm run make:darwin-arm64`       |
+| Make for Linux x64 DEB                                 | `npm run make:linux-x64-deb`      |
+| Make for Linux x64 RPM                                 | `npm run make:linux-x64-rpm`      |
+| Make for Windows x64                                   | `npm run make:win32-x64`          |
 
 
 
@@ -200,13 +201,13 @@ There are some scripts configured to package the application:
 
 In order to maintain the primary goal of enhancing user efficiency and focus while minimizing RAM memory usage, it was decided to abandon the idea of having multiple visible windows or tabs. The objective is not to serve as a widget or a web browser application, as there are many superior apps designed for these purposes. Such functionality would detract from the focus and potentially increase RAM consumption.
 
-## Author
-
-- Created by [Emerson Capuchi Romaneli](https://github.com/ECRomaneli) (@ECRomaneli).
-
 ## About App Signature
 
 Please note that, even though it is not recommended to bypass security warnings, the Handbook is open-source and has no malicious codes. As an alternative, the build can be done manually ensuring code integrity. As a lone developer only aiming for being more productive I have no intention to assign this app for now.
+
+## Author
+
+- Created by [Emerson Capuchi Romaneli](https://github.com/ECRomaneli) (@ECRomaneli).
 
 ## License
 
