@@ -18,6 +18,7 @@ defaultSettings[WindowSettings.DEFAULT_HEIGHT] = 640
 defaultSettings[WindowSettings.ACTION_AREA] = 20
 defaultSettings[WindowSettings.HIDE_SHORTCUT] = ''
 defaultSettings[WindowSettings.GLOBAL_SHORTCUT] = ''
+defaultSettings[WindowSettings.TRAY_LONGPRESS] = 300
 
 class Storage {
     static getSharedBounds() {

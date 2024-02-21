@@ -34,6 +34,7 @@ class Manager {
 
     constructor () {
         this.updatePages()
+        this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
@@ -44,6 +45,15 @@ class Manager {
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
         this.tray.on('click', () => this.toggleWindow())
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
+    }
+
+    setupLongPressEvent() {
+        let longPress
+        this.tray.on('mouse-down', () => { 
+            longPress = setTimeout(() => this.tray.emit('mouse-longpress'), Storage.getSettings(WindowSettings.TRAY_LONGPRESS))
+        })
+
+        this.tray.on('mouse-up', () => clearTimeout(longPress))
     }
 
     registerWindowActionAreaListeners() {
@@ -142,8 +152,11 @@ class Manager {
         const contextMenu = Menu.buildFromTemplate(menuItems)
         
         this.contextMenuListener && this.tray.off('right-click', this.contextMenuListener)
+        this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
         this.contextMenuListener = () => this.tray.popUpContextMenu(contextMenu)
         this.tray.on('right-click', this.contextMenuListener)
+        this.tray.on('mouse-longpress', this.contextMenuListener)
+
     }
 
     /**
