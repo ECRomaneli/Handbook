@@ -27,8 +27,8 @@ jobs:
     - name: Make darwin-x64
       run: npm run make:darwin-x64
 
-    - name: Make darwin-arm64
-      run: npm run make:darwin-arm64
+    - name: Make darwin-universal
+      run: npm run make:darwin-universal
 
     - name: Make linux-x64
       run: npm run make:linux-x64
@@ -50,7 +50,7 @@ jobs:
         mv out/make/rpm/x64/handbook*.rpm out/make/handbook-x64.rpm
         mv out/make/deb/x64/handbook*.deb out/make/handbook-x64.deb
         mv out/make/zip/darwin/x64/handbook*.zip out/make/handbook-darwin-x64.zip
-        mv out/make/zip/darwin/arm64/handbook*.zip out/make/handbook-darwin-arm64.zip
+        mv out/make/zip/darwin/universal/handbook*.zip out/make/handbook-darwin-arm64.zip
         mv out/make/squirrel.windows/x64/handbook*.exe out/make/handbook-x64.exe
 
     - name: Upload files to a GitHub release
