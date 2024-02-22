@@ -6,7 +6,31 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: macos-14 #M1
+            make: darwin-arm64
+            source: out/make/zip/darwin/arm64/handbook*.zip
+            target: out/make/handbook-darwin-arm64.zip
+          - os: macos-13
+            make: darwin-x64
+            source: out/make/zip/darwin/x64/handbook*.zip
+            target: out/make/handbook-darwin-x64.zip
+          - os: ubuntu-22.04
+            make: linux-x64-deb
+            source: out/make/deb/x64/handbook*.deb
+            target: out/make/handbook-x64.deb
+          - os: ubuntu-22.04
+            make: linux-x64-rpm
+            source: out/make/rpm/x64/handbook*.rpm
+            target: out/make/handbook-x64.rpm
+          - os: windows-2022
+            make: win32-x64
+            source: out/make/squirrel.windows/x64/handbook*.exe
+            target: out/make/handbook-x64.exe
+
+    runs-on: ${{ matrix.os }}
 
     permissions:
       contents: write
@@ -24,52 +48,14 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Make darwin-x64
-      run: npm run make:darwin-x64
-
-    - name: Make darwin-universal
-      run: npm run make:darwin-universal
-
-    - name: Make linux-x64
-      run: npm run make:linux-x64
-
-    - name: Install Wine
-      run: |
-        sudo dpkg --add-architecture i386
-        sudo apt update
-        sudo apt install -y wine32 wine64
-
-    - name: Make win32-x64
-      run: npm run make:win32-x64
-
-    - name: List Binaries
-      run: find out/make -type f
+    - name: Make ${{ matrix.make }}
+      run: npm run make:${{ matrix.make }}
 
     - name: Rename Binaries
-      run: |
-        mv out/make/rpm/x64/handbook*.rpm out/make/handbook-x64.rpm
-        mv out/make/deb/x64/handbook*.deb out/make/handbook-x64.deb
-        mv out/make/zip/darwin/x64/handbook*.zip out/make/handbook-darwin-x64.zip
-        mv out/make/zip/darwin/universal/handbook*.zip out/make/handbook-darwin-arm64.zip
-        mv out/make/squirrel.windows/x64/handbook*.exe out/make/handbook-x64.exe
+      run: mv ${{ matrix.source }} ${{ matrix.target }}
 
     - name: Upload files to a GitHub release
       uses: svenstaro/upload-release-action@2.7.0
       with:
-        file: out/make/handbook-x64.rpm
-
-    - uses: svenstaro/upload-release-action@2.7.0
-      with:
-        file: out/make/handbook-x64.deb
-
-    - uses: svenstaro/upload-release-action@2.7.0
-      with:
-        file: out/make/handbook-darwin-x64.zip
-
-    - uses: svenstaro/upload-release-action@2.7.0
-      with:
-        file: out/make/handbook-darwin-arm64.zip
-
-    - uses: svenstaro/upload-release-action@2.7.0
-      with:
-        file: out/make/handbook-x64.exe
+        file: ${{ matrix.target }}
+        overwrite: true
