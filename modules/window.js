@@ -23,7 +23,7 @@ class HandbookWindow extends BrowserWindow {
 
     /** @type {Function} */
     boundsListener = () => {
-        if (!this.isMaximized()) {
+        if (!this.isDestroyed() && !this.isMaximized()) {
             const windowBounds = this.getBounds()
             Storage.setSharedBounds(windowBounds)
             Storage.setWindowBounds(this.getExternalId(), windowBounds)
@@ -204,6 +204,7 @@ class HandbookWindow extends BrowserWindow {
 
         super.on('close', this.preventAndHideListener)
 
+        // Since these events are asynchronous and delayed, they can occur after the window is destroyed.
         super.on('custom-moved', this.boundsListener)
         super.on('custom-resized', this.boundsListener)
     
