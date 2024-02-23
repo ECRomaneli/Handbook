@@ -1,4 +1,4 @@
-const { Tray, Menu, screen, dialog, globalShortcut, ipcMain, BrowserWindow } = require('electron')
+const { Tray, Menu, screen, dialog, globalShortcut, ipcMain, BrowserWindow, clipboard, app } = require('electron')
 const { HandbookWindow } = require('./window')
 const { Storage } = require('./storage')
 const { WindowSettings, Positions } = require('./constants')
@@ -23,6 +23,9 @@ class Manager {
 
     /** @type {Page[]} */
     pages
+
+    /** @type {Page} */
+    fromClipboardPage = { label: 'Clipboard URL' }
 
     /** @type {Page} */
     currentPage
@@ -139,33 +142,51 @@ class Manager {
             click: () => this.selectPage(p, true)
         }))
 
-        if (this.pages.length > 0) {
-            menuItems.push({ type: 'separator' })
-        
-            menuItems.push({ id: 'window', label: 'Current Window', submenu: [
-                { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
-                { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
-                { type: 'separator' },
-                { label: 'Refresh', click: () => this.currentPage.window.reload() },
-                { label: 'Reload', click: () => this.currentPage.window.reset() },
-                { type: 'separator' },
-                { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-                { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
-                { label: 'Close', click: () => this.currentPage.window.close() },
-            ]})
-            menuItems.push({ type: 'separator' })
-
-            menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-                this.pages.filter(p => !this.isCurrentPage(p) && p.window).forEach(p => p.window.close()) })
-
-            menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => 
-                this.pages.filter(p => p.window).forEach(p => p.window.close()) })
-        }
+        menuItems.push({
+            id: 'clipboard-url',
+            type: 'radio', 
+            checked: this.isCurrentPage(this.fromClipboardPage),
+            label: this.fromClipboardPage.label, 
+            click: () => {
+                const page = this.fromClipboardPage
+                const oldUrl = page.url
+                page.url = clipboard.readText()
+                if (page.window && page.url !== oldUrl) {
+                    page.window.loadURL(page.url)
+                    page.window.show()
+                } else {
+                    this.selectPage(page, true)
+                }
+            }
+        })
 
         menuItems.push({ type: 'separator' })
 
+        menuItems.push({ id: 'window', label: 'Current Window', submenu: [
+            { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
+            { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
+            { type: 'separator' },
+            { label: 'Refresh', click: () => this.currentPage.window.reload() },
+            { label: 'Reload', click: () => this.currentPage.window.reset() },
+            { type: 'separator' },
+            { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
+            { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
+            { label: 'Close', click: () => this.currentPage.window.close() },
+        ]})
+
+        menuItems.push({ type: 'separator' })
+
+        menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
+            this.pages.filter(p => !this.isCurrentPage(p) && p.window).forEach(p => p.window.close()) })
+
+        menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
+            this.getAllActivePages().forEach(p => p.window.close())
+        } })
+        
+        menuItems.push({ type: 'separator' })
+
         menuItems.push({ label: 'Settings', click: () => Settings.open() })
-        menuItems.push({ label: 'Quit', click: () => process.exit() })
+        menuItems.push({ label: 'Quit', click: () => app.quit() })
 
         const contextMenu = Menu.buildFromTemplate(menuItems)
         
@@ -173,11 +194,14 @@ class Manager {
         this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
         
         this.contextMenuListener = () => {
-            const windows = this.pages.filter(p => p.window).length
+            let windows = this.getAllActivePages().length
+            const cb = clipboard.readText()
 
             contextMenu.getMenuItemById('window').enabled = !!this.currentPage?.window
-            contextMenu.getMenuItemById('close-other-windows').enabled = windows > 1
-            contextMenu.getMenuItemById('close-all-windows').enabled = windows > 0
+            contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
+            contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
+            contextMenu.getMenuItemById('clipboard-url').visible = cb.indexOf('http://') === 0 || cb.indexOf('https://') === 0
+
             this.tray.popUpContextMenu(contextMenu)
         }
         this.tray.on('right-click', this.contextMenuListener)
@@ -245,7 +269,7 @@ class Manager {
                 this.recreateAllWindows()
                 break
             case WindowSettings.BACKGROUND_COLOR:
-                this.pages.filter(p => p.window).forEach(p => p.window.setBackgroundColor(value))
+                this.getAllActivePages().forEach(p => p.window.setBackgroundColor(value))
                 break
             case WindowSettings.BLUR_OPACITY:
                 if (this.currentPage?.window?.isVisible()) { this.currentPage.window.setOpacity(value / 100) }
@@ -261,20 +285,14 @@ class Manager {
     }
 
     sendToAllWindows(eventName, ...args) {
-        this.pages.filter(p => p.window).forEach(p => p.window.webContents.send(eventName, ...args))
+        this.getAllActivePages().forEach(p => p.sendToWindow(eventName, ...args))
     }
 
     /**
      * Clone all windows closing the old ones. Useful when changing window specs that cannot be updated.
      */
     recreateAllWindows() {
-        this.pages.filter(p => p.window).forEach(p => {
-            const oldWindow = p.window
-            p.window = p.window.clone()
-
-            oldWindow.removeAllListeners('closed')
-            oldWindow.close()
-        })
+        this.getAllActivePages().forEach(cloneAndLinkPageWindow)
     }
 
     /**
@@ -367,13 +385,8 @@ class Manager {
      * @param {Page[]} newPages New set of pages.
      */
     updatePages(newPages) {
-        // Close windows of removed pages
-        const pagesUpdated = this.pages
-            .filter(p => p.window)
-            .filter(p => {
-                if (newPages.some(np => np.label === p.label)) {
-                    return true
-                }
+        const pagesUpdated = this.getAllActivePages().filter(p => {
+                if (newPages.some(np => np.label === p.label)) { return true }
                 p.window.close()
                 return false
             })
@@ -395,10 +408,34 @@ class Manager {
             return page
         })
     }
+
+    /**
+     * Return all pages including not manageable ones (e.g. "Clipboard URL" page).
+     * @returns {Page[]} List of all pages.
+     */
+    getAllPages() {
+        return [...this.pages, this.fromClipboardPage]
+    }
+
+    /**
+     * Return all pages, including not manageable ones, with an active window.
+     * @returns {Page[]} List of active pages.
+     */
+    getAllActivePages() {
+        return this.getAllPages().filter(p => p.window)
+    }
     
     isCurrentPage(page) {
         return page && this.currentPage === page
     }
+}
+
+function cloneAndLinkPageWindow(page) {
+    const oldWindow = page.window
+    page.window = page.window.clone()
+
+    oldWindow.removeAllListeners('closed')
+    oldWindow.close()
 }
 
 function getTrayIcon(open) {

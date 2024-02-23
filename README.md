@@ -99,11 +99,21 @@ Download the `.exe` executable, open it and follow the steps.
     ChatGPT page overlaying the settings
 </p>
 
+### Usage
+
+#### Toggle Window Visibility
+
 To toggle the window visibility, just click on the tray icon or configure the shortcuts (disabled by default).
 
-To change the page, right-click on the tray icon and simply select it.
+#### Change page
 
-Have Fun :)
+To change the page, right-click on the tray icon and simply select it. 
+
+#### Open from clipboard
+
+There is also, the possibility to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
+
+#### Have Fun :)
 
 ### Settings
 
