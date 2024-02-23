@@ -30,12 +30,6 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
-    /** @type {Function} */
-    preventAndHideListener = (e) => {
-        e.preventDefault()
-        this.isVisible() && this.hide()
-    }
-
     /**
      * Create a new Handbook window overriding some options with the standards.
      * @param {Electron.BrowserWindowConstructorOptions | undefined} options
@@ -50,33 +44,23 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
-     * Makes close window only available by .close() call.
-     * @param {boolean} ignoreDestroyedError Ignore error if already destroyed.
-     */
-    close(ignoreDestroyedError) {
-        if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.off('close', this.preventAndHideListener)
-            super.close()
-        }
-    }
-
-    /**
      * Build window right-click menu.
      */
     buildContextMenu() {
         contextMenu({
             window: this,
-            prepend: () => [
-                { label: 'Back', click: () => this.webContents.goBack() },
-                { label: 'Forward', click: () => this.webContents.goForward() },
-                { type: 'separator' }
-            ],
             append: () => [
-                { label: 'Refresh', click: () => this.reload() },
-                { label: 'Reload', click: () => this.reset() },
-                { type: 'separator' },
-                { role: 'toggleDevTools' },
-                { role: 'close' }
+                { label: 'Window', submenu: [
+                    { label: 'Back', click: () => this.webContents.goBack() },
+                    { label: 'Forward', click: () => this.webContents.goForward() },
+                    { type: 'separator' },
+                    { label: 'Refresh', click: () => this.reload() },
+                    { label: 'Reload', click: () => this.reset() },
+                    { type: 'separator' },
+                    { role: 'toggleDevTools' },
+                    { label: 'Hide', click: () => this.hide() },
+                    { label: 'Close', click: () => this.close() }
+                ]}
             ]
         })
     }
@@ -129,13 +113,15 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
-     * Close this window and return another one with the same URL, bounds and visibility.
+     * Return a new window with the same external ID, URL, bounds, visibility, and listeners.
      * @returns {HandbookWindow} New Window.
      */
     clone() {
        const newWindow = new HandbookWindow(this.options)
         newWindow.setBounds(this.getBounds())
         newWindow.loadURL(this.webContents.getURL())
+        newWindow.setExternalId(this.getExternalId())
+
         this.isVisible() ? newWindow.show() : newWindow.hide()
 
         Object.keys(this.listenerMap).forEach(eventName => {
@@ -147,8 +133,6 @@ class HandbookWindow extends BrowserWindow {
                 }
             })
         })
-
-        this.close()
 
         return newWindow
     }
@@ -201,8 +185,6 @@ class HandbookWindow extends BrowserWindow {
     registerDefaultEventListeners() {
         super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
         super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
-
-        super.on('close', this.preventAndHideListener)
 
         // Since these events are asynchronous and delayed, they can occur after the window is destroyed.
         super.on('custom-moved', this.boundsListener)

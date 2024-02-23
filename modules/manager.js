@@ -8,9 +8,10 @@ const path = require('node:path')
 /**
  * @typedef {object} Page
  * @property {string} label
- * @property {string} url
- * @property {boolean} persist
- * @property {HandbookWindow} window
+ * @property {string} url Home URL.
+ * @property {boolean} persist If the page is or not persisted when the current page change.
+ * @property {boolean} hasBounds If the bounds was set at least once in this session.
+ * @property {HandbookWindow} window Window attached to the page.
  */
 
 class Manager {
@@ -29,11 +30,11 @@ class Manager {
     /** @type {string} */
     globalShortcut
 
-    /** @type {object} */
-    newWindowOptions = { onShow: () => this.updateTrayIcon(), onHide: () => this.updateTrayIcon() }
+    /** @type {"" | "position" | "bounds"} */
+    resetType = Storage.getSettings(WindowSettings.RESET_BOUNDS)
 
     constructor () {
-        this.updatePages()
+        this.refreshContextMenu()
         this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
@@ -41,7 +42,7 @@ class Manager {
     }
 
     registerDefaultEventListeners() {
-        Settings.onPagesUpdated(() => this.updatePages())
+        Settings.onPagesUpdated(() => this.refreshContextMenu())
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
         this.tray.on('click', () => this.toggleWindow())
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
@@ -89,7 +90,7 @@ class Manager {
                 title: 'Failed to create the shortcut',
                 message: `Failed to register [${this.globalShortcut}] as a global shortcut, removing it.`,
                 buttons: ['OK']
-                });
+                })
             Storage.setSettings(WindowSettings.GLOBAL_SHORTCUT, '')
             this.globalShortcut = ''
         }
@@ -99,9 +100,15 @@ class Manager {
      * Toggle window visibility. If no page is selected and there is at least one page, select the first one.
      */
     toggleWindow() {
+        if (!this.pages.length) {
+            Settings.open()
+            return
+        }
+
         if (!this.currentPage) {
-            if (this.pages[0]) { this.selectPage(this.pages[0], false) }
-            else { return }
+            this.selectPage(this.pages[0], false)
+        } else if (!this.currentPage.window) {
+            this.setupWindow(this.currentPage)
         }
 
        this.currentPage.window.toggle()
@@ -111,20 +118,17 @@ class Manager {
      * Update tray icon according to the current page visibility.
      */
     updateTrayIcon() {
-        this.tray.setImage(getTrayIcon(this.currentPage?.window.isVisible(true)))
+        this.tray.setImage(getTrayIcon(this.currentPage?.window?.isVisible(true)))
     }
 
     /**
      * Check for page changes and update the context menu.
      */
-    updatePages() {
-        const oldPages = this.pages
-        this.pages = Storage.getPages()
-        if (oldPages) { this.copyOrClosePages(oldPages) }
+    refreshContextMenu() {
+        const newPages = Storage.getPages()
+        this.pages = this.pages ? this.updatePages(newPages) : newPages
 
-        if (!this.pages.length) {
-            Settings.open()
-        }
+        if (!this.pages.length) { Settings.open() }
 
         const menuItems = []
 
@@ -138,10 +142,24 @@ class Manager {
         if (this.pages.length > 0) {
             menuItems.push({ type: 'separator' })
         
-            menuItems.push({ label: 'Window', submenu: [
-                { label: 'Refresh',click: () => this.currentPage.window.reload() },
-                { label: 'Reload', click: () => this.currentPage.window.reset() }
+            menuItems.push({ id: 'window', label: 'Current Window', submenu: [
+                { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
+                { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
+                { type: 'separator' },
+                { label: 'Refresh', click: () => this.currentPage.window.reload() },
+                { label: 'Reload', click: () => this.currentPage.window.reset() },
+                { type: 'separator' },
+                { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
+                { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
+                { label: 'Close', click: () => this.currentPage.window.close() },
             ]})
+            menuItems.push({ type: 'separator' })
+
+            menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
+                this.pages.filter(p => !this.isCurrentPage(p) && p.window).forEach(p => p.window.close()) })
+
+            menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => 
+                this.pages.filter(p => p.window).forEach(p => p.window.close()) })
         }
 
         menuItems.push({ type: 'separator' })
@@ -153,7 +171,15 @@ class Manager {
         
         this.contextMenuListener && this.tray.off('right-click', this.contextMenuListener)
         this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
-        this.contextMenuListener = () => this.tray.popUpContextMenu(contextMenu)
+        
+        this.contextMenuListener = () => {
+            const windows = this.pages.filter(p => p.window).length
+
+            contextMenu.getMenuItemById('window').enabled = !!this.currentPage?.window
+            contextMenu.getMenuItemById('close-other-windows').enabled = windows > 1
+            contextMenu.getMenuItemById('close-all-windows').enabled = windows > 0
+            this.tray.popUpContextMenu(contextMenu)
+        }
         this.tray.on('right-click', this.contextMenuListener)
         this.tray.on('mouse-longpress', this.contextMenuListener)
 
@@ -177,12 +203,14 @@ class Manager {
 
         if (oldPage?.window) {
             if (oldPage.persist) {
+                oldPage.window.isMaximized() && oldPage.window.unmaximize()
                 oldPage.window.hide()
             } else {
                 oldPage.window.close()
-                delete oldPage.window
             }
         }
+
+        page.hasBounds || (page.hasBounds = true)
     }
 
     /**
@@ -197,6 +225,8 @@ class Manager {
             page.window = new HandbookWindow()
             page.window.on('show', () => this.updateTrayIcon())
             page.window.on('hide', () => this.updateTrayIcon())
+            page.window.on('closed', () => delete page.window)
+            page.window.on('closed', () => this.isCurrentPage(page) && this.updateTrayIcon())
             page.window.setExternalId(page.label)
             page.window.loadURL(page.url)
         }
@@ -218,7 +248,7 @@ class Manager {
                 this.pages.filter(p => p.window).forEach(p => p.window.setBackgroundColor(value))
                 break
             case WindowSettings.BLUR_OPACITY:
-                if (this.currentPage.window.isVisible()) { this.currentPage.window.setOpacity(value / 100) }
+                if (this.currentPage?.window?.isVisible()) { this.currentPage.window.setOpacity(value / 100) }
                 break
             case WindowSettings.ACTION_AREA:
             case WindowSettings.HIDE_SHORTCUT:
@@ -238,7 +268,13 @@ class Manager {
      * Clone all windows closing the old ones. Useful when changing window specs that cannot be updated.
      */
     recreateAllWindows() {
-        this.pages.filter(p => p.window).forEach(p => p.window = p.window.clone())
+        this.pages.filter(p => p.window).forEach(p => {
+            const oldWindow = p.window
+            p.window = p.window.clone()
+
+            oldWindow.removeAllListeners('closed')
+            oldWindow.close()
+        })
     }
 
     /**
@@ -247,34 +283,41 @@ class Manager {
      * @returns {Electron.Rectangle} Window bounds.
      */
     getPageBounds(page) {
-        const isSharedBounds = Storage.getSettings(WindowSettings.SHARE_BOUNDS)
-        const currentWindow = this.currentPage?.window
+        if (!page.hasBounds) {
+            page.hasBounds = true
+            if (this.resetType) { return this.resetBounds(page.label) }
+        }
 
-        if (isSharedBounds) {
-            if (currentWindow) {
-                if (currentWindow.isMaximized()) {
-                    currentWindow.unmaximize()
-                }
-                return currentWindow.getBounds()
-            }
+        const bounds = Storage.getSettings(WindowSettings.SHARE_BOUNDS) ? 
+            Storage.getSharedBounds() :
+            Storage.getWindowBounds(page.label)
+
+        // Verify if the stored bounds have position
+        if (bounds.x !== void 0) { return bounds }
+
+        return this.getBoundsForDefaultPosition(bounds)
+    }
+
+    /**
+     * Get the bounds based on the reset settings.
+     * @param {string} label Page label.
+     * @returns {Electron.Rectangle} bounds.
+     */
+    resetBounds(label) {
+        const isShared = Storage.getSettings(WindowSettings.SHARE_BOUNDS)
+        
+        let size
+
+        if (this.resetType === 'bounds') {
+            size = Storage.getDefaultSize()
         } else {
-            if (page.window) { return page.window.getBounds() }
+            size = isShared ? Storage.getSharedBounds() : Storage.getWindowBounds(label)
         }
-        
-        const resetBounds = Storage.getSettings(WindowSettings.RESET_BOUNDS)
-        
-        if (resetBounds && !page.window) {
-            const size = resetBounds === 'bounds' ? 
-                Storage.getDefaultSize() :
-                isSharedBounds ? Storage.getSharedBounds() : Storage.getWindowBounds(page.label)
-            return this.getBoundsForDefaultPosition(size)
-        }
-        
-        let windowBounds = isSharedBounds ? Storage.getSharedBounds() : Storage.getWindowBounds(page.label)
 
-        if (windowBounds.x !== void 0) { return windowBounds }
+        // If the bounds are shared, then the bounds are reset only once
+        isShared && (this.resetType = '')
 
-        return this.getBoundsForDefaultPosition(windowBounds)
+        return this.getBoundsForDefaultPosition(size)
     }
 
     /**
@@ -316,43 +359,45 @@ class Manager {
         return bounds
     }
 
+    /**
+     * Add new pages, and if already exists, copy the changes to the existing one removing those that not.
+     * The returned list will stay with the reference of the old pages updated in order to not invalidate
+     * the window event listeners using it.
+     * 
+     * @param {Page[]} newPages New set of pages.
+     */
+    updatePages(newPages) {
+        // Close windows of removed pages
+        const pagesUpdated = this.pages
+            .filter(p => p.window)
+            .filter(p => {
+                if (newPages.some(np => np.label === p.label)) {
+                    return true
+                }
+                p.window.close()
+                return false
+            })
+
+        return newPages.map(newPage => {
+            const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
+
+            if (!page) { return newPage }
+
+            page.hasBounds = newPage.hasBounds
+            page.persist = newPage.persist
+        
+            if (page.window && page.url !== newPage.url) {
+                page.window.loadURL(newPage.url)
+            }
+
+            page.url = newPage.url
+
+            return page
+        })
+    }
+    
     isCurrentPage(page) {
         return page && this.currentPage === page
-    }
-
-    isCurrentWindow(page) {
-        return this.currentPage?.window && this.currentPage.window === page?.window
-    }
-
-    /**
-     * Once a new set of pages is set, copy old page windows to the new ones. If the old page 
-     * does not match the new one, the old window is closed instead. The shared window is not 
-     * closed but hidden and unloaded instead.
-     * 
-     * @param {Page[]} oldPages Old set of pages.
-     */
-    copyOrClosePages(oldPages) {
-        oldPages.filter(op => op.window).forEach(oldPage => {
-            const newPage = this.pages.filter(newPage => newPage.label === oldPage.label)[0]
-            
-            if (!newPage) {
-                oldPage.window.close(true)
-
-                if (this.isCurrentPage(oldPage)) {
-                    this.currentPage = null
-                    this.updateTrayIcon()
-                }
-
-                return
-            }
-
-            this.isCurrentPage(oldPage) && (this.currentPage = newPage)
-            newPage.window = oldPage.window
-        
-            if (oldPage.url !== newPage.url) {
-                newPage.window.loadURL(newPage.url)
-            }
-        })
     }
 }
 
