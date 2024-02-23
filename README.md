@@ -48,7 +48,9 @@ Read about the app signature on "[About App Signature](#about-app-signature)".
 
 Download the zip file for the right architecture of the processor, unzip it, and copy the `handbook.app` to the "Application" folder.
 
-#### Troubleshooting
+### Troubleshooting
+
+#### Security Warning
 
 As the Handbook has no signature, it may not open directly and trigger a security warning. To bypass it:
 
@@ -60,6 +62,12 @@ As the Handbook has no signature, it may not open directly and trigger a securit
 After these few steps, the app will no longer present the warning.
 
 Source: [Apple Support](https://support.apple.com/en-us/guide/mac-help/mh40616/mac).
+
+#### Damaged App
+
+Some ARM Macbook users are receiving an error stating that the `.app` is damaged. The work to fix it is in progress and can be followed in the issue [#1](https://github.com/ECRomaneli/Handbook/issues/1).
+
+Meanwhile, try to use the `darwin-universal` version (and remember to follow the [Security Warning](#security-warning) steps).
 
 ### Debian-based distributions
 
