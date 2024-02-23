@@ -15,20 +15,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 async function registerWindowMoveListeners() {
-    let movableArea = await getSettings('action_area'), dismissClick = null
-    onSettingsUpdated('action_area', (value) => movableArea = value)
+    let actionArea = await getSettings('action_area')
+    onSettingsUpdated('action_area', (value) => actionArea = value)
 
     const originalCursor = document.body.style.cursor
 
     document.addEventListener('dblclick', (e) => {
-        if (e.button !== 0 || e.pageY > movableArea) { return }
+        if (e.button !== 0 || e.clientY > actionArea) { return }
         e.preventDefault()
         e.stopImmediatePropagation()
         ipcRenderer.send('manager.currentPage.toggleMaximize')
     }, true)
 
     document.addEventListener('mousedown', (e) => {
-        if (e.button !== 0 || e.pageY > movableArea) { return }
+        if (e.button !== 0 || e.clientY > actionArea) { return }
 
         ipcRenderer.send('manager.currentPage.dragStart')
 
