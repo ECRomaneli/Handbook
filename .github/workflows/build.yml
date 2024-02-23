@@ -10,6 +10,10 @@ jobs:
       matrix:
         include:
           - os: macos-14 #M1
+            make: darwin-universal
+            source: out/make/zip/darwin/universal/handbook*.zip
+            target: out/make/handbook-darwin-universal.zip
+          - os: macos-14 #M1
             make: darwin-arm64
             source: out/make/zip/darwin/arm64/handbook*.zip
             target: out/make/handbook-darwin-arm64.zip
