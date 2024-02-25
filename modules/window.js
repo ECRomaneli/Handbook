@@ -30,12 +30,6 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
-    /** @type {Function} */
-    preventAndHideListener = (e) => {
-        e.preventDefault()
-        this.isVisible() && this.hide()
-    }
-
     /**
      * Create a new Handbook window overriding some options with the standards.
      * @param {Electron.BrowserWindowConstructorOptions | undefined} options
@@ -50,33 +44,23 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
-     * Makes close window only available by .close() call.
-     * @param {boolean} ignoreDestroyedError Ignore error if already destroyed.
-     */
-    close(ignoreDestroyedError) {
-        if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.off('close', this.preventAndHideListener)
-            super.close()
-        }
-    }
-
-    /**
      * Build window right-click menu.
      */
     buildContextMenu() {
         contextMenu({
             window: this,
-            prepend: () => [
-                { label: 'Back', click: () => this.webContents.goBack() },
-                { label: 'Forward', click: () => this.webContents.goForward() },
-                { type: 'separator' }
-            ],
             append: () => [
-                { label: 'Refresh', click: () => this.reload() },
-                { label: 'Reload', click: () => this.reset() },
-                { type: 'separator' },
-                { role: 'toggleDevTools' },
-                { role: 'close' }
+                { label: 'Window', submenu: [
+                    { label: 'Back', click: () => this.webContents.goBack() },
+                    { label: 'Forward', click: () => this.webContents.goForward() },
+                    { type: 'separator' },
+                    { label: 'Refresh', click: () => this.reload() },
+                    { label: 'Reload', click: () => this.reset() },
+                    { type: 'separator' },
+                    { role: 'toggleDevTools' },
+                    { label: 'Hide', click: () => this.hide() },
+                    { label: 'Close', click: () => this.close() }
+                ]}
             ]
         })
     }
@@ -88,7 +72,7 @@ class HandbookWindow extends BrowserWindow {
      * @returns {Promise<void>}
      */
     loadURL(url, options) {
-        this._loaded = { url: url, options: options }
+        this.loaded = { url: url, options: options }
         super.loadURL(url, options)
     }
 
@@ -99,7 +83,7 @@ class HandbookWindow extends BrowserWindow {
      * @returns {Promise<void>}
      */
     loadFile(filePath, options) {
-        this._loaded = { filePath: url, options: options }
+        this.loaded = { filePath: url, options: options }
         super.loadFile(filePath, options)
     }
 
@@ -107,13 +91,12 @@ class HandbookWindow extends BrowserWindow {
      * Reset window to the starting loaded content.
      */
     reset() {
-        const loaded = this._loaded
-        if (!loaded) {
+        if (!this.loaded) {
             console.warn('Nothing loaded')
-        } else if (loaded.url) {
-            super.loadURL(loaded.url, loaded.options)
+        } else if (this.loaded.url) {
+            super.loadURL(this.loaded.url, this.loaded.options)
         } else {
-            super.loadFile(loaded.filePath, loaded.options)
+            super.loadFile(this.loaded.filePath, this.loaded.options)
         }
     }
 
@@ -129,14 +112,24 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
-     * Close this window and return another one with the same URL, bounds and visibility.
+     * Return a new window with the same external ID, URL, bounds, visibility, and listeners.
+     * @param {Electron.BrowserWindowConstructorOptions | void} options New options. If not present, the same options are going to be used.
      * @returns {HandbookWindow} New Window.
      */
-    clone() {
-       const newWindow = new HandbookWindow(this.options)
+    clone(options) {
+        const newWindow = new HandbookWindow(options ? setStandardOptions(options) : this.options)
+        newWindow.setExternalId(this.getExternalId())
         newWindow.setBounds(this.getBounds())
-        newWindow.loadURL(this.webContents.getURL())
-        this.isVisible() ? newWindow.show() : newWindow.hide()
+        
+        if (this.loaded?.url) {
+            // Keep current URL
+            newWindow.loadURL(this.webContents.getURL(), this.loaded.options)
+            newWindow.loaded = this.loaded
+        } else if(this.loaded?.filePath) {
+            newWindow.loadFile(this.loaded.filePath, this.loaded.options)
+        }
+
+        this.isVisible() && newWindow.show()
 
         Object.keys(this.listenerMap).forEach(eventName => {
             this.listenerMap[eventName].forEach(listener => {
@@ -147,8 +140,6 @@ class HandbookWindow extends BrowserWindow {
                 }
             })
         })
-
-        this.close()
 
         return newWindow
     }
@@ -166,9 +157,19 @@ class HandbookWindow extends BrowserWindow {
      * Toggle visibility of the window (show and hide).
      * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
      */
-    toggle(ignoreDestroyedError) {
+    toggleVisibility(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
             super.isVisible() ? this.hide() : this.show()
+        }
+    }
+
+    /**
+     * Toggle maximize.
+     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     */
+    toggleMaximize(ignoreDestroyedError) {
+        if (!(ignoreDestroyedError && this.isDestroyed())) {
+            super.isMaximized() ? this.unmaximize() : this.maximize()
         }
     }
 
@@ -201,8 +202,6 @@ class HandbookWindow extends BrowserWindow {
     registerDefaultEventListeners() {
         super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
         super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
-
-        super.on('close', this.preventAndHideListener)
 
         // Since these events are asynchronous and delayed, they can occur after the window is destroyed.
         super.on('custom-moved', this.boundsListener)
@@ -263,7 +262,8 @@ function setStandardOptions(options) {
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
     options.fullscreenable = false
     options.minimizable = false
-    options.webPreferences = { preload: path.join(__dirname, 'windowPreload.js') }
+    if (!options.webPreferences) { options.webPreferences = {} }
+    options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
     return options
 }
 

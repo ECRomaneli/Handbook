@@ -99,11 +99,21 @@ Download the `.exe` executable, open it and follow the steps.
     ChatGPT page overlaying the settings
 </p>
 
+### Usage
+
+#### Toggle Window Visibility
+
 To toggle the window visibility, just click on the tray icon or configure the shortcuts (disabled by default).
 
-To change the page, right-click on the tray icon and simply select it.
+#### Change page
 
-Have Fun :)
+To change the page, right-click on the tray icon and simply select it. 
+
+#### Open from clipboard
+
+There is also, the possibility to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
+
+#### Have Fun :)
 
 ### Settings
 
@@ -114,16 +124,17 @@ To access the settings, simply right-click on the tray icon and select **"Settin
 The **"Pages"** tab enables users to add, sort, customize, or remove pages. The user can also import or export the pages as JSON.
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/qRN17XrV/settings-page.png" alt='Pages'>
+    <img width="600" src="https://i.postimg.cc/bwrVw0tg/settings-page.png" alt='Pages'>
 </p>
+
+#### Session ID
+
+Session ID configuration allows for the management of session data, including cache and storages. By specifying a "Session ID", pages sharing this identifier will access the same session. This functionality proves particularly useful for maintaining user login status across multiple pages utilizing the same OAuth credentials (e.g. Google and Facebook oAuths). Moreover, it facilitates the simultaneous login of multiple accounts for distinct purposes, such as **"Personal" and "Business"**. If no "Session ID" is provided, the value "default" will be automatically assigned.
 
 #### Persistent pages
 
 Persistent pages are not destroyed once the page is changed. This means that if there are any unfinished tasks still loading, the user can change the page and come back later without lose it or reload the URL.
 
-#### Session
-
-The session is maintained according to Electron/Chromium standards, which means it is not lost upon restarting the app or when a page is closed. This functionality is particularly useful for keeping users logged in. However, it's important to note that if the application path is changed, the session will be lost as well.
 
 ### Window Settings
 
@@ -160,6 +171,10 @@ git clone https://github.com/ECRomaneli/Handbook.git
 cd Handbook
 ```
 
+**Step 3: Install Node**
+- Ensure that the Node is installed. This project has been tested with Node versions ranging from `16.x` to `21.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
+- For guidance on installing Node, please visit the [official Node website](https://nodejs.org/) for detailed instructions.
+
 **Step 3: Install Dependencies**
 - Once inside the project directory, install the necessary dependencies by running:
 
@@ -177,19 +192,20 @@ npm start
 That's it! The Electron application should launch, and you can explore and modify the existing codebase as needed.
 
 
-## Package
+## Creating the Artifacts
 
-There are some scripts configured to package the application:
+After setup the project following the steps on "[Build](#build)" section, choose the target version and execute one of the commands below.
 
-| Description                                            | Command                           |
-|--------------------------------------------------------|-----------------------------------|
-| Make for macOS x64 DMG (Only Available on MacOS)       | `npm run make:darwin-x64-dmg`     |
-| Make for macOS arm64 DMG (Only Available on MacOS)     | `npm run make:darwin-arm64-dmg`   |
-| Make for macOS x64 APP                                 | `npm run make:darwin-x64`         |
-| Make for macOS arm64 APP                               | `npm run make:darwin-arm64`       |
-| Make for Linux x64 DEB                                 | `npm run make:linux-x64-deb`      |
-| Make for Linux x64 RPM                                 | `npm run make:linux-x64-rpm`      |
-| Make for Windows x64                                   | `npm run make:win32-x64`          |
+| Target                                        | Command                             |
+|-----------------------------------------------|-------------------------------------|
+| MacOS x64 DMG (Available on MacOS ARM64)      | `npm run make:darwin-x64-dmg`       |
+| MacOS arm64 DMG (Available on MacOS)          | `npm run make:darwin-arm64-dmg`     |
+| MacOS Universal APP (Available on MacOS)      | `npm run make:darwin-universal-app` |
+| MacOS x64 APP (Zipped App)                    | `npm run make:darwin-x64-app`       |
+| MacOS arm64 APP (Zipped App)                  | `npm run make:darwin-arm64-app`     |
+| Linux x64 DEB                                 | `npm run make:linux-x64-deb`        |
+| Linux x64 RPM                                 | `npm run make:linux-x64-rpm`        |
+| Windows x64 EXE                               | `npm run make:win32-x64-exe`        |
 
 ## Next Steps
 

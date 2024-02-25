@@ -3,24 +3,25 @@ app.component('PageTable', {
         <table class="table map-table" aria-label="map table">
             <thead v-if="!noHeader">
                 <tr>
-                    <th scope="col" role="column:drag"></th>
+                    <th scope="col" role="column:options"></th>
                     <th scope="col" role="column:label">Label</th>
                     <th scope="col" role="column:url">URL</th>
+                    <th scope="col" role="column:session">Session ID</th>
                     <th scope="col" role="column:persist" title="Persistent pages will not close when another page is selected">Persist</th>
-                    <th scope="col" role="column:remove"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(page, index) in list" class="c-grab" :key="index" :draggable="draggable" @dragstart="drag(index)" @dragover="$event.preventDefault()" @drop="drop(index)">
-                    <td><img class="svg-icon square-24" :src="$image.src('drag')" alt="drag page"></td>
-                    <td><input type="text" name="label" v-model="page.label" placeholder="Label" class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
-                    <td><input type="text" name="url"   v-model="page.url"   placeholder="URL"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" name="persist" v-model="page.persist" @change="emitUpdate(page)">
+                    <td class="px-0" @click="removePage(index)">
+                        <div class="d-flex">
+                            <img class="svg-icon square-24 me-1"      :src="$image.src('drag')"  alt="drag page">
+                            <img class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
                         </div>
                     </td>
-                    <td class="c-pointer" @click="removePage(index)"><img class="svg-icon square-24" :src="$image.src('trash')" alt="remove page" title="Remove"></td>
+                    <td><input type="text" v-model="page.label"   placeholder="Label"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
+                    <td><input type="text" v-model="page.url"     placeholder="URL"     class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
+                    <td><input type="text" v-model="page.session" placeholder="Default" class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
+                    <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" name="persist" v-model="page.persist" @change="emitUpdate(page)"></div></td>
                 </tr>
                 <tr class="c-pointer" @click="addPage()">
                     <td><img class="svg-icon square-24" :src="$image.src('plus')" alt="add page"></td>
@@ -45,7 +46,7 @@ app.component('PageTable', {
                 const last = this.list[this.list.length - 1]
                 if (!last.label && !last.url) { return }
             }
-            this.list.push({ label: '', url: '', persist: false })
+            this.list.push({ label: '', url: '', session: '', persist: false })
         },
 
         removePage(index) { this.$emit('remove', this.$clone(this.list.splice(index, 1)[0])) },

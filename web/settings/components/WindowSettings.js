@@ -6,6 +6,12 @@ app.component('WindowSettings', {
                 <hr class="text-black-50">
                 <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
             </template>
+
+            <div class="h6 mt-4">Appearance</div>
+            <template v-for="(input) in inputs.appearance" :key="input.id">
+                <hr class="text-black-50">
+                <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
+            </template>
             
             <div class="h6 mt-4">Bounds</div>
             <template v-for="(input) in inputs.bounds" :key="input.id">
@@ -47,15 +53,23 @@ app.component('WindowSettings', {
             this.inputs = { 
                 general: [
                     {
-                        id: this.$const.WindowSettings.SHOW_FRAME,
-                        label: 'Show frame',
-                        data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
+                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
+                        label: 'Tray icon long-press timeout',
+                        description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
+                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                     {
                         id: this.$const.WindowSettings.ACTION_AREA,
                         label: 'Action area height',
                         description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
                         data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.WindowSettings.ACTION_AREA), unit: 'px' }
+                    },
+                ],
+                appearance: [
+                    {
+                        id: this.$const.WindowSettings.SHOW_FRAME,
+                        label: 'Show frame',
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
                     },
                     {
                         id: this.$const.WindowSettings.BACKGROUND_COLOR,
@@ -74,12 +88,6 @@ app.component('WindowSettings', {
                         label: 'Opacity when blurred',
                         description: 'Opacity when window is blurred. Linux is not supported.',
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.WindowSettings.BLUR_OPACITY), unit: '%' }
-                    },
-                    {
-                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
-                        label: 'Tray icon long-press timeout',
-                        description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
-                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                 ],
                 bounds: [
