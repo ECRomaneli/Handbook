@@ -72,10 +72,7 @@ class Manager {
             window.setPosition(position[0] + offset.x, position[1] + offset.y)
         })
 
-        ipcMain.on('manager.currentPage.toggleMaximize', () => {
-            const window = this.currentPage.window
-            window.isMaximized() ? window.unmaximize() : window.maximize()
-        })
+        ipcMain.on('manager.currentPage.toggleMaximize', () => this.currentPage.window.toggleMaximize())
     }
 
     registerGlobalShortcut() {
@@ -114,7 +111,7 @@ class Manager {
             this.setupWindow(this.currentPage)
         }
 
-       this.currentPage.window.toggle()
+       this.currentPage.window.toggleVisibility()
     }
 
     /**

@@ -150,9 +150,19 @@ class HandbookWindow extends BrowserWindow {
      * Toggle visibility of the window (show and hide).
      * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
      */
-    toggle(ignoreDestroyedError) {
+    toggleVisibility(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
             super.isVisible() ? this.hide() : this.show()
+        }
+    }
+
+    /**
+     * Toggle maximize.
+     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     */
+    toggleMaximize(ignoreDestroyedError) {
+        if (!(ignoreDestroyedError && this.isDestroyed())) {
+            super.isMaximized() ? this.unmaximize() : this.maximize()
         }
     }
 
