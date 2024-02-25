@@ -1,4 +1,4 @@
-const { screen } = require("electron")
+const { screen, session } = require("electron")
 const { Positions, WindowSettings } = require("./constants")
 const { HandbookWindow } = require("./window")
 const { Storage } = require("./storage")
@@ -20,6 +20,9 @@ class Page {
     /** @type {string} Home URL. */
     url
 
+    /** @type {string} */
+    session
+
     /** @type {boolean} If the page is or not persisted when the current page change. */
     persist
 
@@ -29,9 +32,10 @@ class Page {
     /** @type {HandbookWindow} Window attached to the page. */
     window
 
-    constructor (label, url, persist) {
+    constructor (label, url, session, persist) {
         this.label = label
         this.url = url
+        this.session = session !== void 0 && session !== '' ? session : 'default'
         this.persist = persist
     }
 
@@ -39,7 +43,7 @@ class Page {
      * Create window.
      */
     createWindow() {
-        this.window = new HandbookWindow()
+        this.window = new HandbookWindow(this.createWindowOptions())
         this.window.on('closed', () => delete this.window)
         this.window.setExternalId(this.label)
         this.window.loadURL(this.url)
@@ -47,10 +51,14 @@ class Page {
 
     /**
      * Recreate the internal window.
+     * @param {true | void} recreateWindowOptions If true, the window options are going to be recreated (may change dynamic options).
      */
-    recreateWindow() {
+    recreateWindow(recreateWindowOptions) {
         const oldWindow = this.window
-        this.window = this.window.clone()
+
+        this.window = recreateWindowOptions ? 
+            this.window.clone(this.createWindowOptions()) : 
+            this.window.clone()
     
         oldWindow.removeAllListeners('closed')
         oldWindow.close()
@@ -58,7 +66,7 @@ class Page {
 
     /**
      * Destroy page's window. If the "hideIfPersistent" is true, the window is going to be hidden instead.
-     * @param {boolean} hideIfPersistent If true, persistent windows will be hidden instead of closed.
+     * @param {true | void} hideIfPersistent If true, persistent windows will be hidden instead of closed.
      */
     destroyWindow(hideIfPersistent) {
         if (hideIfPersistent && this.persist) {
@@ -66,6 +74,18 @@ class Page {
             this.window.hide()
         } else {
             this.window.close()
+        }
+    }
+
+    /**
+     * Return the default window options.
+     * @returns {Electron.BrowserWindowConstructorOptions} options.
+     */
+    createWindowOptions() {
+        return {
+            webPreferences: {
+                session: session.fromPartition(`persist:handbook_${this.session}`)
+            }
         }
     }
 
@@ -80,12 +100,20 @@ class Page {
     copy(page) {
         this.hasBounds = page.hasBounds
         this.persist = page.persist
-    
-        if (this.window && this.url !== page.url) {
-            this.window.loadURL(page.url)
-        }
 
+        const urlChanged = this.url !== page.url
+        const sessionChanged = this.session !== page.session
+
+        this.session = page.session
         this.url = page.url
+
+        if (this.hasWindow()) {
+            if (sessionChanged) {
+                this.recreateWindow(true)
+            } else if (urlChanged) {
+                this.window.loadURL(this.url)
+            }
+        }
     }
 
     /**
@@ -189,7 +217,7 @@ class Page {
      * @returns {Page[]} Page objects.
      */
     static fromList(rawPages) {
-        return rawPages.map(p => new Page(p.label, p.url, p.persist))
+        return rawPages.map(p => new Page(p.label, p.url, p.session, p.persist))
     }
 }
 

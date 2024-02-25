@@ -113,10 +113,11 @@ class HandbookWindow extends BrowserWindow {
 
     /**
      * Return a new window with the same external ID, URL, bounds, visibility, and listeners.
+     * @param {Electron.BrowserWindowConstructorOptions | void} options New options. If not present, the same options are going to be used.
      * @returns {HandbookWindow} New Window.
      */
-    clone() {
-        const newWindow = new HandbookWindow(this.options)
+    clone(options) {
+        const newWindow = new HandbookWindow(options ? setStandardOptions(options) : this.options)
         newWindow.setExternalId(this.getExternalId())
         newWindow.setBounds(this.getBounds())
         
