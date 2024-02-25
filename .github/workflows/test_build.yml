@@ -1,8 +1,8 @@
-name: Build release files
+name: Test build steps
 
 on:
   push:
-    tags: [ '*' ]
+    branches: [ 'develop' ]
   workflow_dispatch:
 jobs:
   build:
@@ -37,9 +37,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    permissions:
-      contents: write
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -65,9 +62,3 @@ jobs:
 
     - name: Rename Binaries
       run: mv ${{ matrix.source }} ${{ matrix.target }}
-
-    - name: Upload files to a GitHub release
-      uses: svenstaro/upload-release-action@2.9.0
-      with:
-        file: ${{ matrix.target }}
-        overwrite: true
