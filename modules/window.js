@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron')
+const { BrowserWindow, session } = require('electron')
 const path = require('node:path')
 const { Storage } = require('./storage')
 const { WindowSettings } = require('./constants')
@@ -255,7 +255,10 @@ function setStandardOptions(options) {
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
     options.fullscreenable = false
     options.minimizable = false
-    options.webPreferences = { preload: path.join(__dirname, 'windowPreload.js') }
+    options.webPreferences = {
+        preload: path.join(__dirname, 'windowPreload.js'),
+        session: session.fromPartition('persist:handbook_' + Storage.getSettings(WindowSettings.SESSION_ID))    
+    }
     return options
 }
 
