@@ -43,6 +43,7 @@ class Page {
      * Create window.
      */
     createWindow() {
+        if (this.hasWindow()) { throw new Error('Unexpected window replacement.') }
         this.window = new HandbookWindow(this.createWindowOptions())
         this.window.on('closed', () => delete this.window)
         this.window.setExternalId(this.label)

@@ -120,7 +120,6 @@ class HandbookManager {
             page.window.on('hide', () => this.updateTrayIcon())
             page.window.on('closed', () => this.isCurrentPage(page) && this.updateTrayIcon())
         }
-        page.defineWindowBounds()
     }
 
     /**
@@ -225,6 +224,7 @@ class HandbookManager {
         if (this.isCurrentPage(page)) { return this.togglePage() }
 
         this.setupPageWindow(page)
+        page.defineWindowBounds()
 
         const oldPage = this.currentPage
         this.currentPage = page
