@@ -6,15 +6,17 @@ app.component('PageTable', {
                     <th scope="col" role="column:options"></th>
                     <th scope="col" role="column:label">Label</th>
                     <th scope="col" role="column:url">URL</th>
-                    <th scope="col" role="column:session">Session</th>
+                    <th scope="col" role="column:session">Session ID</th>
                     <th scope="col" role="column:persist" title="Persistent pages will not close when another page is selected">Persist</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(page, index) in list" class="c-grab" :key="index" :draggable="draggable" @dragstart="drag(index)" @dragover="$event.preventDefault()" @drop="drop(index)">
-                    <td class="d-flex px-0" @click="removePage(index)">
-                        <img class="svg-icon square-24 me-2"      :src="$image.src('drag')"  alt="drag page">
-                        <img class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
+                    <td class="px-0" @click="removePage(index)">
+                        <div class="d-flex">
+                            <img class="svg-icon square-24 me-1"      :src="$image.src('drag')"  alt="drag page">
+                            <img class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
+                        </div>
                     </td>
                     <td><input type="text" v-model="page.label"   placeholder="Label"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
                     <td><input type="text" v-model="page.url"     placeholder="URL"     class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
@@ -22,7 +24,11 @@ app.component('PageTable', {
                     <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" name="persist" v-model="page.persist" @change="emitUpdate(page)"></div></td>
                 </tr>
                 <tr class="c-pointer" @click="addPage()">
-                    <td colspan="6"><img class="svg-icon square-24" :src="$image.src('plus')" alt="add page"></td>
+                    <td><img class="svg-icon square-24" :src="$image.src('plus')" alt="add page"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
