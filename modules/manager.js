@@ -1,20 +1,16 @@
-const { Tray, Menu, screen, dialog, globalShortcut, ipcMain, BrowserWindow, clipboard, app } = require('electron')
-const { HandbookWindow } = require('./window')
+const { Tray, Menu, dialog, globalShortcut, ipcMain, clipboard, app } = require('electron')
 const { Storage } = require('./storage')
-const { WindowSettings, Positions } = require('./constants')
+const { WindowSettings } = require('./constants')
 const { Settings } = require('./settings')
 const path = require('node:path')
+const { Page } = require('./page')
 
-/**
- * @typedef {object} Page
- * @property {string} label
- * @property {string} url Home URL.
- * @property {boolean} persist If the page is or not persisted when the current page change.
- * @property {boolean} hasBounds If the bounds was set at least once in this session.
- * @property {HandbookWindow} window Window attached to the page.
- */
+const Manager = (() => {
+    /** @type {HandbookManager} */ let instance
+    return { getInstance: () => instance ?? (instance = new HandbookManager()) }
+})()
 
-class Manager {
+class HandbookManager {
     /** @type {Tray} */
     tray = new Tray(getTrayIcon())
 
@@ -25,7 +21,7 @@ class Manager {
     pages
 
     /** @type {Page} */
-    fromClipboardPage = { label: 'Clipboard URL' }
+    fromClipboardPage = new Page('Clipboard URL')
 
     /** @type {Page} */
     currentPage
@@ -33,21 +29,23 @@ class Manager {
     /** @type {string} */
     globalShortcut
 
-    /** @type {"" | "position" | "bounds"} */
-    resetType = Storage.getSettings(WindowSettings.RESET_BOUNDS)
-
     constructor () {
         this.refreshContextMenu()
         this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
+        this.configurePages()
+    }
+
+    configurePages() {
+        Page.verticalMargin = this.tray.getBounds().height + 10
     }
 
     registerDefaultEventListeners() {
         Settings.onPagesUpdated(() => this.refreshContextMenu())
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
-        this.tray.on('click', () => this.toggleWindow())
+        this.tray.on('click', () => this.togglePage())
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
@@ -61,15 +59,12 @@ class Manager {
     }
 
     registerWindowActionAreaListeners() {
-        let position, window
+        let position
 
-        ipcMain.on('manager.currentPage.dragStart', (e) => {
-            window = BrowserWindow.fromWebContents(e.sender)
-            position = window.getPosition()
-        })
+        ipcMain.on('manager.currentPage.dragStart', () => { position = this.currentPage.window.getPosition() })
 
         ipcMain.on('manager.currentPage.dragging', (_e, offset) => {
-            window.setPosition(position[0] + offset.x, position[1] + offset.y)
+            this.currentPage.window.setPosition(position[0] + offset.x, position[1] + offset.y)
         })
 
         ipcMain.on('manager.currentPage.toggleMaximize', () => this.currentPage.window.toggleMaximize())
@@ -82,7 +77,7 @@ class Manager {
         if (!this.globalShortcut) { return }
 
         try {
-            globalShortcut.register(this.globalShortcut, () => { this.toggleWindow() })
+            globalShortcut.register(this.globalShortcut, () => { this.togglePage() })
         } catch(e) {
             console.error('Failed to create the shortcut: ', e)
             dialog.showMessageBox(Settings.window, {
@@ -99,19 +94,33 @@ class Manager {
     /**
      * Toggle window visibility. If no page is selected and there is at least one page, select the first one.
      */
-    toggleWindow() {
+    togglePage() {
         if (!this.pages.length) {
             Settings.open()
             return
         }
 
         if (!this.currentPage) {
-            this.selectPage(this.pages[0], false)
-        } else if (!this.currentPage.window) {
-            this.setupWindow(this.currentPage)
+            this.selectPage(this.pages[0], true)
+            return
         }
 
-       this.currentPage.window.toggleVisibility()
+        this.setupPageWindow(this.currentPage)
+        this.currentPage.window.toggleVisibility()
+    }
+
+    /**
+     * Set up the window page, creating it if it does not exist, and set the window bounds.
+     * @param {Page} page 
+     */
+    setupPageWindow(page) {
+        if (!page.hasWindow()) {
+            page.createWindow()
+            page.window.on('show', () => this.updateTrayIcon())
+            page.window.on('hide', () => this.updateTrayIcon())
+            page.window.on('closed', () => this.isCurrentPage(page) && this.updateTrayIcon())
+        }
+        page.defineWindowBounds()
     }
 
     /**
@@ -125,7 +134,7 @@ class Manager {
      * Check for page changes and update the context menu.
      */
     refreshContextMenu() {
-        const newPages = Storage.getPages()
+        const newPages = Page.fromList(Storage.getPages())
         this.pages = this.pages ? this.updatePages(newPages) : newPages
 
         if (!this.pages.length) { Settings.open() }
@@ -148,7 +157,7 @@ class Manager {
                 const page = this.fromClipboardPage
                 const oldUrl = page.url
                 page.url = clipboard.readText()
-                if (page.window && page.url !== oldUrl) {
+                if (page.hasWindow() && page.url !== oldUrl) {
                     page.window.loadURL(page.url)
                     page.window.show()
                 } else {
@@ -174,7 +183,7 @@ class Manager {
         menuItems.push({ type: 'separator' })
 
         menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-            this.pages.filter(p => !this.isCurrentPage(p) && p.window).forEach(p => p.window.close()) })
+            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.window.close()) })
 
         menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
             this.getAllActivePages().forEach(p => p.window.close())
@@ -197,7 +206,7 @@ class Manager {
             contextMenu.getMenuItemById('window').enabled = !!this.currentPage?.window
             contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
             contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
-            contextMenu.getMenuItemById('clipboard-url').visible = cb.indexOf('http://') === 0 || cb.indexOf('https://') === 0
+            contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://')
 
             this.tray.popUpContextMenu(contextMenu)
         }
@@ -213,46 +222,15 @@ class Manager {
      * @param {boolean} show If true, the page is shown. Otherwise, the page visibility will not be changed.
      */
     selectPage(page, show) {
-        if (this.isCurrentPage(page)) { return this.toggleWindow() }
+        if (this.isCurrentPage(page)) { return this.togglePage() }
 
-        this.setupWindow(page)
+        this.setupPageWindow(page)
 
         const oldPage = this.currentPage
         this.currentPage = page
 
-        show && !page.window.isVisible() && this.toggleWindow()
-
-        if (oldPage?.window) {
-            if (oldPage.persist) {
-                oldPage.window.isMaximized() && oldPage.window.unmaximize()
-                oldPage.window.hide()
-            } else {
-                oldPage.window.close()
-            }
-        }
-
-        page.hasBounds || (page.hasBounds = true)
-    }
-
-    /**
-     * Set up the window page creating it if not exist and set the window bounds.
-     * @param {Page} page 
-     */
-    setupWindow(page) {
-        // Note: Must be done before set window to calculate first time
-        const bounds = this.getPageBounds(page)
-
-        if (!page.window) {
-            page.window = new HandbookWindow()
-            page.window.on('show', () => this.updateTrayIcon())
-            page.window.on('hide', () => this.updateTrayIcon())
-            page.window.on('closed', () => delete page.window)
-            page.window.on('closed', () => this.isCurrentPage(page) && this.updateTrayIcon())
-            page.window.setExternalId(page.label)
-            page.window.loadURL(page.url)
-        }
-
-        page.window.setBounds(bounds)
+        show && !page.window.isVisible() && this.togglePage()
+        oldPage?.hasWindow() && oldPage.destroyWindow(true)
     }
 
     /**
@@ -289,89 +267,7 @@ class Manager {
      * Clone all windows closing the old ones. Useful when changing window specs that cannot be updated.
      */
     recreateAllWindows() {
-        this.getAllActivePages().forEach(cloneAndLinkPageWindow)
-    }
-
-    /**
-     * If the window already exists, return its bounds. Otherwise, calculate the bounds based on user settings.
-     * @param {Page} page Page to calculate boudns.
-     * @returns {Electron.Rectangle} Window bounds.
-     */
-    getPageBounds(page) {
-        if (!page.hasBounds) {
-            page.hasBounds = true
-            if (this.resetType) { return this.resetBounds(page.label) }
-        }
-
-        const bounds = Storage.getSettings(WindowSettings.SHARE_BOUNDS) ? 
-            Storage.getSharedBounds() :
-            Storage.getWindowBounds(page.label)
-
-        // Verify if the stored bounds have position
-        if (bounds.x !== void 0) { return bounds }
-
-        return this.getBoundsForDefaultPosition(bounds)
-    }
-
-    /**
-     * Get the bounds based on the reset settings.
-     * @param {string} label Page label.
-     * @returns {Electron.Rectangle} bounds.
-     */
-    resetBounds(label) {
-        const isShared = Storage.getSettings(WindowSettings.SHARE_BOUNDS)
-        
-        let size
-
-        if (this.resetType === 'bounds') {
-            size = Storage.getDefaultSize()
-        } else {
-            size = isShared ? Storage.getSharedBounds() : Storage.getWindowBounds(label)
-        }
-
-        // If the bounds are shared, then the bounds are reset only once
-        isShared && (this.resetType = '')
-
-        return this.getBoundsForDefaultPosition(size)
-    }
-
-    /**
-     * Calculate default position based on the window, tray, and screen size. 
-     * @param {{ width: number, height: number }} windowSize Window size to be used in the returned 
-     * bounds and for distance calculation.
-     * @param {number} margin Minimum margin from the corners in pixels. Default: 10 (px).
-     * @returns {Electron.Rectangle} Window bounds.
-     */
-    getBoundsForDefaultPosition(windowSize, margin) {
-        !margin && (margin = 10)
-        const bounds = { width: windowSize.width, height: windowSize.height }
-
-        // Get user position preference
-        const position = Storage.getSettings(WindowSettings.DEFAULT_POSITION)
-        if (position === Positions.CENTER) { return bounds }
-
-        // Get the available area
-        const trayBounds = this.tray.getBounds()
-        const area = screen.getPrimaryDisplay().workAreaSize
-        area.width  -= bounds.width
-        area.height -= bounds.height
-        area.x = trayBounds.x === 0 ? trayBounds.width  : 0
-        area.y = trayBounds.y === 0 ? trayBounds.height : 0
- 
-         // Calc position
-        switch (position) {
-            case Positions.TOP_LEFT:      bounds.y = area.y + margin;      bounds.x = area.x + margin;     break
-            case Positions.TOP_CENTER:    bounds.y = area.y + margin;      bounds.x = area.width / 2 | 0;  break
-            case Positions.TOP_RIGHT:     bounds.y = area.y + margin;      bounds.x = area.width - margin; break
-            case Positions.MIDDLE_LEFT:   bounds.y = area.height / 2 | 0;  bounds.x = area.x + margin;     break
-            case Positions.CENTER:        bounds.y = area.height / 2 | 0;  bounds.x = area.width / 2 | 0;  break
-            case Positions.MIDDLE_RIGHT:  bounds.y = area.height / 2 | 0;  bounds.x = area.width - margin; break
-            case Positions.BOTTOM_LEFT:   bounds.y = area.height - margin; bounds.x = area.x + margin;     break
-            case Positions.BOTTOM_CENTER: bounds.y = area.height - margin; bounds.x = area.width / 2 | 0;  break
-            case Positions.BOTTOM_RIGHT:  bounds.y = area.height - margin; bounds.x = area.width - margin; break
-        }
-        
-        return bounds
+        this.getAllActivePages().forEach(p => p.recreateWindow())
     }
 
     /**
@@ -390,18 +286,8 @@ class Manager {
 
         return newPages.map(newPage => {
             const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
-
             if (!page) { return newPage }
-
-            page.hasBounds = newPage.hasBounds
-            page.persist = newPage.persist
-        
-            if (page.window && page.url !== newPage.url) {
-                page.window.loadURL(newPage.url)
-            }
-
-            page.url = newPage.url
-
+            page.copy(newPage)
             return page
         })
     }
@@ -419,20 +305,12 @@ class Manager {
      * @returns {Page[]} List of active pages.
      */
     getAllActivePages() {
-        return this.getAllPages().filter(p => p.window)
+        return this.getAllPages().filter(p => p.hasWindow())
     }
     
     isCurrentPage(page) {
         return page && this.currentPage === page
     }
-}
-
-function cloneAndLinkPageWindow(page) {
-    const oldWindow = page.window
-    page.window = page.window.clone()
-
-    oldWindow.removeAllListeners('closed')
-    oldWindow.close()
 }
 
 function getTrayIcon(open) {

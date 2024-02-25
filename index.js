@@ -8,4 +8,4 @@ if (IS_DARWIN) {
   app.on('window-all-closed', () => {})
 }
 
-app.whenReady().then(() => new Manager())
+app.whenReady().then(() => Manager.getInstance())
