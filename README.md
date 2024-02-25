@@ -124,16 +124,17 @@ To access the settings, simply right-click on the tray icon and select **"Settin
 The **"Pages"** tab enables users to add, sort, customize, or remove pages. The user can also import or export the pages as JSON.
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/qRN17XrV/settings-page.png" alt='Pages'>
+    <img width="600" src="https://i.postimg.cc/bwrVw0tg/settings-page.png" alt='Pages'>
 </p>
+
+#### Session ID
+
+Session ID configuration allows for the management of session data, including cache and storages. By specifying a "Session ID", pages sharing this identifier will access the same session. This functionality proves particularly useful for maintaining user login status across multiple pages utilizing the same OAuth credentials (e.g. Google and Facebook oAuths). Moreover, it facilitates the simultaneous login of multiple accounts for distinct purposes, such as **"Personal" and "Business"**. If no "Session ID" is provided, the value "default" will be automatically assigned.
 
 #### Persistent pages
 
 Persistent pages are not destroyed once the page is changed. This means that if there are any unfinished tasks still loading, the user can change the page and come back later without lose it or reload the URL.
 
-#### Session
-
-The session is maintained according to Electron/Chromium standards, which means it is not lost upon restarting the app or when a page is closed. This functionality is particularly useful for keeping users logged in. However, it's important to note that if the application path is changed, the session will be lost as well.
 
 ### Window Settings
 
