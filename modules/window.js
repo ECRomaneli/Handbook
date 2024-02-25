@@ -72,7 +72,7 @@ class HandbookWindow extends BrowserWindow {
      * @returns {Promise<void>}
      */
     loadURL(url, options) {
-        this._loaded = { url: url, options: options }
+        this.loaded = { url: url, options: options }
         super.loadURL(url, options)
     }
 
@@ -83,7 +83,7 @@ class HandbookWindow extends BrowserWindow {
      * @returns {Promise<void>}
      */
     loadFile(filePath, options) {
-        this._loaded = { filePath: url, options: options }
+        this.loaded = { filePath: url, options: options }
         super.loadFile(filePath, options)
     }
 
@@ -91,13 +91,12 @@ class HandbookWindow extends BrowserWindow {
      * Reset window to the starting loaded content.
      */
     reset() {
-        const loaded = this._loaded
-        if (!loaded) {
+        if (!this.loaded) {
             console.warn('Nothing loaded')
-        } else if (loaded.url) {
-            super.loadURL(loaded.url, loaded.options)
+        } else if (this.loaded.url) {
+            super.loadURL(this.loaded.url, this.loaded.options)
         } else {
-            super.loadFile(loaded.filePath, loaded.options)
+            super.loadFile(this.loaded.filePath, this.loaded.options)
         }
     }
 
@@ -117,12 +116,19 @@ class HandbookWindow extends BrowserWindow {
      * @returns {HandbookWindow} New Window.
      */
     clone() {
-       const newWindow = new HandbookWindow(this.options)
-        newWindow.setBounds(this.getBounds())
-        newWindow.loadURL(this.webContents.getURL())
+        const newWindow = new HandbookWindow(this.options)
         newWindow.setExternalId(this.getExternalId())
+        newWindow.setBounds(this.getBounds())
+        
+        if (this.loaded?.url) {
+            // Keep current URL
+            newWindow.loadURL(this.webContents.getURL(), this.loaded.options)
+            newWindow.loaded = this.loaded
+        } else if(this.loaded?.filePath) {
+            newWindow.loadFile(this.loaded.filePath, this.loaded.options)
+        }
 
-        this.isVisible() ? newWindow.show() : newWindow.hide()
+        this.isVisible() && newWindow.show()
 
         Object.keys(this.listenerMap).forEach(eventName => {
             this.listenerMap[eventName].forEach(listener => {
@@ -255,10 +261,9 @@ function setStandardOptions(options) {
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
     options.fullscreenable = false
     options.minimizable = false
-    options.webPreferences = {
-        preload: path.join(__dirname, 'windowPreload.js'),
-        session: session.fromPartition('persist:handbook_' + Storage.getSettings(WindowSettings.SESSION_ID))    
-    }
+    if (!options.webPreferences) { options.webPreferences = {} }
+    options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
+    options.webPreferences.session = session.fromPartition('persist:handbook_' + Storage.getSettings(WindowSettings.SESSION_ID))
     return options
 }
 
