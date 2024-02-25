@@ -11,7 +11,7 @@ class Settings {
         
         Settings.window = new BrowserWindow({
             icon: HandbookWindow.getLogo(),
-            width: 640,
+            width: 700,
             height: 640,
             show: false,
             frame: false,

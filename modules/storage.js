@@ -19,7 +19,6 @@ defaultSettings[WindowSettings.ACTION_AREA] = 20
 defaultSettings[WindowSettings.HIDE_SHORTCUT] = ''
 defaultSettings[WindowSettings.GLOBAL_SHORTCUT] = ''
 defaultSettings[WindowSettings.TRAY_LONGPRESS] = 300
-defaultSettings[WindowSettings.SESSION_ID] = 'default'
 
 class Storage {
     static getSharedBounds() {

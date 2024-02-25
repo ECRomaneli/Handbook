@@ -53,22 +53,16 @@ app.component('WindowSettings', {
             this.inputs = { 
                 general: [
                     {
-                        id: this.$const.WindowSettings.SESSION_ID,
-                        label: 'Session ID',
-                        description: 'The session is persisted and shared between all pages.',
-                        data: { type: 'text', value: await storage.getSettings(this.$const.WindowSettings.SESSION_ID) }
+                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
+                        label: 'Tray icon long-press timeout',
+                        description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
+                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                     {
                         id: this.$const.WindowSettings.ACTION_AREA,
                         label: 'Action area height',
                         description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
                         data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.WindowSettings.ACTION_AREA), unit: 'px' }
-                    },
-                    {
-                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
-                        label: 'Tray icon long-press timeout',
-                        description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
-                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                 ],
                 appearance: [

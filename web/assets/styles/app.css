@@ -89,13 +89,16 @@
 
 /* MAP TABLE ======================= */
 
-.map-table [role="column:drag"],
-.map-table [role="column:remove"] {
+.map-table [role="column:options"] {
     width: 24px;
 }
 
 .map-table [role="column:label"] {
     width: 140px;
+}
+
+.map-table [role="column:session"] {
+    width: 110px;
 }
 
 .map-table [role="column:persist"] {
