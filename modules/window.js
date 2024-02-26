@@ -262,6 +262,7 @@ function setStandardOptions(options) {
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
     options.fullscreenable = false
     options.minimizable = false
+    options.enableLargerThanScreen = true
     if (!options.webPreferences) { options.webPreferences = {} }
     options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
     return options
