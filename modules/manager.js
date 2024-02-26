@@ -101,11 +101,11 @@ class HandbookManager {
         }
 
         if (!this.currentPage) {
-            this.selectPage(this.pages[0], true)
-            return
+            this.selectPage(this.pages[0])
+        } else if (!this.currentPage.hasWindow()) {
+            this.setupPageWindow(this.currentPage)
         }
 
-        this.setupPageWindow(this.currentPage)
         this.currentPage.window.toggleVisibility()
     }
 
@@ -118,8 +118,9 @@ class HandbookManager {
             page.createWindow()
             page.window.on('show', () => this.updateTrayIcon())
             page.window.on('hide', () => this.updateTrayIcon())
-            page.window.on('closed', () => this.isCurrentPage(page) && this.updateTrayIcon())
+            page.window.on('closed', () => this.updateTrayIcon())
         }
+        page.defineWindowBounds()
     }
 
     /**
@@ -176,16 +177,16 @@ class HandbookManager {
             { type: 'separator' },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
             { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
-            { label: 'Close', click: () => this.currentPage.window.close() },
+            { label: 'Close', click: () => this.currentPage.destroyWindow() },
         ]})
 
         menuItems.push({ type: 'separator' })
 
         menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.window.close()) })
+            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.destroyWindow()) })
 
         menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
-            this.getAllActivePages().forEach(p => p.window.close())
+            this.getAllActivePages().forEach(p => p.destroyWindow())
         } })
         
         menuItems.push({ type: 'separator' })
@@ -224,7 +225,6 @@ class HandbookManager {
         if (this.isCurrentPage(page)) { return this.togglePage() }
 
         this.setupPageWindow(page)
-        page.defineWindowBounds()
 
         const oldPage = this.currentPage
         this.currentPage = page
@@ -280,7 +280,8 @@ class HandbookManager {
     updatePages(newPages) {
         const pagesUpdated = this.getAllActivePages().filter(p => {
                 if (newPages.some(np => np.label === p.label)) { return true }
-                p.window.close()
+                if (this.isCurrentPage(p)) { this.currentPage = null }
+                p.destroyWindow()
                 return false
             })
 
