@@ -63,12 +63,6 @@ After these few steps, the app will no longer present the warning.
 
 Source: [Apple Support](https://support.apple.com/en-us/guide/mac-help/mh40616/mac).
 
-#### Damaged App
-
-Some ARM Macbook users are receiving an error stating that the `.app` is damaged. The work to fix it is in progress and can be followed in the issue [#1](https://github.com/ECRomaneli/Handbook/issues/1).
-
-Meanwhile, try to use the `darwin-universal` version (and remember to follow the [Security Warning](#security-warning) steps).
-
 ### Debian-based distributions
 
 1. Download the .deb package;
@@ -103,21 +97,19 @@ Download the `.exe` executable, open it and follow the steps.
 
 #### Toggle Window Visibility
 
-To toggle the window visibility, just click on the tray icon or configure the shortcuts (disabled by default).
+To toggle the window visibility, just click on the tray icon or configure the "Toggle Window" shortcut (disabled by default).
 
 #### Change page
 
-To change the page, right-click on the tray icon and simply select it. 
+To change the page, right-click (or long-press) on the tray icon and simply select the page wanted.
 
 #### Open from clipboard
 
 There is also, the possibility to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
 
-#### Have Fun :)
-
 ### Settings
 
-To access the settings, simply right-click on the tray icon and select **"Settings"**.
+To access the settings, right-click (or long-press) on the tray icon and select **"Settings"**.
 
 ### Pages
 
