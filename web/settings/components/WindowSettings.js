@@ -47,7 +47,7 @@ app.component('WindowSettings', {
             const options = []
             Object.keys(this.$const.Positions).forEach(key => {
                 const value = this.$const.Positions[key]
-                options.push({ label: this.capitalize(value.replace('\W', ' ')), value: value })
+                options.push({ label: this.capitalize(value), value: value })
             })
     
             this.inputs = { 
