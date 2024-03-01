@@ -206,7 +206,7 @@ class HandbookManager {
             contextMenu.getMenuItemById('window').enabled = !!this.currentPage?.window
             contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
             contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
-            contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://')
+            contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://')
 
             this.tray.popUpContextMenu(contextMenu)
         }
