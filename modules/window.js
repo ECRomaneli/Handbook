@@ -59,7 +59,7 @@ class HandbookWindow extends BrowserWindow {
                     { type: 'separator' },
                     { role: 'toggleDevTools' },
                     { label: 'Hide', click: () => this.hide() },
-                    { label: 'Close', click: () => this.close() }
+                    { label: 'Close', click: () => this.forceClose() }
                 ]}
             ]
         })
@@ -184,6 +184,18 @@ class HandbookWindow extends BrowserWindow {
     unload() {
         if (this.webContents?.getURL() !== HandbookWindow.BLANK_URL) {
             this.loadURL(HandbookWindow.BLANK_URL)
+        }
+    }
+
+    /**
+     * Try to close window normally, if it fails, then destroy the window.
+     * This method call the "close" event even when destroyed.
+     */
+    forceClose() {
+        this.close()
+        if (this.isDestroyed()) {
+            this.emit('close')
+            this.destroy()
         }
     }
 

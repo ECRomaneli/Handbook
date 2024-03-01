@@ -177,16 +177,16 @@ class HandbookManager {
             { type: 'separator' },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
             { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
-            { label: 'Close', click: () => this.currentPage.destroyWindow() },
+            { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
         menuItems.push({ type: 'separator' })
 
         menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.destroyWindow()) })
+            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.closeWindow()) })
 
         menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
-            this.getAllActivePages().forEach(p => p.destroyWindow())
+            this.getAllActivePages().forEach(p => p.closeWindow())
         } })
         
         menuItems.push({ type: 'separator' })
@@ -230,7 +230,7 @@ class HandbookManager {
         this.currentPage = page
 
         show && !page.window.isVisible() && this.togglePage()
-        oldPage?.hasWindow() && oldPage.destroyWindow(true)
+        oldPage?.hasWindow() && oldPage.closeWindow(true)
     }
 
     /**
@@ -281,7 +281,7 @@ class HandbookManager {
         const pagesUpdated = this.getAllActivePages().filter(p => {
                 if (newPages.some(np => np.label === p.label)) { return true }
                 if (this.isCurrentPage(p)) { this.currentPage = null }
-                p.destroyWindow()
+                p.closeWindow()
                 return false
             })
 

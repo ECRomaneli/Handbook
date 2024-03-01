@@ -62,19 +62,19 @@ class Page {
             this.window.clone()
     
         oldWindow.removeAllListeners('closed')
-        oldWindow.close()
+        oldWindow.forceClose()
     }
 
     /**
      * Destroy page's window. If the "hideIfPersistent" is true, the window is going to be hidden instead.
      * @param {true | void} hideIfPersistent If true, persistent windows will be hidden instead of closed.
      */
-    destroyWindow(hideIfPersistent) {
+    closeWindow(hideIfPersistent) {
         if (hideIfPersistent && this.persist) {
             this.window.isMaximized() && this.window.unmaximize()
             this.window.hide()
         } else {
-            this.window.close()
+            this.window.forceClose()
         }
     }
 
