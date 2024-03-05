@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron')
 const getSettings = async (id) => await ipcRenderer.invoke('storage.settings', id)
-const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY > actionAreaHeight
+const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY <= actionAreaHeight
 
 // Mini event bus to capture settings changes and call the listeners
 const fns = {}
