@@ -87,13 +87,23 @@ Download the `.exe` executable, open it and follow the steps.
 
 ## Getting Started
 
+**The Handbook** is a tray app and all the interaction with it will be available there. Note that the first time the app is open, the ["Settings"](#settings) is going to pop-up as there is no page configured yet. Once the first page is set, the ["Settings"](#settings) will no longer pop-up, but it is going to be accessible through the tray icon.
+
+<p align='center'>
+    <img width="250" src="https://i.postimg.cc/3Nzq7y6c/tray-icon.png" alt='tray-icon'>
+    <br/>
+    Tray Icon
+</p>
+
+### Usage
+
+To keep the user focused, **the Handbook** shows a single window at a time, persistent and always-on-top, where the user can move, resize, toggle the visibility, configure opacity, etc (see ["Window Settings"](#window-settings) for more). The app refers to these windows as **"Pages"**.
+
 <p align='center'>
     <img width="600" src="https://i.postimg.cc/sDy8HdKP/example.png" alt='Example'>
     <br/>
     ChatGPT page overlaying the settings
 </p>
-
-### Usage
 
 #### Toggle Window Visibility
 
@@ -101,7 +111,9 @@ To toggle the window visibility, just click on the tray icon or configure the "T
 
 #### Change page
 
-To change the page, right-click (or long-press) on the tray icon and simply select the page wanted.
+To change the page, right-click on the tray icon and simply select the page wanted.
+
+> MacOS also supports long-press to open the tray icon context menu.
 
 #### Open from clipboard
 
@@ -109,7 +121,7 @@ There is also, the possibility to open a URL directly from the clipboard. Just c
 
 ### Settings
 
-To access the settings, right-click (or long-press) on the tray icon and select **"Settings"**.
+To access the settings, right-click on the tray icon and select **"Settings"**.
 
 ### Pages
 
