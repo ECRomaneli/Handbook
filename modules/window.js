@@ -275,6 +275,7 @@ function setStandardOptions(options) {
     options.fullscreenable = false
     options.minimizable = false
     options.enableLargerThanScreen = true
+    options.skipTaskbar = true
     if (!options.webPreferences) { options.webPreferences = {} }
     options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
     return options
