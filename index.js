@@ -1,11 +1,12 @@
 const { app } = require('electron')
 const { Manager } = require('./modules/manager')
+const { OS } = require('./modules/constants')
 
-const IS_DARWIN = process.platform === 'darwin'
-
-if (IS_DARWIN) {
-  app.dock.hide()
+app.whenReady().then(() => {
+  if (OS.IS_DARWIN) {
+    app.dock.hide()
+  }
   app.on('window-all-closed', () => {})
-}
 
-app.whenReady().then(() => Manager.getInstance())
+  Manager.getInstance()
+})

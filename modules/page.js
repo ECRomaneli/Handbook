@@ -83,11 +83,7 @@ class Page {
      * @returns {Electron.BrowserWindowConstructorOptions} options.
      */
     createWindowOptions() {
-        return {
-            webPreferences: {
-                session: session.fromPartition(`persist:handbook_${this.session}`)
-            }
-        }
+        return { webPreferences: { partition: `persist:handbook_${this.session}` } }
     }
 
     defineWindowBounds() {

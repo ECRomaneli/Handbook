@@ -1,4 +1,5 @@
 const Vue = require("vue")
+window.addEventListener('load', () => { app.mount('#app') })
 
 const app = Vue.createApp({
     template: /*html*/ `
