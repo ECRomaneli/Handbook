@@ -1,6 +1,6 @@
 const { Tray, Menu, dialog, globalShortcut, ipcMain, clipboard, app } = require('electron')
 const { Storage } = require('./storage')
-const { WindowSettings } = require('./constants')
+const { WindowSettings, OS } = require('./constants')
 const { Settings } = require('./settings')
 const path = require('node:path')
 const { Page } = require('./page')
@@ -31,10 +31,11 @@ class HandbookManager {
 
     constructor () {
         this.refreshContextMenu()
-        this.setupLongPressEvent()
+        OS.IS_DARWIN && this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
+        OS.IS_WIN32 && this.tray.focus()
     }
 
     registerDefaultEventListeners() {
