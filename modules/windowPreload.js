@@ -1,34 +1,38 @@
 const { ipcRenderer } = require('electron')
 const getSettings = async (id) => await ipcRenderer.invoke('storage.settings', id)
+const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY > actionAreaHeight
 
-const settingsListeners = {}
-ipcRenderer.on('storage.settings.updated', (_e, id, value) => settingsListeners[id]?.call(this, value))
-const onSettingsUpdated = (id, fn) => settingsListeners[id] = fn
+// Mini event bus to capture settings changes and call the listeners
+const fns = {}
+ipcRenderer.on('storage.settings.updated', (_e, id, value) => fns[id]?.forEach(fn => fn.call(this, value)))
+const onSettingsUpdated = (id, fn) => (fns[id] ?? (fns[id] = [])).push(fn)
 
-
+// Register actions after DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     const showFrame = await getSettings('show_frame')
 
     setupShortcut()
-    !showFrame && registerWindowMoveListeners()
+    !showFrame && registerActions()
     console.info('Preloaded')
 })
 
-async function registerWindowMoveListeners() {
+// Actions Logic
+
+async function registerActions() {
     let actionArea = await getSettings('action_area')
     onSettingsUpdated('action_area', (value) => actionArea = value)
 
     const originalCursor = document.body.style.cursor
 
     document.addEventListener('dblclick', (e) => {
-        if (e.button !== 0 || e.clientY > actionArea) { return }
+        if (!isLeftClickInActionArea(e, actionArea)) { return }
         e.preventDefault()
         e.stopImmediatePropagation()
         ipcRenderer.send('manager.currentPage.toggleMaximize')
     }, true)
 
     document.addEventListener('mousedown', (e) => {
-        if (e.button !== 0 || e.clientY > actionArea) { return }
+        if (!isLeftClickInActionArea(e, actionArea)) { return }
 
         ipcRenderer.send('manager.currentPage.dragStart')
 

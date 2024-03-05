@@ -1,6 +1,6 @@
 const { Tray, Menu, dialog, globalShortcut, ipcMain, clipboard, app } = require('electron')
 const { Storage } = require('./storage')
-const { WindowSettings } = require('./constants')
+const { WindowSettings, OS } = require('./constants')
 const { Settings } = require('./settings')
 const path = require('node:path')
 const { Page } = require('./page')
@@ -31,15 +31,11 @@ class HandbookManager {
 
     constructor () {
         this.refreshContextMenu()
-        this.setupLongPressEvent()
+        OS.IS_DARWIN && this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
-        this.configurePages()
-    }
-
-    configurePages() {
-        Page.verticalMargin = this.tray.getBounds().height + 10
+        OS.IS_WIN32 && this.tray.focus()
     }
 
     registerDefaultEventListeners() {
@@ -49,6 +45,10 @@ class HandbookManager {
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
+    /**
+     * Setup longpress event on Darwin.
+     * @platform — darwin
+     */
     setupLongPressEvent() {
         let longPress
         this.tray.on('mouse-down', () => { 
@@ -166,7 +166,7 @@ class HandbookManager {
             }
         })
 
-        menuItems.push({ type: 'separator' })
+        menuItems.push({ id: 'window-separator', type: 'separator' })
 
         menuItems.push({ id: 'window', label: 'Current Window', submenu: [
             { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
@@ -203,7 +203,8 @@ class HandbookManager {
             let windows = this.getAllActivePages().length
             const cb = clipboard.readText()
 
-            contextMenu.getMenuItemById('window').enabled = !!this.currentPage?.window
+            contextMenu.getMenuItemById('window').enabled = this.currentPage?.hasWindow()
+            contextMenu.getMenuItemById('window-separator').enabled = this.currentPage?.hasWindow()
             contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
             contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
             contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://')
