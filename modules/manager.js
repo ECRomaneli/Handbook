@@ -35,11 +35,6 @@ class HandbookManager {
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
-        this.configurePages()
-    }
-
-    configurePages() {
-        Page.verticalMargin = this.tray.getBounds().height + 10
     }
 
     registerDefaultEventListeners() {
