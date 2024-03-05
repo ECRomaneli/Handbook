@@ -44,6 +44,10 @@ class HandbookManager {
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
+    /**
+     * Setup longpress event on Darwin.
+     * @platform — darwin
+     */
     setupLongPressEvent() {
         let longPress
         this.tray.on('mouse-down', () => { 

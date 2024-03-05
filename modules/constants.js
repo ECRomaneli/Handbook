@@ -26,4 +26,10 @@ const Positions = {
     BOTTOM_RIGHT:   'bottom-right'
 }
 
-module.exports = { WindowSettings, Positions }
+const OS = {
+    IS_DARWIN: process.platform === 'darwin',
+    IS_LINUX: process.platform === 'linux',
+    IS_WIN32: process.platform === 'win32'
+}
+
+module.exports = { WindowSettings, Positions, OS }
