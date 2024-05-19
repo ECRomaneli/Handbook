@@ -36,7 +36,7 @@ class HandbookWindow extends BrowserWindow {
      */
     constructor (options) {
         super (setStandardOptions(options))
-        this.webContents.setUserAgent(this.webContents.getUserAgent().replace(/\s(handbook|Electron)[^\s]+/g, ''))
+        this.webContents.setUserAgent(this.webContents.getUserAgent().replace(/\shandbook[^\s]+/g, ''))
         this.options = options
         this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
         this.buildContextMenu()
