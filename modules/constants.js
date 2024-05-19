@@ -11,7 +11,8 @@ const WindowSettings = {
     FOCUS_OPACITY: 'focus_opacity',
     BLUR_OPACITY: 'blur_opacity',
     ACTION_AREA: 'action_area',
-    TRAY_LONGPRESS: 'tray_longpress'
+    TRAY_LONGPRESS: 'tray_longpress',
+    WINDOW_THEME: 'window_theme'
 }
 
 const Positions = {

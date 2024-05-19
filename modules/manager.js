@@ -1,4 +1,4 @@
-const { Tray, Menu, dialog, globalShortcut, ipcMain, clipboard, app } = require('electron')
+const { Tray, Menu, dialog, globalShortcut, ipcMain, clipboard, app, nativeTheme } = require('electron')
 const { Storage } = require('./storage')
 const { WindowSettings, OS } = require('./constants')
 const { Settings } = require('./settings')
@@ -36,6 +36,7 @@ class HandbookManager {
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
         OS.IS_WIN32 && this.tray.focus()
+        nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
     }
 
     registerDefaultEventListeners() {
@@ -256,6 +257,9 @@ class HandbookManager {
                 break
             case WindowSettings.GLOBAL_SHORTCUT:
                 this.registerGlobalShortcut()
+                break
+            case WindowSettings.WINDOW_THEME:
+                nativeTheme.themeSource = value
                 break
         }
     }
