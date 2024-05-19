@@ -72,6 +72,18 @@ app.component('WindowSettings', {
                         data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
                     },
                     {
+                        id: this.$const.WindowSettings.WINDOW_THEME,
+                        label: 'Preferred theme',
+                        description: 'Specify the favorite appearance for pages. The website must support the theme selected. It may take a few minutes to affect some websites.',
+                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.WINDOW_THEME), 
+                            options: [
+                                { label: 'System', value: 'system' },
+                                { label: 'Light',  value: 'light'  },
+                                { label: 'Dark',   value: 'dark'   }
+                            ]
+                        }
+                    },
+                    {
                         id: this.$const.WindowSettings.BACKGROUND_COLOR,
                         label: 'Background color',
                         description: 'Background color for loading windows.',
