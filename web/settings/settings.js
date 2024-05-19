@@ -19,15 +19,20 @@ const app = Vue.createApp({
                 <li @click="tab = 'window'">
                     <button class="tab" :class="{ active: tab === 'window' }">Window</button>
                 </li>
+                <li @click="tab = 'about'">
+                    <button class="tab" :class="{ active: tab === 'about' }">About</button>
+                </li>
             </ul>
 
             <div class="tab-content p-3 overflow-auto">
                 <div class="tab-pane show" :class="{ active: tab === 'pages' }">
                     <page-settings></page-settings>
                 </div>
-
                 <div class="tab-pane container" :class="{ active: tab === 'window' }">
                     <window-settings></window-settings>
+                </div>
+                <div class="tab-pane container" :class="{ active: tab === 'about' }">
+                    <about-tab v-if="tab === 'about'"></about-tab>
                 </div>
             </div>
         </div>
