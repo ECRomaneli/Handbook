@@ -41,6 +41,7 @@ class HandbookWindow extends BrowserWindow {
         this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
         this.buildContextMenu()
         this.registerDefaultEventListeners()
+        this.handleChildWindows()
     }
 
     /**
@@ -211,11 +212,26 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
+    handleChildWindows() {
+        super.webContents.setWindowOpenHandler(() => {
+            return {
+                action: 'allow',
+                overrideBrowserWindowOptions: {
+                    alwaysOnTop: true,
+                    backgroundColor: Storage.getSettings(WindowSettings.BACKGROUND_COLOR),
+                    minimizable: false,
+                    enableLargerThanScreen: true,
+                    skipTaskbar: true
+                }
+              }
+        })
+    }
+
     registerDefaultEventListeners() {
         super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
         super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
 
-        // Since these events are asynchronous and delayed, they can occur after the window is destroyed.
+        // As these events are asynchronous and delayed, they can occur after the window is destroyed.
         super.on('custom-moved', this.boundsListener)
         super.on('custom-resized', this.boundsListener)
     
