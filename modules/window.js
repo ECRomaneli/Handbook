@@ -36,7 +36,7 @@ class HandbookWindow extends BrowserWindow {
      */
     constructor (options) {
         super (setStandardOptions(options))
-        this.webContents.setUserAgent(this.webContents.getUserAgent().replace(/\shandbook[^\s]+/g, ''))
+        fixUserAgent(this)
         this.options = options
         this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
         this.buildContextMenu()
@@ -213,18 +213,33 @@ class HandbookWindow extends BrowserWindow {
     }
 
     handleChildWindows() {
-        super.webContents.setWindowOpenHandler(() => {
-            return {
-                action: 'allow',
-                overrideBrowserWindowOptions: {
-                    alwaysOnTop: true,
-                    backgroundColor: Storage.getSettings(WindowSettings.BACKGROUND_COLOR),
-                    minimizable: false,
-                    enableLargerThanScreen: true,
-                    skipTaskbar: true
+        super.webContents
+            .on('did-create-window', (window) => {
+                const showHandler = () => window.show()
+                const hideHandler = () => window.hide()
+                super.on('show', showHandler)
+                super.on('hide', hideHandler)
+
+                window.on('close', () => {
+                    super.off('show', showHandler)
+                    super.off('hide', hideHandler)
+                })
+
+                contextMenu({ window: window })
+                fixUserAgent(window)
+            })
+            .setWindowOpenHandler(() => {
+                return {
+                    action: 'allow',
+                    overrideBrowserWindowOptions: {
+                        alwaysOnTop: true,
+                        backgroundColor: Storage.getSettings(WindowSettings.BACKGROUND_COLOR),
+                        minimizable: false,
+                        enableLargerThanScreen: true,
+                        skipTaskbar: true
+                    }
                 }
-              }
-        })
+            })
     }
 
     registerDefaultEventListeners() {
@@ -275,6 +290,14 @@ class HandbookWindow extends BrowserWindow {
     static getLogo(size) {
         return path.join(__dirname, '..', 'assets', 'img', `logo-${size ?? 128}px.png`)
     }
+}
+
+/**
+ * Fix the window userAgent removing the app tag. Some websites disallow features based on this.
+ * @param {BrowserWindow} window 
+ */
+function fixUserAgent(window) {
+    window.webContents.setUserAgent(window.webContents.getUserAgent().replace(/\shandbook[^\s]+/g, ''))
 }
 
 /**
