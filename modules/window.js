@@ -194,7 +194,7 @@ class HandbookWindow extends BrowserWindow {
      */
     forceClose() {
         this.close()
-        if (this.isDestroyed()) {
+        if (!this.isDestroyed()) {
             this.emit('close')
             this.destroy()
         }
