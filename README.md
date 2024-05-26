@@ -109,15 +109,26 @@ To keep the user focused, **the Handbook** shows a single window at a time, pers
 
 To toggle the window visibility, just click on the tray icon or configure the "Toggle Window" shortcut (disabled by default).
 
+> The "Toggle Window" shortcut is a very useful feature. It is by far, the most recommended way to toggle the window for productivity.
+
 #### Change page
 
-To change the page, right-click on the tray icon and simply select the page wanted.
+To change the page, right-click on the tray icon and simply select the page wanted. If the current page is selected, the page visibility will toggle. 
 
 > MacOS also supports long-press to open the tray icon context menu.
 
 #### Open from clipboard
 
 There is also, the possibility to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
+
+#### Linux issues
+
+Currently there is an open issue (#5) for linux users. Unfortunatelly there are some tray events not supported (at least using Electron.js). To not remove completely the linux support, the usage was changed to:
+
+- Clicking on the tray icon will open the context menu (instead of toggle the page visibility);
+- An item was added on top of the context menu to toggle the current window visibility.
+
+The usage of the "Toggle Window" shortcut is highly recommended.
 
 ### Settings
 

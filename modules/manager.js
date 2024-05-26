@@ -30,19 +30,19 @@ class HandbookManager {
     globalShortcut
 
     constructor () {
+        nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
         this.refreshContextMenu()
         OS.IS_DARWIN && this.setupLongPressEvent()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
         OS.IS_WIN32 && this.tray.focus()
-        nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
     }
 
     registerDefaultEventListeners() {
         Settings.onPagesUpdated(() => this.refreshContextMenu())
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
-        this.tray.on('click', () => this.togglePage())
+        OS.IS_LINUX || this.tray.on('click', () => this.togglePage())
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
@@ -196,6 +196,12 @@ class HandbookManager {
         menuItems.push({ label: 'Quit', click: () => app.quit() })
 
         const contextMenu = Menu.buildFromTemplate(menuItems)
+
+        // Linux workaround. Linux does not support many events in the traybar.
+        if (OS.IS_LINUX) {
+            this.tray.setContextMenu(contextMenu)
+            return
+        }
         
         this.contextMenuListener && this.tray.off('right-click', this.contextMenuListener)
         this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
@@ -214,7 +220,6 @@ class HandbookManager {
         }
         this.tray.on('right-click', this.contextMenuListener)
         this.tray.on('mouse-longpress', this.contextMenuListener)
-
     }
 
     /**
