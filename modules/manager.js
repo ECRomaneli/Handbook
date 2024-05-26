@@ -142,6 +142,11 @@ class HandbookManager {
 
         const menuItems = []
 
+        if (OS.IS_LINUX) {
+            menuItems.push({ label: 'Show/Hide Page', click: () => this.togglePage() })
+            menuItems.push({ type: 'separator' })
+        }
+
         this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
             type: 'radio', 
             checked: this.isCurrentPage(p),
@@ -177,7 +182,7 @@ class HandbookManager {
             { label: 'Reload', click: () => this.currentPage.window.reset() },
             { type: 'separator' },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-            { label: 'Show/Hide', click: () => this.selectPage(this.currentPage, true) },
+            { label: 'Show/Hide', click: () => this.currentPage.window.toggleVisibility() },
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
