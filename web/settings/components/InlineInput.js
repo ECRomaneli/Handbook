@@ -31,7 +31,7 @@ app.component('InlineInput', {
                         @keydown="captureKey($event)" 
                         @keypress="preventKeyPressing($event)" 
                         @keyup="preventKeyPressing($event)"
-                        @blur="data.value = $event.target.value; $emit('update', input)" 
+                        @blur="updateInputWithTargetValue($event)" 
                         :value="data.value" 
                         :aria-label="input.label">
                 </div>
@@ -76,6 +76,13 @@ app.component('InlineInput', {
             if (event.ctrlKey && key !== 'Ctrl')    { keyComb = 'Ctrl+' + keyComb  } 
         
             return keyComb
+        },
+
+        updateInputWithTargetValue(event) {
+            if (this.input.data.value !== event.target.value) {
+                this.input.data.value = event.target.value
+                this.$emit('update', this.input)
+            }
         }
     }
 })
