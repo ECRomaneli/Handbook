@@ -14,8 +14,8 @@ class HandbookManager {
     /** @type {Tray} */
     tray = new Tray(getTrayIcon())
 
-    /** @type {() => void} */
-    contextMenuListener
+    /** @type {Menu} */
+    contextMenu
 
     /** @type {Page[]} */
     pages
@@ -31,8 +31,8 @@ class HandbookManager {
 
     constructor () {
         nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
-        this.refreshContextMenu()
-        OS.IS_DARWIN && this.setupLongPressEvent()
+        this.updatePages()
+        this.registerDynamicContextMenu()
         this.registerGlobalShortcut()
         this.registerDefaultEventListeners()
         this.registerWindowActionAreaListeners()
@@ -40,15 +40,20 @@ class HandbookManager {
     }
 
     registerDefaultEventListeners() {
-        Settings.onPagesUpdated(() => this.refreshContextMenu())
+        Settings.onPagesUpdated(() => this.updatePages())
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
-        OS.IS_LINUX || this.tray.on('click', () => this.togglePage())
         ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
+
+        if (OS.IS_LINUX) {
+            Settings.onPagesUpdated(() => this.tray.emit('refresh-context-menu'))
+        } else {
+            this.tray.on('click', () => this.togglePage())
+        }
     }
 
     /**
      * Setup longpress event on Darwin.
-     * @platform — darwin
+     * @platform darwin
      */
     setupLongPressEvent() {
         let longPress
@@ -132,13 +137,70 @@ class HandbookManager {
     }
 
     /**
+     * Add new pages, and if already exists, copy the changes to the existing one removing those that not.
+     * The updated pages (compared by label) will keep the same reference to not invalidate the window
+     * event listeners using it.
+     */
+    updatePages() {
+        const newPages = Page.fromList(Storage.getPages())
+
+        if (!newPages.length) {
+            this.pages = []
+            Settings.open()
+            return
+        }
+
+        if (!this.pages) {
+            this.pages = newPages
+            return
+        }
+
+        const pagesUpdated = this.getAllActivePages().filter(p => {
+            if (newPages.some(np => np.label === p.label)) { return true }
+            if (this.isCurrentPage(p)) { this.currentPage = null }
+            p.closeWindow()
+            return false
+        })
+
+        this.pages = newPages.map(newPage => {
+            const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
+            if (!page) { return newPage }
+            page.copy(newPage)
+            return page
+        })
+    }
+
+    /**
+     * Link a new tray event called 'refresh-context-menu' when 
+     * clicking on the context menu items.
+     * Created as a workaround to make context-menu dynamic on linux.
+     * @param {any[]} menuItems 
+     * @platform linux
+     */
+    enhanceContextMenuClickEvent(menuItems) {
+        if (!OS.IS_LINUX) { return }
+
+        const enhancedClick = (clickHandler) => () => {
+            clickHandler()
+            this.tray.emit('refresh-context-menu')
+        }
+
+        menuItems.forEach(menuItem => {
+            if (menuItem.click) {
+                menuItem.click = enhancedClick(menuItem.click)
+            }
+            if (menuItem.submenu) {
+                this.enhanceContextMenuClickEvent(menuItem.submenu)
+            }
+        })
+    }
+
+    /**
      * Check for page changes and update the context menu.
      */
     refreshContextMenu() {
-        const newPages = Page.fromList(Storage.getPages())
-        this.pages = this.pages ? this.updatePages(newPages) : newPages
-
-        if (!this.pages.length) { Settings.open() }
+        const activePages = this.getAllActivePages()
+        const cb = clipboard.readText()
 
         const menuItems = []
 
@@ -150,7 +212,7 @@ class HandbookManager {
         this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
             type: 'radio', 
             checked: this.isCurrentPage(p),
-            label: p.label, 
+            label: p.label + getSymbols(p), 
             click: () => this.selectPage(p, true)
         }))
 
@@ -159,6 +221,7 @@ class HandbookManager {
             type: 'radio', 
             checked: this.isCurrentPage(this.fromClipboardPage),
             label: this.fromClipboardPage.label, 
+            visible: cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://'),
             click: () => {
                 const page = this.fromClipboardPage
                 const oldUrl = page.url
@@ -172,9 +235,9 @@ class HandbookManager {
             }
         })
 
-        menuItems.push({ id: 'window-separator', type: 'separator' })
+        menuItems.push({ type: 'separator' })
 
-        menuItems.push({ id: 'window', label: 'Current Window', submenu: [
+        menuItems.push({ id: 'window', label: 'Current Window', enabled: !!this.currentPage?.hasWindow(), submenu: [
             { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
             { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
             { type: 'separator' },
@@ -186,45 +249,48 @@ class HandbookManager {
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
-        menuItems.push({ type: 'separator' })
+        if (activePages.length > 0) {
+            menuItems.push({ type: 'separator' })
 
-        menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.closeWindow()) })
+            if (activePages.length > 1) {
+                menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
+                    activePages.filter(p => !this.isCurrentPage(p)).forEach(p => p.closeWindow())
+                })
+            }
 
-        menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
-            this.getAllActivePages().forEach(p => p.closeWindow())
-        } })
+            menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
+                activePages.forEach(p => p.closeWindow())
+            }})
+        }
         
         menuItems.push({ type: 'separator' })
 
         menuItems.push({ label: 'Settings', click: () => Settings.open() })
         menuItems.push({ label: 'Quit', click: () => app.quit() })
 
-        const contextMenu = Menu.buildFromTemplate(menuItems)
+        this.enhanceContextMenuClickEvent(menuItems)
+        this.contextMenu = Menu.buildFromTemplate(menuItems)
+    }
 
-        // Linux workaround. Linux does not support many events in the traybar.
+    registerDynamicContextMenu() {
         if (OS.IS_LINUX) {
-            this.tray.setContextMenu(contextMenu)
+            this.tray.on('refresh-context-menu', () => {
+                this.refreshContextMenu()
+                this.tray.setContextMenu(this.contextMenu)
+            })
+            this.tray.emit('refresh-context-menu')
             return
         }
-        
-        this.contextMenuListener && this.tray.off('right-click', this.contextMenuListener)
-        this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
-        
-        this.contextMenuListener = () => {
-            let windows = this.getAllActivePages().length
-            const cb = clipboard.readText()
 
-            contextMenu.getMenuItemById('window').enabled = this.currentPage?.hasWindow()
-            contextMenu.getMenuItemById('window-separator').enabled = this.currentPage?.hasWindow()
-            contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
-            contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
-            contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://')
+        OS.IS_DARWIN && this.setupLongPressEvent()
 
-            this.tray.popUpContextMenu(contextMenu)
+        const dynamicContextMenuCallback = () => {
+            this.refreshContextMenu()
+            this.tray.popUpContextMenu(this.contextMenu)
         }
-        this.tray.on('right-click', this.contextMenuListener)
-        this.tray.on('mouse-longpress', this.contextMenuListener)
+
+        this.tray.on('right-click', dynamicContextMenuCallback)
+        OS.IS_DARWIN && this.tray.on('mouse-longpress', dynamicContextMenuCallback)
     }
 
     /**
@@ -286,29 +352,6 @@ class HandbookManager {
     }
 
     /**
-     * Add new pages, and if already exists, copy the changes to the existing one removing those that not.
-     * The returned list will stay with the reference of the old pages updated in order to not invalidate
-     * the window event listeners using it.
-     * 
-     * @param {Page[]} newPages New set of pages.
-     */
-    updatePages(newPages) {
-        const pagesUpdated = this.getAllActivePages().filter(p => {
-                if (newPages.some(np => np.label === p.label)) { return true }
-                if (this.isCurrentPage(p)) { this.currentPage = null }
-                p.closeWindow()
-                return false
-            })
-
-        return newPages.map(newPage => {
-            const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
-            if (!page) { return newPage }
-            page.copy(newPage)
-            return page
-        })
-    }
-
-    /**
      * Return all pages including not manageable ones (e.g. "Clipboard URL" page).
      * @returns {Page[]} List of all pages.
      */
@@ -327,6 +370,18 @@ class HandbookManager {
     isCurrentPage(page) {
         return page && this.currentPage === page
     }
+}
+
+/**
+ * Get page symbols based on the page status.
+ * @param {Page} page Page.
+ */
+function getSymbols(page) {
+    let symbols = ''
+    if (page.hasWindow()) {
+        symbols += ' ❏'
+    }
+    return symbols
 }
 
 function getTrayIcon(open) {
