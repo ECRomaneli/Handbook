@@ -92,6 +92,18 @@ class Page {
     }
 
     /**
+     * Get page label with status symbols.
+     */
+    getLabelWithStatus() {
+        let label = this.label
+        if (this.hasWindow()) {
+            label += ' ❏'
+            this.window.isMuted() && (label += ' ✕')
+        }
+        return label
+    }
+
+    /**
      * Copy fields from another page. If the URL is different and there is an active window, the new URL is loaded.
      * @param {Page} page Page to copy fields.
      */

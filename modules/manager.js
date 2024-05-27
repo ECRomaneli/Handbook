@@ -187,7 +187,7 @@ class HandbookManager {
         this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
             type: 'radio', 
             checked: this.isCurrentPage(p),
-            label: p.label + getSymbols(p), 
+            label: p.getLabelWithStatus(), 
             click: () => this.selectPage(p, true)
         }))
 
@@ -220,6 +220,7 @@ class HandbookManager {
             { label: 'Reload', click: () => this.currentPage.window.reset() },
             { type: 'separator' },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
+            { label: 'Mute/Unmute', click: () => this.currentPage.window.toggleMute() },
             { label: 'Show/Hide', click: () => this.currentPage.window.toggleVisibility() },
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
@@ -337,18 +338,6 @@ class HandbookManager {
     isCurrentPage(page) {
         return page && this.currentPage === page
     }
-}
-
-/**
- * Get page symbols based on the page status.
- * @param {Page} page Page.
- */
-function getSymbols(page) {
-    let symbols = ''
-    if (page.hasWindow()) {
-        symbols += ' ❏'
-    }
-    return symbols
 }
 
 function getTrayIcon(open) {

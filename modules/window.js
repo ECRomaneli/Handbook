@@ -56,6 +56,7 @@ class HandbookWindow extends BrowserWindow {
                     { label: 'Reload', click: () => this.reset() },
                     { type: 'separator' },
                     { role: 'toggleDevTools' },
+                    { label: 'Mute/Unmute', click: () => this.toggleMute() },
                     { label: 'Hide', click: () => this.hide() },
                     { label: 'Close', click: () => this.forceClose() }
                 ]}
@@ -146,7 +147,7 @@ class HandbookWindow extends BrowserWindow {
 
     /**
      * Whether the window is visible to the user in the foreground of the app.
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window. 
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed. 
      * @returns {boolean} If the window is visible or not.
      */
     isVisible(ignoreDestroyedError) {
@@ -154,8 +155,17 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
+     * Return the mute state of the window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed. 
+     * @returns {boolean} If the audio is muted.
+     */
+    isMuted(ignoreDestroyedError) {
+        return !(ignoreDestroyedError && this.isDestroyed()) && super.webContents.isAudioMuted()
+    }
+
+    /**
      * Toggle visibility of the window (show and hide).
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
      */
     toggleVisibility(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
@@ -164,13 +174,33 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
+     * Toggle the mute state of the window (mute and unmute).
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
+     */
+    toggleMute(ignoreDestroyedError) {
+        if (!(ignoreDestroyedError && this.isDestroyed())) {
+            this.webContents.isAudioMuted() ? this.unmute() : this.mute()
+        }
+    }
+
+    /**
      * Toggle maximize.
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
      */
     toggleMaximize(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
             super.isMaximized() ? this.unmaximize() : this.maximize()
         }
+    }
+
+    mute() {
+        this.webContents.setAudioMuted(true)
+        this.emit('muted')
+    }
+
+    unmute() {
+        this.webContents.setAudioMuted(false)
+        this.emit('unmuted')
     }
 
     getExternalId() {
@@ -242,6 +272,8 @@ class HandbookWindow extends BrowserWindow {
 
         super.on('show', e => this.emit('state-change', ...['show', e]))
         super.on('hide', e => this.emit('state-change', ...['hide', e]))
+        super.on('muted', e => this.emit('state-change', ...['muted', e]))
+        super.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
         super.on('closed', e => this.emit('state-change', ...['closed', e]))
 
         // Workaround to only capture user made events 
