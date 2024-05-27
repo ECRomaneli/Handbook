@@ -160,7 +160,7 @@ class HandbookWindow extends BrowserWindow {
      * @returns {boolean} If the audio is muted.
      */
     isMuted(ignoreDestroyedError) {
-        return !(ignoreDestroyedError && this.isDestroyed()) && super.webContents.isAudioMuted()
+        return !(ignoreDestroyedError && this.isDestroyed()) && this.webContents.isAudioMuted()
     }
 
     /**
@@ -169,7 +169,7 @@ class HandbookWindow extends BrowserWindow {
      */
     toggleVisibility(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.isVisible() ? this.hide() : this.show()
+            this.isVisible() ? this.hide() : this.show()
         }
     }
 
@@ -189,7 +189,7 @@ class HandbookWindow extends BrowserWindow {
      */
     toggleMaximize(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.isMaximized() ? this.unmaximize() : this.maximize()
+            this.isMaximized() ? this.unmaximize() : this.maximize()
         }
     }
 
@@ -230,7 +230,7 @@ class HandbookWindow extends BrowserWindow {
     }
 
     handleChildWindows() {
-        super.webContents
+        this.webContents
             .on('did-create-window', (window) => {
                 const showHandler = () => window.show()
                 const hideHandler = () => window.hide()
@@ -260,21 +260,21 @@ class HandbookWindow extends BrowserWindow {
     }
 
     registerDefaultEventListeners() {
-        super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
-        super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
+        this.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
+        this.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
 
         // As these events are asynchronous and delayed, they can occur after the window is destroyed.
-        super.on('custom-moved', this.boundsListener)
-        super.on('custom-resized', this.boundsListener)
+        this.on('custom-moved', this.boundsListener)
+        this.on('custom-resized', this.boundsListener)
     
-        super.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
-        super.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
+        this.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
+        this.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
 
-        super.on('show', e => this.emit('state-change', ...['show', e]))
-        super.on('hide', e => this.emit('state-change', ...['hide', e]))
-        super.on('muted', e => this.emit('state-change', ...['muted', e]))
-        super.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
-        super.on('closed', e => this.emit('state-change', ...['closed', e]))
+        this.on('show', e => this.emit('state-change', ...['show', e]))
+        this.on('hide', e => this.emit('state-change', ...['hide', e]))
+        this.on('muted', e => this.emit('state-change', ...['muted', e]))
+        this.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
+        this.on('closed', e => this.emit('state-change', ...['closed', e]))
 
         // Workaround to only capture user made events 
         // otherwise the electron listeners will be tracked during the construction
