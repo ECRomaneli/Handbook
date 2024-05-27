@@ -4,6 +4,7 @@ const { WindowSettings, OS } = require('./constants')
 const { Settings } = require('./settings')
 const path = require('node:path')
 const { Page } = require('./page')
+const { parasiteIt } = require('./debug')
 
 const Manager = (() => {
     /** @type {HandbookManager} */ let instance
@@ -32,23 +33,20 @@ class HandbookManager {
     constructor () {
         nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
         this.updatePages()
+        this.refreshContextMenu()
         this.registerDynamicContextMenu()
         this.registerGlobalShortcut()
-        this.registerDefaultEventListeners()
+        this.registerSettingsListeners()
         this.registerWindowActionAreaListeners()
         OS.IS_WIN32 && this.tray.focus()
     }
 
-    registerDefaultEventListeners() {
-        Settings.onPagesUpdated(() => this.updatePages())
+    registerSettingsListeners() {
+        Settings.onPagesUpdated(() => {
+            this.updatePages()
+            this.refreshContextMenu()
+        })
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
-        ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
-
-        if (OS.IS_LINUX) {
-            Settings.onPagesUpdated(() => this.tray.emit('refresh-context-menu'))
-        } else {
-            this.tray.on('click', () => this.togglePage())
-        }
     }
 
     /**
@@ -74,6 +72,7 @@ class HandbookManager {
         })
 
         ipcMain.on('manager.currentPage.toggleMaximize', () => this.currentPage.window.toggleMaximize())
+        ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
     registerGlobalShortcut() {
@@ -122,9 +121,10 @@ class HandbookManager {
     setupPageWindow(page) {
         if (!page.hasWindow()) {
             page.createWindow()
-            page.window.on('show', () => this.updateTrayIcon())
-            page.window.on('hide', () => this.updateTrayIcon())
-            page.window.on('closed', () => this.updateTrayIcon())
+            page.window.on('state-change', () => {
+                this.refreshContextMenu()
+                this.updateTrayIcon()
+            })
         }
         page.defineWindowBounds()
     }
@@ -155,7 +155,7 @@ class HandbookManager {
             return
         }
 
-        const pagesUpdated = this.getAllActivePages().filter(p => {
+        const updatedPages = this.getAllActivePages().filter(p => {
             if (newPages.some(np => np.label === p.label)) { return true }
             if (this.isCurrentPage(p)) { this.currentPage = null }
             p.closeWindow()
@@ -163,35 +163,10 @@ class HandbookManager {
         })
 
         this.pages = newPages.map(newPage => {
-            const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
+            const page = updatedPages.filter(page => newPage.label === page.label)[0]
             if (!page) { return newPage }
-            page.copy(newPage)
+            page.copyFrom(newPage)
             return page
-        })
-    }
-
-    /**
-     * Link a new tray event called 'refresh-context-menu' when 
-     * clicking on the context menu items.
-     * Created as a workaround to make context-menu dynamic on linux.
-     * @param {any[]} menuItems 
-     * @platform linux
-     */
-    enhanceContextMenuClickEvent(menuItems) {
-        if (!OS.IS_LINUX) { return }
-
-        const enhancedClick = (clickHandler) => () => {
-            clickHandler()
-            this.tray.emit('refresh-context-menu')
-        }
-
-        menuItems.forEach(menuItem => {
-            if (menuItem.click) {
-                menuItem.click = enhancedClick(menuItem.click)
-            }
-            if (menuItem.submenu) {
-                this.enhanceContextMenuClickEvent(menuItem.submenu)
-            }
         })
     }
 
@@ -268,29 +243,21 @@ class HandbookManager {
         menuItems.push({ label: 'Settings', click: () => Settings.open() })
         menuItems.push({ label: 'Quit', click: () => app.quit() })
 
-        this.enhanceContextMenuClickEvent(menuItems)
         this.contextMenu = Menu.buildFromTemplate(menuItems)
+
+        if (OS.IS_LINUX) { this.tray.setContextMenu(this.contextMenu) }
     }
 
     registerDynamicContextMenu() {
-        if (OS.IS_LINUX) {
-            this.tray.on('refresh-context-menu', () => {
-                this.refreshContextMenu()
-                this.tray.setContextMenu(this.contextMenu)
-            })
-            this.tray.emit('refresh-context-menu')
-            return
-        }
+        if (OS.IS_LINUX) { return }
 
         OS.IS_DARWIN && this.setupLongPressEvent()
 
-        const dynamicContextMenuCallback = () => {
-            this.refreshContextMenu()
-            this.tray.popUpContextMenu(this.contextMenu)
-        }
+        const popUpMenu = () => this.tray.popUpContextMenu(this.contextMenu)
 
-        this.tray.on('right-click', dynamicContextMenuCallback)
-        OS.IS_DARWIN && this.tray.on('mouse-longpress', dynamicContextMenuCallback)
+        this.tray.on('right-click', popUpMenu)
+        OS.IS_DARWIN && this.tray.on('mouse-longpress', popUpMenu)
+        this.tray.on('click', () => this.togglePage())
     }
 
     /**

@@ -134,10 +134,17 @@ class HandbookWindow extends BrowserWindow {
 
         Object.keys(this.listenerMap).forEach(eventName => {
             this.listenerMap[eventName].forEach(listener => {
-                if (listener._handbookOnce) {
+                const cfg = listener.__handbook__
+                if (!cfg) {
+                    newWindow.on(eventName, listener)
+                } else if (cfg.prepend) {
+                    cfg.once ? 
+                        newWindow.prependOnceListener(eventName, listener) :
+                        newWindow.prependListener(eventName, listener)
+                } else if (cfg.once) {
                     newWindow.once(eventName, listener)
                 } else {
-                    newWindow.on(eventName, listener)
+                    throw new Error('Unknown listener type', cfg)
                 }
             })
         })
@@ -253,10 +260,21 @@ class HandbookWindow extends BrowserWindow {
         super.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
         super.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
 
-        // Workaround to only capture user made events
+        super.on('show', e => this.emit('state-change', ...['show', e]))
+        super.on('hide', e => this.emit('state-change', ...['hide', e]))
+        super.on('closed', e => this.emit('state-change', ...['closed', e]))
+
+        // Workaround to only capture user made events 
+        // otherwise the electron listeners will be tracked during the construction
+
         this.on = (event, listener) => {
             this.trackListener(event, listener)
             return super.on(event, listener)
+        }
+
+        this.off = (event, listener) => {
+            this.untrackListener(event, listener)
+            return super.off(event, listener)
         }
     
         this.once = (event, listener) => {
@@ -264,14 +282,25 @@ class HandbookWindow extends BrowserWindow {
                 this.off(event, onceListener)
                 listener(...args)
             }
-            listener._handbookOnce = true
+            listener.__handbook__ = { once: true }
             this.trackListener(event, listener)
             return super.once(event, onceListener)
         }
-    
-        this.off = (event, listener) => {
-            this.untrackListener(event, listener)
-            return super.off(event, listener)
+
+        this.prependListener = (event, listener) => {
+            listener.__handbook__ = { prepend: true }
+            this.trackListener(event, listener)
+            return super.prependListener(event, listener)
+        }
+
+        this.prependOnceListener = (event, listener) => {
+            const onceListener = (...args) => {
+                this.off(event, onceListener)
+                listener(...args)
+            }
+            onceListener.__handbook__ = { once: true, prepend: true }
+            this.trackListener(event, listener)
+            return super.prependOnceListener(event, onceListener)
         }
     
         this.addListener = (event, listener) => this.on(event, listener)
