@@ -61,6 +61,7 @@ class Page {
             this.window.clone(this.createWindowOptions()) : 
             this.window.clone()
     
+        oldWindow.removeAllListeners('close')
         oldWindow.removeAllListeners('closed')
         oldWindow.forceClose()
     }

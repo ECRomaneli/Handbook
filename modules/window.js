@@ -18,9 +18,6 @@ class HandbookWindow extends BrowserWindow {
     /** @type {string} */
     externalId
 
-    /** @type {object} */
-    listenerMap = {}
-
     /** @type {Function} */
     boundsListener = () => {
         if (!this.isDestroyed() && !this.isMaximized()) {
@@ -132,21 +129,16 @@ class HandbookWindow extends BrowserWindow {
 
         this.isVisible() && newWindow.show()
 
-        Object.keys(this.listenerMap).forEach(eventName => {
-            this.listenerMap[eventName].forEach(listener => {
-                const cfg = listener.__handbook__
-                if (!cfg) {
-                    newWindow.on(eventName, listener)
-                } else if (cfg.prepend) {
-                    cfg.once ? 
-                        newWindow.prependOnceListener(eventName, listener) :
-                        newWindow.prependListener(eventName, listener)
-                } else if (cfg.once) {
-                    newWindow.once(eventName, listener)
-                } else {
-                    throw new Error('Unknown listener type', cfg)
-                }
-            })
+        this.eventNames().forEach(event => {
+            const listeners = this.rawListeners(event)
+                .filter(l => l._hb || l.listener?._hb)
+                .reduce((ls, l) => {
+                    const cfg = l._hb || l.listener?._hb
+                    cfg.prepend ? ls.prepend.unshift(l) : ls.append.push(l)
+                    return ls
+                }, { prepend: [], append: [] })
+            listeners.prepend.forEach(l => newWindow.prependListener(event, l))
+            listeners.append.forEach(l => newWindow.addListener(event, l))
         })
 
         return newWindow
@@ -207,18 +199,6 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
-    trackListener(event, listener) {
-        (this.listenerMap[event] ?? (this.listenerMap[event] = [])).push(listener)
-    }
-
-    untrackListener(event, listener) {
-        const listeners = this.listenerMap[event]
-        if (listeners) {
-            const index = listeners.indexOf(listener)
-            if (index !== -1) { listeners.splice(index, 1) }
-        }
-    }
-
     handleChildWindows() {
         super.webContents
             .on('did-create-window', (window) => {
@@ -267,53 +247,18 @@ class HandbookWindow extends BrowserWindow {
         // Workaround to only capture user made events 
         // otherwise the electron listeners will be tracked during the construction
 
-        this.on = (event, listener) => {
-            this.trackListener(event, listener)
-            return super.on(event, listener)
+        const call = (event, listener, prepend, fn) => {
+            if (!listener._hb && !listener.listener?._hb) {
+                listener._hb = { prepend: prepend }
+            }
+            return fn.call(this, event, listener)
         }
 
-        this.off = (event, listener) => {
-            this.untrackListener(event, listener)
-            return super.off(event, listener)
-        }
-    
-        this.once = (event, listener) => {
-            const onceListener = (...args) => {
-                this.off(event, onceListener)
-                listener(...args)
-            }
-            listener.__handbook__ = { once: true }
-            this.trackListener(event, listener)
-            return super.once(event, onceListener)
-        }
-
-        this.prependListener = (event, listener) => {
-            listener.__handbook__ = { prepend: true }
-            this.trackListener(event, listener)
-            return super.prependListener(event, listener)
-        }
-
-        this.prependOnceListener = (event, listener) => {
-            const onceListener = (...args) => {
-                this.off(event, onceListener)
-                listener(...args)
-            }
-            onceListener.__handbook__ = { once: true, prepend: true }
-            this.trackListener(event, listener)
-            return super.prependOnceListener(event, onceListener)
-        }
-    
-        this.addListener = (event, listener) => this.on(event, listener)
-        this.removeListener = (event, listener) => this.off(event, listener)
-    
-        this.removeAllListeners = (event) => {
-            if (event) {
-                this.listenerMap[event] = void 0
-            } else {
-                this.listenerMap = {}
-            }
-            return super.removeAllListeners(event)
-        }
+        this.on = (e, l) => call(e, l, false, super.on)
+        this.once = (e, l) => call(e, l, false, super.once)
+        this.addListener = (e, l) => call(e, l, false, super.addListener)
+        this.prependListener = (e, l) => call(e, l, true, super.prependListener)
+        this.prependOnceListener = (e, l) => call(e, l, true, super.prependOnceListener)    
     }
 
     static getLogo(size) {
