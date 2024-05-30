@@ -174,8 +174,7 @@ class HandbookManager {
      */
     refreshContextMenu() {
         const activePages = this.getAllActivePages()
-        const cb = clipboard.readText()
-
+        
         const menuItems = []
 
         if (OS.IS_LINUX) {
@@ -203,10 +202,11 @@ class HandbookManager {
 
                 const oldUrl = page.url
                 page.url = cpUrl
+                
                 if (page.hasWindow() && page.url !== oldUrl) {
                     page.window.loadURL(page.url)
                     page.window.show()
-                } else {
+                } else if (page.url) {
                     this.selectPage(page, true)
                 }
             }
