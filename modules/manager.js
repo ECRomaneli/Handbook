@@ -221,9 +221,11 @@ class HandbookManager {
             { label: 'Refresh', click: () => this.currentPage.window.reload() },
             { label: 'Reload', click: () => this.currentPage.window.reset() },
             { type: 'separator' },
+            { label: 'Copy URL', click: () => clipboard.writeText(this.currentPage.window.webContents.getURL()) },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-            { label: 'Mute/Unmute', click: () => this.currentPage.window.toggleMute() },
-            { label: 'Show/Hide', click: () => this.currentPage.window.toggleVisibility() },
+            { type: 'separator' },
+            { label: 'Mute / Unmute', click: () => this.currentPage.window.toggleMute() },
+            { label: 'Show / Hide', click: () => this.currentPage.window.toggleVisibility() },
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
