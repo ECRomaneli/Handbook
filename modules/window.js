@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron')
+const { BrowserWindow, clipboard } = require('electron')
 const path = require('node:path')
 const { Storage } = require('./storage')
 const { WindowSettings } = require('./constants')
@@ -17,9 +17,6 @@ class HandbookWindow extends BrowserWindow {
 
     /** @type {string} */
     externalId
-
-    /** @type {object} */
-    listenerMap = {}
 
     /** @type {Function} */
     boundsListener = () => {
@@ -58,8 +55,11 @@ class HandbookWindow extends BrowserWindow {
                     { label: 'Refresh', click: () => this.reload() },
                     { label: 'Reload', click: () => this.reset() },
                     { type: 'separator' },
+                    { label: 'Copy URL', click: () => clipboard.writeText(this.webContents.getURL()) },
                     { role: 'toggleDevTools' },
-                    { label: 'Hide', click: () => this.hide() },
+                    { type: 'separator' },
+                    { label: 'Mute / Unmute', click: () => this.toggleMute() },
+                    { label: 'Show / Hide', click: () => this.hide() },
                     { label: 'Close', click: () => this.forceClose() }
                 ]}
             ]
@@ -132,14 +132,16 @@ class HandbookWindow extends BrowserWindow {
 
         this.isVisible() && newWindow.show()
 
-        Object.keys(this.listenerMap).forEach(eventName => {
-            this.listenerMap[eventName].forEach(listener => {
-                if (listener._handbookOnce) {
-                    newWindow.once(eventName, listener)
-                } else {
-                    newWindow.on(eventName, listener)
-                }
-            })
+        this.eventNames().forEach(event => {
+            const listeners = this.rawListeners(event)
+                .filter(l => l._hb || l.listener?._hb)
+                .reduce((ls, l) => {
+                    const cfg = l._hb || l.listener?._hb
+                    cfg.prepend ? ls.prepend.unshift(l) : ls.append.push(l)
+                    return ls
+                }, { prepend: [], append: [] })
+            listeners.prepend.forEach(l => newWindow.prependListener(event, l))
+            listeners.append.forEach(l => newWindow.addListener(event, l))
         })
 
         return newWindow
@@ -147,7 +149,7 @@ class HandbookWindow extends BrowserWindow {
 
     /**
      * Whether the window is visible to the user in the foreground of the app.
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window. 
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed. 
      * @returns {boolean} If the window is visible or not.
      */
     isVisible(ignoreDestroyedError) {
@@ -155,23 +157,52 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
+     * Return the mute state of the window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed. 
+     * @returns {boolean} If the audio is muted.
+     */
+    isMuted(ignoreDestroyedError) {
+        return !(ignoreDestroyedError && this.isDestroyed()) && this.webContents.isAudioMuted()
+    }
+
+    /**
      * Toggle visibility of the window (show and hide).
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
      */
     toggleVisibility(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.isVisible() ? this.hide() : this.show()
+            this.isVisible() ? this.hide() : this.show()
+        }
+    }
+
+    /**
+     * Toggle the mute state of the window (mute and unmute).
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
+     */
+    toggleMute(ignoreDestroyedError) {
+        if (!(ignoreDestroyedError && this.isDestroyed())) {
+            this.webContents.isAudioMuted() ? this.unmute() : this.mute()
         }
     }
 
     /**
      * Toggle maximize.
-     * @param {boolean} ignoreDestroyedError Ignore error when trying to check the visibility of a destroyed window.
+     * @param {boolean} ignoreDestroyedError Ignore error when the window is destroyed.
      */
     toggleMaximize(ignoreDestroyedError) {
         if (!(ignoreDestroyedError && this.isDestroyed())) {
-            super.isMaximized() ? this.unmaximize() : this.maximize()
+            this.isMaximized() ? this.unmaximize() : this.maximize()
         }
+    }
+
+    mute() {
+        this.webContents.setAudioMuted(true)
+        this.emit('muted')
+    }
+
+    unmute() {
+        this.webContents.setAudioMuted(false)
+        this.emit('unmuted')
     }
 
     getExternalId() {
@@ -200,20 +231,8 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
-    trackListener(event, listener) {
-        (this.listenerMap[event] ?? (this.listenerMap[event] = [])).push(listener)
-    }
-
-    untrackListener(event, listener) {
-        const listeners = this.listenerMap[event]
-        if (listeners) {
-            const index = listeners.indexOf(listener)
-            if (index !== -1) { listeners.splice(index, 1) }
-        }
-    }
-
     handleChildWindows() {
-        super.webContents
+        this.webContents
             .on('did-create-window', (window) => {
                 const showHandler = () => window.show()
                 const hideHandler = () => window.hide()
@@ -243,48 +262,37 @@ class HandbookWindow extends BrowserWindow {
     }
 
     registerDefaultEventListeners() {
-        super.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
-        super.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
+        this.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
+        this.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
 
         // As these events are asynchronous and delayed, they can occur after the window is destroyed.
-        super.on('custom-moved', this.boundsListener)
-        super.on('custom-resized', this.boundsListener)
+        this.on('custom-moved', this.boundsListener)
+        this.on('custom-resized', this.boundsListener)
     
-        super.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
-        super.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
+        this.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
+        this.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
 
-        // Workaround to only capture user made events
-        this.on = (event, listener) => {
-            this.trackListener(event, listener)
-            return super.on(event, listener)
-        }
-    
-        this.once = (event, listener) => {
-            const onceListener = (...args) => {
-                this.off(event, onceListener)
-                listener(...args)
+        this.on('show', e => this.emit('state-change', ...['show', e]))
+        this.on('hide', e => this.emit('state-change', ...['hide', e]))
+        this.on('muted', e => this.emit('state-change', ...['muted', e]))
+        this.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
+        this.on('closed', e => this.emit('state-change', ...['closed', e]))
+
+        // Workaround to only capture user made events 
+        // otherwise the electron listeners will be tracked during the construction
+
+        const call = (event, listener, prepend, fn) => {
+            if (!listener._hb && !listener.listener?._hb) {
+                listener._hb = { prepend: prepend }
             }
-            listener._handbookOnce = true
-            this.trackListener(event, listener)
-            return super.once(event, onceListener)
+            return fn.call(this, event, listener)
         }
-    
-        this.off = (event, listener) => {
-            this.untrackListener(event, listener)
-            return super.off(event, listener)
-        }
-    
-        this.addListener = (event, listener) => this.on(event, listener)
-        this.removeListener = (event, listener) => this.off(event, listener)
-    
-        this.removeAllListeners = (event) => {
-            if (event) {
-                this.listenerMap[event] = void 0
-            } else {
-                this.listenerMap = {}
-            }
-            return super.removeAllListeners(event)
-        }
+
+        this.on = (e, l) => call(e, l, false, super.on)
+        this.once = (e, l) => call(e, l, false, super.once)
+        this.addListener = (e, l) => call(e, l, false, super.addListener)
+        this.prependListener = (e, l) => call(e, l, true, super.prependListener)
+        this.prependOnceListener = (e, l) => call(e, l, true, super.prependOnceListener)    
     }
 
     static getLogo(size) {

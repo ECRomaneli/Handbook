@@ -45,7 +45,7 @@ class Page {
     createWindow() {
         if (this.hasWindow()) { throw new Error('Unexpected window replacement.') }
         this.window = new HandbookWindow(this.createWindowOptions())
-        this.window.on('closed', () => delete this.window)
+        this.window.prependListener('closed', () => delete this.window)
         this.window.setExternalId(this.label)
         this.window.loadURL(this.url)
     }
@@ -61,6 +61,7 @@ class Page {
             this.window.clone(this.createWindowOptions()) : 
             this.window.clone()
     
+        oldWindow.removeAllListeners('close')
         oldWindow.removeAllListeners('closed')
         oldWindow.forceClose()
     }
@@ -91,10 +92,22 @@ class Page {
     }
 
     /**
+     * Get page label with status symbols.
+     */
+    getLabelWithStatus() {
+        let label = this.label
+        if (this.hasWindow()) {
+            label += ' ❏'
+            this.window.isMuted() && (label += ' ✕')
+        }
+        return label
+    }
+
+    /**
      * Copy fields from another page. If the URL is different and there is an active window, the new URL is loaded.
      * @param {Page} page Page to copy fields.
      */
-    copy(page) {
+    copyFrom(page) {
         this.hasBounds = page.hasBounds
         this.persist = page.persist
 

@@ -14,8 +14,8 @@ class HandbookManager {
     /** @type {Tray} */
     tray = new Tray(getTrayIcon())
 
-    /** @type {() => void} */
-    contextMenuListener
+    /** @type {Menu} */
+    contextMenu
 
     /** @type {Page[]} */
     pages
@@ -31,24 +31,26 @@ class HandbookManager {
 
     constructor () {
         nativeTheme.themeSource = Storage.getSettings(WindowSettings.WINDOW_THEME)
+        this.updatePages()
         this.refreshContextMenu()
-        OS.IS_DARWIN && this.setupLongPressEvent()
+        this.registerDynamicContextMenu()
         this.registerGlobalShortcut()
-        this.registerDefaultEventListeners()
+        this.registerSettingsListeners()
         this.registerWindowActionAreaListeners()
         OS.IS_WIN32 && this.tray.focus()
     }
 
-    registerDefaultEventListeners() {
-        Settings.onPagesUpdated(() => this.refreshContextMenu())
+    registerSettingsListeners() {
+        Settings.onPagesUpdated(() => {
+            this.updatePages()
+            this.refreshContextMenu()
+        })
         Settings.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value))
-        OS.IS_LINUX || this.tray.on('click', () => this.togglePage())
-        ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
     /**
      * Setup longpress event on Darwin.
-     * @platform — darwin
+     * @platform darwin
      */
     setupLongPressEvent() {
         let longPress
@@ -69,6 +71,7 @@ class HandbookManager {
         })
 
         ipcMain.on('manager.currentPage.toggleMaximize', () => this.currentPage.window.toggleMaximize())
+        ipcMain.on('manager.currentPage.hide', () => this.currentPage.window.hide())
     }
 
     registerGlobalShortcut() {
@@ -117,9 +120,10 @@ class HandbookManager {
     setupPageWindow(page) {
         if (!page.hasWindow()) {
             page.createWindow()
-            page.window.on('show', () => this.updateTrayIcon())
-            page.window.on('hide', () => this.updateTrayIcon())
-            page.window.on('closed', () => this.updateTrayIcon())
+            page.window.on('state-change', () => {
+                this.refreshContextMenu()
+                this.updateTrayIcon()
+            })
         }
         page.defineWindowBounds()
     }
@@ -132,13 +136,45 @@ class HandbookManager {
     }
 
     /**
+     * Add new pages, and if already exists, copy the changes to the existing one removing those that not.
+     * The updated pages (compared by label) will keep the same reference to not invalidate the window
+     * event listeners using it.
+     */
+    updatePages() {
+        const newPages = Page.fromList(Storage.getPages())
+
+        if (!newPages.length) {
+            this.pages = []
+            Settings.open()
+            return
+        }
+
+        if (!this.pages) {
+            this.pages = newPages
+            return
+        }
+
+        const updatedPages = this.getAllActivePages().filter(p => {
+            if (newPages.some(np => np.label === p.label)) { return true }
+            if (this.isCurrentPage(p)) { this.currentPage = null }
+            p.closeWindow()
+            return false
+        })
+
+        this.pages = newPages.map(newPage => {
+            const page = updatedPages.filter(page => newPage.label === page.label)[0]
+            if (!page) { return newPage }
+            page.copyFrom(newPage)
+            return page
+        })
+    }
+
+    /**
      * Check for page changes and update the context menu.
      */
     refreshContextMenu() {
-        const newPages = Page.fromList(Storage.getPages())
-        this.pages = this.pages ? this.updatePages(newPages) : newPages
-
-        if (!this.pages.length) { Settings.open() }
+        const activePages = this.getAllActivePages()
+        const cb = clipboard.readText()
 
         const menuItems = []
 
@@ -150,7 +186,7 @@ class HandbookManager {
         this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
             type: 'radio', 
             checked: this.isCurrentPage(p),
-            label: p.label, 
+            label: p.getLabelWithStatus(), 
             click: () => this.selectPage(p, true)
         }))
 
@@ -158,11 +194,15 @@ class HandbookManager {
             id: 'clipboard-url',
             type: 'radio', 
             checked: this.isCurrentPage(this.fromClipboardPage),
-            label: this.fromClipboardPage.label, 
+            label: this.fromClipboardPage.getLabelWithStatus(), 
             click: () => {
                 const page = this.fromClipboardPage
+                let cpUrl = getClipboardUrl()
+
+                if (!cpUrl) { cpUrl = page.url }
+
                 const oldUrl = page.url
-                page.url = clipboard.readText()
+                page.url = cpUrl
                 if (page.hasWindow() && page.url !== oldUrl) {
                     page.window.loadURL(page.url)
                     page.window.show()
@@ -172,59 +212,63 @@ class HandbookManager {
             }
         })
 
-        menuItems.push({ id: 'window-separator', type: 'separator' })
+        menuItems.push({ type: 'separator' })
 
-        menuItems.push({ id: 'window', label: 'Current Window', submenu: [
+        menuItems.push({ id: 'window', label: 'Current Window', enabled: !!this.currentPage?.hasWindow(), submenu: [
             { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
             { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
             { type: 'separator' },
             { label: 'Refresh', click: () => this.currentPage.window.reload() },
             { label: 'Reload', click: () => this.currentPage.window.reset() },
             { type: 'separator' },
+            { label: 'Copy URL', click: () => clipboard.writeText(this.currentPage.window.webContents.getURL()) },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-            { label: 'Show/Hide', click: () => this.currentPage.window.toggleVisibility() },
+            { type: 'separator' },
+            { label: 'Mute / Unmute', click: () => this.currentPage.window.toggleMute() },
+            { label: 'Show / Hide', click: () => this.currentPage.window.toggleVisibility() },
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
-        menuItems.push({ type: 'separator' })
+        if (activePages.length > 0) {
+            menuItems.push({ type: 'separator' })
 
-        menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-            this.pages.filter(p => !this.isCurrentPage(p) && p.hasWindow()).forEach(p => p.closeWindow()) })
+            if (activePages.length > 1) {
+                menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
+                    activePages.filter(p => !this.isCurrentPage(p)).forEach(p => p.closeWindow())
+                })
+            }
 
-        menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
-            this.getAllActivePages().forEach(p => p.closeWindow())
-        } })
+            menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
+                activePages.forEach(p => p.closeWindow())
+            }})
+        }
         
         menuItems.push({ type: 'separator' })
 
         menuItems.push({ label: 'Settings', click: () => Settings.open() })
         menuItems.push({ label: 'Quit', click: () => app.quit() })
 
-        const contextMenu = Menu.buildFromTemplate(menuItems)
+        this.contextMenu = Menu.buildFromTemplate(menuItems)
 
-        // Linux workaround. Linux does not support many events in the traybar.
-        if (OS.IS_LINUX) {
-            this.tray.setContextMenu(contextMenu)
-            return
+        if (OS.IS_LINUX) { this.tray.setContextMenu(this.contextMenu) }
+    }
+
+    registerDynamicContextMenu() {
+        if (OS.IS_LINUX) { return }
+
+        const popUpMenu = () => {
+            this.contextMenu.getMenuItemById('clipboard-url').visible = 
+                this.isCurrentPage(this.fromClipboardPage) || getClipboardUrl()
+            this.tray.popUpContextMenu(this.contextMenu)
         }
-        
-        this.contextMenuListener && this.tray.off('right-click', this.contextMenuListener)
-        this.contextMenuListener && this.tray.off('mouse-longpress', this.contextMenuListener)
-        
-        this.contextMenuListener = () => {
-            let windows = this.getAllActivePages().length
-            const cb = clipboard.readText()
 
-            contextMenu.getMenuItemById('window').enabled = this.currentPage?.hasWindow()
-            contextMenu.getMenuItemById('window-separator').enabled = this.currentPage?.hasWindow()
-            contextMenu.getMenuItemById('close-other-windows').visible = windows > 1
-            contextMenu.getMenuItemById('close-all-windows').visible = windows > 0
-            contextMenu.getMenuItemById('clipboard-url').visible = cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://')
-
-            this.tray.popUpContextMenu(contextMenu)
+        if (OS.IS_DARWIN) {
+            this.setupLongPressEvent()
+            this.tray.on('mouse-longpress', popUpMenu)
         }
-        this.tray.on('right-click', this.contextMenuListener)
-        this.tray.on('mouse-longpress', this.contextMenuListener)
+
+        this.tray.on('right-click', popUpMenu)
+        this.tray.on('click', () => this.togglePage())
     }
 
     /**
@@ -286,29 +330,6 @@ class HandbookManager {
     }
 
     /**
-     * Add new pages, and if already exists, copy the changes to the existing one removing those that not.
-     * The returned list will stay with the reference of the old pages updated in order to not invalidate
-     * the window event listeners using it.
-     * 
-     * @param {Page[]} newPages New set of pages.
-     */
-    updatePages(newPages) {
-        const pagesUpdated = this.getAllActivePages().filter(p => {
-                if (newPages.some(np => np.label === p.label)) { return true }
-                if (this.isCurrentPage(p)) { this.currentPage = null }
-                p.closeWindow()
-                return false
-            })
-
-        return newPages.map(newPage => {
-            const page = pagesUpdated.filter(page => newPage.label === page.label)[0]
-            if (!page) { return newPage }
-            page.copy(newPage)
-            return page
-        })
-    }
-
-    /**
      * Return all pages including not manageable ones (e.g. "Clipboard URL" page).
      * @returns {Page[]} List of all pages.
      */
@@ -331,6 +352,11 @@ class HandbookManager {
 
 function getTrayIcon(open) {
     return path.join(__dirname, '..', 'assets', 'img', 'tray', `icon${open ? 'Open' : 'Closed'}Template.png`)
+}
+
+function getClipboardUrl() {
+    const cb = clipboard.readText()
+    return cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://') ? cb : null
 }
 
 module.exports = { Manager }
