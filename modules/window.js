@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron')
+const { BrowserWindow, clipboard } = require('electron')
 const path = require('node:path')
 const { Storage } = require('./storage')
 const { WindowSettings } = require('./constants')
@@ -55,9 +55,11 @@ class HandbookWindow extends BrowserWindow {
                     { label: 'Refresh', click: () => this.reload() },
                     { label: 'Reload', click: () => this.reset() },
                     { type: 'separator' },
+                    { label: 'Copy URL', click: () => clipboard.writeText(this.webContents.getURL()) },
                     { role: 'toggleDevTools' },
-                    { label: 'Mute/Unmute', click: () => this.toggleMute() },
-                    { label: 'Hide', click: () => this.hide() },
+                    { type: 'separator' },
+                    { label: 'Mute / Unmute', click: () => this.toggleMute() },
+                    { label: 'Show / Hide', click: () => this.hide() },
                     { label: 'Close', click: () => this.forceClose() }
                 ]}
             ]

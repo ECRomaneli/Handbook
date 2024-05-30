@@ -12,10 +12,10 @@ app.component('PageTable', {
             </thead>
             <tbody>
                 <tr v-for="(page, index) in list" class="c-grab" :key="index" :draggable="draggable" @dragstart="drag(index)" @dragover="$event.preventDefault()" @drop="drop(index)">
-                    <td class="px-0" @click="removePage(index)">
+                    <td class="px-0">
                         <div class="d-flex">
-                            <img class="svg-icon square-24 me-1"      :src="$image.src('drag')"  alt="drag page">
-                            <img class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
+                            <img class="svg-icon square-24 me-1" :src="$image.src('drag')" alt="drag page">
+                            <img @click="removePage(index)" class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
                         </div>
                     </td>
                     <td><input type="text" v-model="page.label"   placeholder="Label"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>

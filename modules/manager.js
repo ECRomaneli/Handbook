@@ -4,7 +4,6 @@ const { WindowSettings, OS } = require('./constants')
 const { Settings } = require('./settings')
 const path = require('node:path')
 const { Page } = require('./page')
-const { parasiteIt } = require('./debug')
 
 const Manager = (() => {
     /** @type {HandbookManager} */ let instance
@@ -195,12 +194,15 @@ class HandbookManager {
             id: 'clipboard-url',
             type: 'radio', 
             checked: this.isCurrentPage(this.fromClipboardPage),
-            label: this.fromClipboardPage.label, 
-            visible: cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://'),
+            label: this.fromClipboardPage.getLabelWithStatus(), 
             click: () => {
                 const page = this.fromClipboardPage
+                let cpUrl = getClipboardUrl()
+
+                if (!cpUrl) { cpUrl = page.url }
+
                 const oldUrl = page.url
-                page.url = clipboard.readText()
+                page.url = cpUrl
                 if (page.hasWindow() && page.url !== oldUrl) {
                     page.window.loadURL(page.url)
                     page.window.show()
@@ -219,9 +221,11 @@ class HandbookManager {
             { label: 'Refresh', click: () => this.currentPage.window.reload() },
             { label: 'Reload', click: () => this.currentPage.window.reset() },
             { type: 'separator' },
+            { label: 'Copy URL', click: () => clipboard.writeText(this.currentPage.window.webContents.getURL()) },
             { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-            { label: 'Mute/Unmute', click: () => this.currentPage.window.toggleMute() },
-            { label: 'Show/Hide', click: () => this.currentPage.window.toggleVisibility() },
+            { type: 'separator' },
+            { label: 'Mute / Unmute', click: () => this.currentPage.window.toggleMute() },
+            { label: 'Show / Hide', click: () => this.currentPage.window.toggleVisibility() },
             { label: 'Close', click: () => this.currentPage.closeWindow() },
         ]})
 
@@ -252,12 +256,18 @@ class HandbookManager {
     registerDynamicContextMenu() {
         if (OS.IS_LINUX) { return }
 
-        OS.IS_DARWIN && this.setupLongPressEvent()
+        const popUpMenu = () => {
+            this.contextMenu.getMenuItemById('clipboard-url').visible = 
+                this.isCurrentPage(this.fromClipboardPage) || getClipboardUrl()
+            this.tray.popUpContextMenu(this.contextMenu)
+        }
 
-        const popUpMenu = () => this.tray.popUpContextMenu(this.contextMenu)
+        if (OS.IS_DARWIN) {
+            this.setupLongPressEvent()
+            this.tray.on('mouse-longpress', popUpMenu)
+        }
 
         this.tray.on('right-click', popUpMenu)
-        OS.IS_DARWIN && this.tray.on('mouse-longpress', popUpMenu)
         this.tray.on('click', () => this.togglePage())
     }
 
@@ -342,6 +352,11 @@ class HandbookManager {
 
 function getTrayIcon(open) {
     return path.join(__dirname, '..', 'assets', 'img', 'tray', `icon${open ? 'Open' : 'Closed'}Template.png`)
+}
+
+function getClipboardUrl() {
+    const cb = clipboard.readText()
+    return cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://') ? cb : null
 }
 
 module.exports = { Manager }
