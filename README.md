@@ -121,14 +121,21 @@ To change the page, right-click on the tray icon and simply select the page want
 
 There is also, the possibility to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
 
-#### Linux issues
+#### Linux usage
 
-Currently there is an open issue (#5) for linux users. Unfortunatelly there are some tray events not supported (at least using Electron.js). To not remove completely the linux support, the usage was changed to:
+Due to some limitations on the tray events, there are some differences on the linux experience:
 
 - Clicking on the tray icon will open the context menu (instead of toggle the page visibility);
 - An item was added on top of the context menu to toggle the current window visibility.
 
-The usage of the "Toggle Window" shortcut is highly recommended.
+#### Context menu symbols
+
+There are symbols in the context menu that can be displayed alongside the page names to represent the current status:
+
+| Icon | Description     |
+|------|-----------------|
+| ❏    | Page is alive   |
+| ✕    | Page is muted   |
 
 ### Settings
 
