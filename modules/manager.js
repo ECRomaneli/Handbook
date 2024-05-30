@@ -143,7 +143,7 @@ class HandbookManager {
     updatePages() {
         const newPages = Page.fromList(Storage.getPages())
 
-        if (!newPages.length) {
+        if (!newPages.some(p => p.canCreateWindow())) {
             this.pages = []
             Settings.open()
             return
@@ -174,15 +174,15 @@ class HandbookManager {
      */
     refreshContextMenu() {
         const activePages = this.getAllActivePages()
-        
+
         const menuItems = []
 
         if (OS.IS_LINUX) {
-            menuItems.push({ label: 'Show/Hide Page', click: () => this.togglePage() })
+            menuItems.push({ label: 'Show / Hide Page', click: () => this.togglePage() })
             menuItems.push({ type: 'separator' })
         }
 
-        this.pages.filter(p => p.label && p.url).forEach(p => menuItems.push({
+        this.pages.filter(p => p.canCreateWindow()).forEach(p => menuItems.push({
             type: 'radio', 
             checked: this.isCurrentPage(p),
             label: p.getLabelWithStatus(), 
@@ -356,7 +356,16 @@ function getTrayIcon(open) {
 
 function getClipboardUrl() {
     const cb = clipboard.readText()
-    return cb.startsWith('http://') || cb.startsWith('https://') || cb.startsWith('file://') ? cb : null
+    return hasAllowedProtocol(cb) ? cb : null
+}
+
+/**
+ * Verify if URL has an allowed protocol.
+ * @param {string} url URL.
+ * @returns {boolean}
+ */
+function hasAllowedProtocol(url) {
+    return url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('file://'))
 }
 
 module.exports = { Manager }
