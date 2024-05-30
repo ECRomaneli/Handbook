@@ -135,6 +135,14 @@ class Page {
     }
 
     /**
+     * Verify if the page has all required fields to create a window.
+     * @returns {boolean}
+     */
+    canCreateWindow() {
+        return this.label && this.url
+    }
+
+    /**
      * Send event to the internal window. Be sure to have an active page, otherwise
      * it will trigger an error.
      * @param {string} eventName Event name.
