@@ -154,7 +154,7 @@ class HandbookManager {
             return
         }
 
-        const updatedPages = this.getAllActivePages().filter(p => {
+        const updatedPages = this.getAllActivePages(true).filter(p => {
             if (newPages.some(np => np.label === p.label)) { return true }
             if (this.isCurrentPage(p)) { this.currentPage = null }
             p.closeWindow()
@@ -338,11 +338,12 @@ class HandbookManager {
     }
 
     /**
-     * Return all pages, including not manageable ones, with an active window.
+     * Return all pages containing an active window.
+     * @param {true | void} excludeCustomPages Exclude custom pages (e.g. "Clipboard URL" page).
      * @returns {Page[]} List of active pages.
      */
-    getAllActivePages() {
-        return this.getAllPages().filter(p => p.hasWindow())
+    getAllActivePages(excludeCustomPages) {
+        return this.getAllPages(excludeCustomPages).filter(p => p.hasWindow())
     }
     
     isCurrentPage(page) {
