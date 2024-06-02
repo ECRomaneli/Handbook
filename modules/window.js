@@ -7,44 +7,35 @@ const contextMenu = require('electron-context-menu')
 class HandbookWindow extends BrowserWindow {
     
     /** @const {string} */
-    static BLANK_URL = 'about:blank'
+    static #BLANK_URL = 'about:blank'
 
     /** @const {number} */
-    static DEFAULT_INTERVAL = 200
+    static #CANCELABLE_INTERVAL = 200
 
     /** @type {Electron.BrowserWindowConstructorOptions} */
-    options
+    #options
 
     /** @type {string} */
-    externalId
-
-    /** @type {Function} */
-    boundsListener = () => {
-        if (!this.isDestroyed() && !this.isMaximized()) {
-            const windowBounds = this.getBounds()
-            Storage.setSharedBounds(windowBounds)
-            Storage.setWindowBounds(this.getExternalId(), windowBounds)
-        }
-    }
+    #externalId
 
     /**
      * Create a new Handbook window overriding some options with the standards.
      * @param {Electron.BrowserWindowConstructorOptions | undefined} options
      */
     constructor (options) {
-        super (setStandardOptions(options))
-        fixUserAgent(this)
-        this.options = options
+        super (HandbookWindow.#setStandardOptions(options))
+        HandbookWindow.#fixUserAgent(this)
+        this.#options = options
         this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
-        this.buildContextMenu()
-        this.registerDefaultEventListeners()
-        this.handleChildWindows()
+        this.#buildContextMenu()
+        this.#registerEvents()
+        this.#handleChildWindows()
     }
 
     /**
      * Build window right-click menu.
      */
-    buildContextMenu() {
+    #buildContextMenu() {
         contextMenu({
             window: this,
             append: () => [
@@ -102,11 +93,13 @@ class HandbookWindow extends BrowserWindow {
     }
 
     /**
+     * @deprecated
      * Resizes and/or moves the window to the supplied bounds. Any properties that are not supplied 
      * will default to their current values.
      * @param {Rectangle} bounds
      */
     setBoundsIfExists(bounds) {
+        // TODO: Remove it in the next commit.
         this.setBounds()
         bounds.x !== void 0 && bounds.y !== void 0 && newWindow.setPosition(bounds.x, bounds.y)
         bounds.width !== void 0 && bounds.height !== void 0 && newWindow.setSize(bounds.width, bounds.height)    
@@ -118,7 +111,10 @@ class HandbookWindow extends BrowserWindow {
      * @returns {HandbookWindow} New Window.
      */
     clone(options) {
-        const newWindow = new HandbookWindow(options ? setStandardOptions(options) : this.options)
+        options = options ? setStandardOptions(options) : this.#options
+        options.show = this.isVisible()
+        console.log(this.#options.title, options.show)
+        const newWindow = new HandbookWindow(options)
         newWindow.setExternalId(this.getExternalId())
         newWindow.setBounds(this.getBounds())
         
@@ -129,8 +125,6 @@ class HandbookWindow extends BrowserWindow {
         } else if(this.loaded?.filePath) {
             newWindow.loadFile(this.loaded.filePath, this.loaded.options)
         }
-
-        this.isVisible() && newWindow.show()
 
         this.eventNames().forEach(event => {
             const listeners = this.rawListeners(event)
@@ -206,16 +200,16 @@ class HandbookWindow extends BrowserWindow {
     }
 
     getExternalId() {
-        return this.externalId
+        return this.#externalId
     }
 
     setExternalId(externalId) {
-        this.externalId = externalId
+        this.#externalId = externalId
     }
 
     unload() {
-        if (this.webContents?.getURL() !== HandbookWindow.BLANK_URL) {
-            this.loadURL(HandbookWindow.BLANK_URL)
+        if (this.webContents?.getURL() !== HandbookWindow.#BLANK_URL) {
+            this.loadURL(HandbookWindow.#BLANK_URL)
         }
     }
 
@@ -231,21 +225,73 @@ class HandbookWindow extends BrowserWindow {
         }
     }
 
-    handleChildWindows() {
+    #registerEvents() {
+        this.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
+        this.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
+
+        this.#registerDelayedEvents()
+        this.#registerStateChangeEvent()
+
+        // Workaround to only capture user made events 
+        // otherwise the electron listeners will be tracked during the construction
+        this.#overrideEventMethods()
+    }
+
+    #registerDelayedEvents() {
+        this.on('move', createCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.#CANCELABLE_INTERVAL))
+        this.on('resize', createCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.#CANCELABLE_INTERVAL))
+
+        // As these events are asynchronous and delayed, they can occur after the window is destroyed.
+        this.on('custom-moved', this.#saveBounds)
+        this.on('custom-resized', this.#saveBounds)
+    }
+
+    #registerStateChangeEvent() {
+        this.on('show', e => this.emit('state-change', ...['show', e]))
+        this.on('hide', e => this.emit('state-change', ...['hide', e]))
+        this.on('muted', e => this.emit('state-change', ...['muted', e]))
+        this.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
+        this.on('closed', e => this.emit('state-change', ...['closed', e]))
+    }
+
+    #overrideEventMethods() {
+        const call = (fn, event, listener, prepend) => {
+            if (!listener._hb && !listener.listener?._hb) {
+                listener._hb = { prepend: prepend }
+            }
+            return fn.call(this, event, listener)
+        }
+
+        this.on = (e, l) => call(super.on, e, l, false)
+        this.once = (e, l) => call(super.once, e, l, false)
+        this.addListener = (e, l) => call(super.addListener, e, l, false)
+        this.prependListener = (e, l) => call(super.prependListener, e, l, true)
+        this.prependOnceListener = (e, l) => call(super.prependOnceListener, e, l, true)
+    }
+
+    #saveBounds() {
+        if (!this.isDestroyed() && !this.isMaximized()) {
+            const windowBounds = this.getBounds()
+            Storage.setSharedBounds(windowBounds)
+            Storage.setWindowBounds(this.getExternalId(), windowBounds)
+        }
+    }
+
+    #handleChildWindows() {
         this.webContents
             .on('did-create-window', (window) => {
-                const showHandler = () => window.show()
-                const hideHandler = () => window.hide()
-                this.on('show', showHandler)
-                this.on('hide', hideHandler)
+                const showHandler = () => !window.isDestroyed() && window.show()
+                const hideHandler = () => !window.isDestroyed() &&  window.hide()
+                super.on('show', showHandler)
+                super.on('hide', hideHandler)
 
                 window.on('close', () => {
-                    this.off('show', showHandler)
-                    this.off('hide', hideHandler)
+                    super.off('show', showHandler)
+                    super.off('hide', hideHandler)
                 })
 
                 contextMenu({ window: window })
-                fixUserAgent(window)
+                HandbookWindow.#fixUserAgent(window)
             })
             .setWindowOpenHandler(() => {
                 return {
@@ -261,71 +307,36 @@ class HandbookWindow extends BrowserWindow {
             })
     }
 
-    registerDefaultEventListeners() {
-        this.on('move', setCancelableListener(e => this.emit('custom-moved', e), HandbookWindow.DEFAULT_INTERVAL))
-        this.on('resize', setCancelableListener(e => this.emit('custom-resized', e), HandbookWindow.DEFAULT_INTERVAL))
-
-        // As these events are asynchronous and delayed, they can occur after the window is destroyed.
-        this.on('custom-moved', this.boundsListener)
-        this.on('custom-resized', this.boundsListener)
-    
-        this.on('focus', () => this.setOpacity(Storage.getSettings(WindowSettings.FOCUS_OPACITY) / 100))
-        this.on('blur', () => this.setOpacity(Storage.getSettings(WindowSettings.BLUR_OPACITY) / 100))
-
-        this.on('show', e => this.emit('state-change', ...['show', e]))
-        this.on('hide', e => this.emit('state-change', ...['hide', e]))
-        this.on('muted', e => this.emit('state-change', ...['muted', e]))
-        this.on('unmuted', e => this.emit('state-change', ...['unmuted', e]))
-        this.on('closed', e => this.emit('state-change', ...['closed', e]))
-
-        // Workaround to only capture user made events 
-        // otherwise the electron listeners will be tracked during the construction
-
-        const call = (event, listener, prepend, fn) => {
-            if (!listener._hb && !listener.listener?._hb) {
-                listener._hb = { prepend: prepend }
-            }
-            return fn.call(this, event, listener)
-        }
-
-        this.on = (e, l) => call(e, l, false, super.on)
-        this.once = (e, l) => call(e, l, false, super.once)
-        this.addListener = (e, l) => call(e, l, false, super.addListener)
-        this.prependListener = (e, l) => call(e, l, true, super.prependListener)
-        this.prependOnceListener = (e, l) => call(e, l, true, super.prependOnceListener)    
-    }
-
     static getLogo(size) {
         return path.join(__dirname, '..', 'assets', 'img', `logo-${size ?? 128}px.png`)
     }
-}
 
-/**
- * Fix the window userAgent removing the app tag. Some websites disallow features based on this.
- * @param {BrowserWindow} window 
- */
-function fixUserAgent(window) {
-    window.webContents.setUserAgent(window.webContents.getUserAgent().replace(/\shandbook[^\s]+/g, ''))
-}
+    /**
+     * Fix the window userAgent removing the app tag. Some websites disallow features based on this.
+     * @param {BrowserWindow} window 
+     */
+    static #fixUserAgent(window) {
+        window.webContents.setUserAgent(window.webContents.getUserAgent().replace(/\shandbook[^\s]+/g, ''))
+    }
 
-/**
- * @param {Electron.BrowserWindowConstructorOptions | undefined} options 
- * @returns {Electron.BrowserWindowConstructorOptions} options
- */
-function setStandardOptions(options) {
-    if (!options) { options = {} }
-    options.icon = HandbookWindow.getLogo()
-    options.show = true
-    options.frame = Storage.getSettings(WindowSettings.SHOW_FRAME)
-    options.alwaysOnTop = true
-    options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
-    options.fullscreenable = false
-    options.minimizable = false
-    options.enableLargerThanScreen = true
-    options.skipTaskbar = true
-    if (!options.webPreferences) { options.webPreferences = {} }
-    options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
-    return options
+    /**
+     * @param {Electron.BrowserWindowConstructorOptions | undefined} options 
+     * @returns {Electron.BrowserWindowConstructorOptions} options
+     */
+    static #setStandardOptions(options) {
+        if (!options) { options = {} }
+        options.icon = HandbookWindow.getLogo()
+        options.frame = Storage.getSettings(WindowSettings.SHOW_FRAME)
+        options.alwaysOnTop = true
+        options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
+        options.fullscreenable = false
+        options.minimizable = false
+        options.enableLargerThanScreen = true
+        options.skipTaskbar = true
+        if (!options.webPreferences) { options.webPreferences = {} }
+        options.webPreferences.preload = path.join(__dirname, 'windowPreload.js')
+        return options
+    }
 }
 
 /**
@@ -334,7 +345,7 @@ function setStandardOptions(options) {
  * @param {number} cancelTimeout time on which the listener can be canceled.
  * @returns {Function} Cancelable listener.
  */
-function setCancelableListener(listener, cancelTimeout) {
+function createCancelableListener(listener, cancelTimeout) {
     let intervalId, skip
     return (e) => {
         skip = true

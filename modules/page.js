@@ -6,37 +6,37 @@ const { Storage } = require("./storage")
 class Page {
 
     /** @type {"" | "position" | "bounds"} */
-    static resetType = Storage.getSettings(WindowSettings.RESET_BOUNDS)
+    static #resetType = Storage.getSettings(WindowSettings.RESET_BOUNDS)
 
     /** @type {number} */
-    static verticalMargin = 10
+    static #verticalMargin = 10
 
     /** @type {number} */
-    static horizontalMargin = 10
+    static #horizontalMargin = 10
     
     /** @type {string} */
-    label
+    #label
 
     /** @type {string} Home URL. */
-    url
-
-    /** @type {string} */
-    session
-
-    /** @type {boolean} If the page is or not persisted when the current page change. */
-    persist
-
-    /** @type {boolean} If the bounds was set at least once in this session. */
-    hasBounds
+    #url
 
     /** @type {HandbookWindow} Window attached to the page. */
-    window
+    #window
+
+    /** @type {string} */
+    #session
+
+    /** @type {boolean} If the page is or not persisted when the current page change. */
+    #persist
+
+    /** @type {boolean} If the bounds was set at least once in this session. */
+    #hasBounds
 
     constructor (label, url, session, persist) {
-        this.label = label
-        this.url = url
-        this.session = session !== void 0 && session !== '' ? session : 'default'
-        this.persist = persist
+        this.#label = label
+        this.#url = url
+        this.#session = session !== void 0 && session !== '' ? session : 'default'
+        this.#persist = persist
     }
 
     /**
@@ -44,10 +44,10 @@ class Page {
      */
     createWindow() {
         if (this.hasWindow()) { throw new Error('Unexpected window replacement.') }
-        this.window = new HandbookWindow(this.createWindowOptions())
-        this.window.prependListener('closed', () => delete this.window)
-        this.window.setExternalId(this.label)
-        this.window.loadURL(this.url)
+        this.#window = new HandbookWindow(this.#createWindowOptions())
+        this.#window.prependListener('closed', () => this.#window = void 0)
+        this.#window.setExternalId(this.#label)
+        this.#window.loadURL(this.#url)
     }
 
     /**
@@ -55,11 +55,11 @@ class Page {
      * @param {true | void} recreateWindowOptions If true, the window options are going to be recreated (may change dynamic options).
      */
     recreateWindow(recreateWindowOptions) {
-        const oldWindow = this.window
+        const oldWindow = this.#window
 
-        this.window = recreateWindowOptions ? 
-            this.window.clone(this.createWindowOptions()) : 
-            this.window.clone()
+        this.#window = recreateWindowOptions ? 
+            this.#window.clone(this.#createWindowOptions()) : 
+            this.#window.clone()
     
         oldWindow.removeAllListeners('close')
         oldWindow.removeAllListeners('closed')
@@ -67,12 +67,12 @@ class Page {
     }
 
     /**
-     * Hide page's window. If the page is not persistent, (force) close the window.
+     * Hide page's window or if page is not persistent, (force) close the window.
      */
-    hideWindow() {
-        if (this.persist) {
-            this.window.isMaximized() && this.window.unmaximize()
-            this.window.hide()
+    suspendWindow() {
+        if (this.#persist) {
+            this.#window.isMaximized() && this.#window.unmaximize()
+            this.#window.hide()
         } else {
             this.closeWindow()
         }
@@ -82,31 +82,63 @@ class Page {
      * Try to close window normally, if it fails, then destroy the window.
      */
     closeWindow() {
-        this.window.forceClose()
+        this.#window.forceClose()
     }
 
     /**
-     * Return the default window options.
-     * @returns {Electron.BrowserWindowConstructorOptions} options.
+     * Retrieve bounds and apply it according to the settings.
      */
-    createWindowOptions() {
-        return { webPreferences: { partition: `persist:handbook_${this.session}` } }
+    updateWindowBounds() {
+        this.#window.setBounds(this.#getPageBounds())
     }
 
-    defineWindowBounds() {
-        this.window.setBounds(this.getPageBounds())
+    /**
+     * Compare the labels on this page with the provided page.
+     * @param {Page} page 
+     * @returns {boolean} True if the labels are equal, false if not.
+     */
+    isSameLabel(page) {
+        return this.#label === page.#label
+    }
+
+    /**
+     * Change the page's window URL. If the URL is the same or equivalent to false, nothing happens.
+     * @param {string} url 
+     * @returns {boolean} True if the URL was changed, false if not.
+     */
+    changeUrl(url) {
+        if (!url || this.#url === url) { return false }
+
+        this.#url = url
+        
+        if (this.hasWindow()) {
+            this.#window.loadURL(this.#url)
+        }
+        return true
     }
 
     /**
      * Get page label with status symbols.
      */
     getLabelWithStatus() {
-        let label = this.label
+        let label = this.#label
         if (this.hasWindow()) {
             label += ' ❏'
-            this.window.isMuted() && (label += ' ✕')
+            this.#window.isMuted() && (label += ' ✕')
         }
         return label
+    }
+
+    getLabel() {
+        return this.#label
+    }
+
+    getUrl() {
+        return this.#url
+    }
+
+    getWindow() {
+        return this.#window
     }
 
     /**
@@ -114,20 +146,20 @@ class Page {
      * @param {Page} page Page to copy fields.
      */
     copyFrom(page) {
-        this.hasBounds = page.hasBounds
-        this.persist = page.persist
+        this.#hasBounds = page.#hasBounds
+        this.#persist = page.#persist
 
-        const urlChanged = this.url !== page.url
-        const sessionChanged = this.session !== page.session
+        const urlChanged = this.#url !== page.#url
+        const sessionChanged = this.#session !== page.#session
 
-        this.session = page.session
-        this.url = page.url
+        this.#session = page.#session
+        this.#url = page.#url
 
         if (this.hasWindow()) {
             if (sessionChanged) {
                 this.recreateWindow(true)
             } else if (urlChanged) {
-                this.window.loadURL(this.url)
+                this.#window.loadURL(this.#url)
             }
         }
     }
@@ -137,7 +169,7 @@ class Page {
      * @returns {boolean} True, if there is a window associated to this page.
      */
     hasWindow() {
-        return this.window !== void 0
+        return this.#window !== void 0
     }
 
     /**
@@ -145,7 +177,7 @@ class Page {
      * @returns {boolean}
      */
     canCreateWindow() {
-        return this.label && this.url
+        return this.#label && this.#url
     }
 
     /**
@@ -155,48 +187,56 @@ class Page {
      * @param  {...any} args Arguments.
      */
     sendToWindow(eventName, ...args) {
-        this.window.webContents.send(eventName, ...args)
+        this.#window.webContents.send(eventName, ...args)
+    }
+
+    /**
+     * Return the default window options.
+     * @returns {Electron.BrowserWindowConstructorOptions} options.
+     */
+    #createWindowOptions() {
+        return { webPreferences: { partition: `persist:handbook_${this.#session}` } }
     }
 
     /**
      * If the page has bounds, return its bounds. Otherwise, calculate the bounds based on user settings.
      * @returns {Electron.Rectangle} Window bounds.
      */
-    getPageBounds() {
-        if (!this.hasBounds) {
-            this.hasBounds = true
-            if (Page.resetType) { return this.resetBounds() }
+    #getPageBounds() {
+        if (!this.#hasBounds) {
+            this.#hasBounds = true
+            if (Page.#resetType) { return this.#resetBounds() }
         }
 
         const bounds = Storage.getSettings(WindowSettings.SHARE_BOUNDS) ? 
             Storage.getSharedBounds() :
-            Storage.getWindowBounds(this.label)
+            Storage.getWindowBounds(this.#label)
 
         // Verify if the stored bounds have position
         if (bounds.x !== void 0) { return bounds }
 
-        return this.getBoundsForDefaultPosition(bounds)
+        return this.#getBoundsForDefaultPosition(bounds)
     }
 
     /**
      * Get the bounds based on the reset settings.
      * @returns {Electron.Rectangle} bounds.
      */
-    resetBounds() {
+    #resetBounds() {
         const isShared = Storage.getSettings(WindowSettings.SHARE_BOUNDS)
         
         let size
 
-        if (Page.resetType === 'bounds') {
+        if (Page.#resetType === 'bounds') {
             size = Storage.getDefaultSize()
         } else {
-            size = isShared ? Storage.getSharedBounds() : Storage.getWindowBounds(this.label)
+            size = isShared ? Storage.getSharedBounds() : Storage.getWindowBounds(this.#label)
         }
 
         // If the bounds are shared, then the bounds are reset only once
-        isShared && (Page.resetType = '')
+        isShared && (Page.#resetType = '')
 
-        return this.getBoundsForDefaultPosition(size)
+        return this.#getBoundsForDefaultPosition(size)
     }
 
     /**
@@ -205,7 +245,7 @@ class Page {
      * bounds and for distance calculation.
      * @returns {Electron.Rectangle} Window bounds.
      */
-    getBoundsForDefaultPosition(windowSize) {
+    #getBoundsForDefaultPosition(windowSize) {
         const bounds = { width: windowSize.width, height: windowSize.height }
 
         // Get user position preference
@@ -221,15 +261,15 @@ class Page {
  
          // Calc position
         switch (position) {
-            case Positions.TOP_LEFT:      bounds.y = area.y + Page.verticalMargin;      bounds.x = area.x + Page.horizontalMargin;     break
-            case Positions.TOP_CENTER:    bounds.y = area.y + Page.verticalMargin;      bounds.x = area.width / 2 | 0;                 break
-            case Positions.TOP_RIGHT:     bounds.y = area.y + Page.verticalMargin;      bounds.x = area.width - Page.horizontalMargin; break
-            case Positions.MIDDLE_LEFT:   bounds.y = area.height / 2 | 0;               bounds.x = area.x + Page.horizontalMargin;     break
+            case Positions.TOP_LEFT:      bounds.y = area.y + Page.#verticalMargin;      bounds.x = area.x + Page.#horizontalMargin;     break
+            case Positions.TOP_CENTER:    bounds.y = area.y + Page.#verticalMargin;      bounds.x = area.width / 2 | 0;                 break
+            case Positions.TOP_RIGHT:     bounds.y = area.y + Page.#verticalMargin;      bounds.x = area.width - Page.#horizontalMargin; break
+            case Positions.MIDDLE_LEFT:   bounds.y = area.height / 2 | 0;               bounds.x = area.x + Page.#horizontalMargin;     break
             case Positions.CENTER:        bounds.y = area.height / 2 | 0;               bounds.x = area.width / 2 | 0;                 break
-            case Positions.MIDDLE_RIGHT:  bounds.y = area.height / 2 | 0;               bounds.x = area.width - Page.horizontalMargin; break
-            case Positions.BOTTOM_LEFT:   bounds.y = area.height - Page.verticalMargin; bounds.x = area.x + Page.horizontalMargin;     break
-            case Positions.BOTTOM_CENTER: bounds.y = area.height - Page.verticalMargin; bounds.x = area.width / 2 | 0;                 break
-            case Positions.BOTTOM_RIGHT:  bounds.y = area.height - Page.verticalMargin; bounds.x = area.width - Page.horizontalMargin; break
+            case Positions.MIDDLE_RIGHT:  bounds.y = area.height / 2 | 0;               bounds.x = area.width - Page.#horizontalMargin; break
+            case Positions.BOTTOM_LEFT:   bounds.y = area.height - Page.#verticalMargin; bounds.x = area.x + Page.#horizontalMargin;     break
+            case Positions.BOTTOM_CENTER: bounds.y = area.height - Page.#verticalMargin; bounds.x = area.width / 2 | 0;                 break
+            case Positions.BOTTOM_RIGHT:  bounds.y = area.height - Page.#verticalMargin; bounds.x = area.width - Page.#horizontalMargin; break
         }
         
         return bounds
@@ -237,7 +277,7 @@ class Page {
 
     /**
      * Receive a list of plain pages and return as Page objects.
-     * @param {Page[]} rawPages Plain pages.
+     * @param {object[]} rawPages Plain pages.
      * @returns {Page[]} Page objects.
      */
     static fromList(rawPages) {
