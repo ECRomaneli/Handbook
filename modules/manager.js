@@ -81,7 +81,7 @@ class HandbookManager {
         if (!this.globalShortcut) { return }
 
         try {
-            globalShortcut.register(this.globalShortcut, () => { this.togglePage() })
+            globalShortcut.register(this.globalShortcut, () => { this.setupOrTogglePage() })
         } catch(e) {
             console.error('Failed to create the shortcut: ', e)
             dialog.showMessageBox(Settings.window, {
@@ -96,9 +96,13 @@ class HandbookManager {
     }
 
     /**
-     * Toggle window visibility. If no page is selected and there is at least one page, select the first one.
+     * Toggle window visibility. Roles:
+     * - If the is no pages, open "Settings".
+     * - If there is no current page, select the first one and show.
+     * - If there is no window in the current page, setup a window and show.
+     * - Otherwise, toggle visibility.
      */
-    togglePage() {
+    setupOrTogglePage() {
         if (!this.pages.length) {
             Settings.open()
             return
@@ -106,8 +110,12 @@ class HandbookManager {
 
         if (!this.currentPage) {
             this.selectPage(this.pages[0])
-        } else if (!this.currentPage.hasWindow()) {
+            return
+        }
+
+        if (!this.currentPage.hasWindow()) {
             this.setupPageWindow(this.currentPage)
+            return
         }
 
         this.currentPage.window.toggleVisibility()
@@ -176,7 +184,7 @@ class HandbookManager {
         const menuItems = []
 
         if (OS.IS_LINUX) {
-            menuItems.push({ label: 'Show / Hide Page', click: () => this.togglePage() })
+            menuItems.push({ label: 'Show / Hide Page', click: () => this.setupOrTogglePage() })
             menuItems.push({ type: 'separator' })
         }
 
@@ -184,7 +192,7 @@ class HandbookManager {
             type: 'radio', 
             checked: this.isCurrentPage(p),
             label: p.getLabelWithStatus(), 
-            click: () => this.selectPage(p, true)
+            click: () => this.selectPage(p)
         }))
 
         menuItems.push({
@@ -205,7 +213,7 @@ class HandbookManager {
                     page.window.loadURL(page.url)
                     page.window.show()
                 } else if (page.url) {
-                    this.selectPage(page, true)
+                    this.selectPage(page)
                 }
             }
         })
@@ -277,7 +285,7 @@ class HandbookManager {
                 { label: 'Open DevTools', click: () => win.webContents.openDevTools() },
             ] : 
             [
-                { label: 'Show', click: () => this.selectPage(page, true) },
+                { label: 'Show', click: () => this.selectPage(page) },
                 { label: win.isMuted() ? 'Unmute' : 'Mute', click: () => win.toggleMute() },
                 { label: 'Close', click: () => page.closeWindow() },
             ]
@@ -299,24 +307,23 @@ class HandbookManager {
         }
 
         this.tray.on('right-click', popUpMenu)
-        this.tray.on('click', () => this.togglePage())
+        this.tray.on('click', () => this.setupOrTogglePage())
     }
 
     /**
-     * Select the page, configure the window, and show it if necessary. If trying to select the current page,
+     * Select the page, configure the window, and show it. If trying to select the current page,
      * only toggle the visibility.
      * @param {Page} page Page to be selected.
-     * @param {true | void} forceShow If true, the page is shown. Otherwise, the page's visibility will not be changed.
      */
-    selectPage(page, forceShow) {
-        if (this.isCurrentPage(page)) { return this.togglePage() }
+    selectPage(page) {
+        if (this.isCurrentPage(page)) { return this.setupOrTogglePage() }
 
         this.setupPageWindow(page)
 
         const oldPage = this.currentPage
         this.currentPage = page
 
-        forceShow && !page.window.isVisible() && this.togglePage()
+        !page.window.isVisible() && page.window.show()
         oldPage?.hasWindow() && oldPage.hideWindow()
     }
 

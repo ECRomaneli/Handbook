@@ -315,7 +315,7 @@ function fixUserAgent(window) {
 function setStandardOptions(options) {
     if (!options) { options = {} }
     options.icon = HandbookWindow.getLogo()
-    options.show = false
+    options.show = true
     options.frame = Storage.getSettings(WindowSettings.SHOW_FRAME)
     options.alwaysOnTop = true
     options.backgroundColor = Storage.getSettings(WindowSettings.BACKGROUND_COLOR)
