@@ -1,15 +1,22 @@
-const { BrowserWindow, ipcMain } = require('electron')
+const { BrowserWindow, ipcMain, nativeTheme } = require('electron')
 const { WindowSettings } = require('./constants')
 const { Storage } = require('./storage')
 const { HandbookWindow } = require('./window')
 const path = require('node:path')
 const contextMenu = require('electron-context-menu')
 
-class Settings {
-    static open() {
-        if (Settings.window) { return }
+class HandbookSettings {
+    /** @const {BrowserWindow} */
+    #window
+
+    constructor () {
+        this.#registerRenderListeners()
+    }
+
+    open() {
+        if (this.#window) { return }
         
-        Settings.window = new BrowserWindow({
+        this.#window = new BrowserWindow({
             icon: HandbookWindow.getLogo(),
             width: 700,
             height: 640,
@@ -23,57 +30,62 @@ class Settings {
             }
         })
 
-        Settings.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
-        Settings.buildContextMenu()
-        Settings.registerWindowMoveListeners()
-        Settings.window.loadFile(path.join(__dirname, '..', 'web', 'settings', 'settings.html'))
-
-        Settings.window.show()
+        this.#window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+        this.#buildContextMenu()
+        this.#window.loadFile(path.join(__dirname, '..', 'web', 'settings', 'settings.html'))
+        this.#window.show()
     }
 
-    static setupCrossSecurityPolicy() {
-        
+    close() {
+        if (!this.#window.isDestroyed()) {
+            this.#window.close()
+        }
+        this.#window = null
     }
 
-    static registerWindowMoveListeners() {
+    getWindow() {
+        return this.#window
+    }
+
+    #registerRenderListeners() {
         let position
 
         ipcMain.on('settings.dragStart', () => {
-            position = Settings.window.getPosition()
+            position = this.#window.getPosition()
         })
 
         ipcMain.on('settings.dragging', (_e, offset) => {
-            Settings.window.setPosition(position[0] + offset.x, position[1] + offset.y)
+            this.#window.setPosition(position[0] + offset.x, position[1] + offset.y)
         })
+
+        // Handle UI [x] button
+        ipcMain.on('settings.close', () => Settings.close())
     }
 
-    static close() {
-        if (!Settings.window.isDestroyed()) {
-            Settings.window.close()
-        }
-        Settings.window = null
-    }
-
-    static onPagesUpdated(listener) {
-        ipcMain.on('storage.pages.updated', listener)
-    }
-
-    static onSettingsUpdated(listener) {
-        ipcMain.on('storage.settings.updated', listener)
-    }
-
-    static buildContextMenu() {
+    #buildContextMenu() {
         contextMenu({
-            window: Settings.window,
+            window: this.#window,
             append: () => [
                 { role: 'toggleDevTools' },
                 { role: 'close' }
             ]
         })
     }
+
+    /**
+     * @param { (event: Electron.IpcMainEvent, pages: object[]) => void } listener 
+     */
+    onPagesUpdated(listener) {
+        ipcMain.on('storage.pages.updated', listener)
+    }
+
+    /**
+     * @param { (event: Electron.IpcMainEvent, id: string, value: string) => void } listener 
+     */
+    onSettingsUpdated(listener) {
+        ipcMain.on('storage.settings.updated', listener)
+    }
 }
 
-// Handle UI [x] button
-ipcMain.on('settings.close', () => Settings.close())
-
+const Settings = new HandbookSettings()
 module.exports = { Settings }

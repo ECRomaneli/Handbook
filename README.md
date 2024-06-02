@@ -195,8 +195,7 @@ cd Handbook
 ```
 
 **Step 3: Install Node**
-- Ensure that Node is installed. This project has been tested with Node versions ranging from `16.x` to ```markdown
-`21.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
+- Ensure that Node is installed. This project has been tested with Node versions ranging from `16.x` to `21.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
 - For guidance on installing Node, please visit the [official Node website](https://nodejs.org/) for detailed instructions.
 
 **Step 4: Install Dependencies**
