@@ -173,8 +173,6 @@ class HandbookManager {
      * Check for page changes and update the context menu.
      */
     refreshContextMenu() {
-        const activePages = this.getAllActivePages()
-
         const menuItems = []
 
         if (OS.IS_LINUX) {
@@ -214,34 +212,37 @@ class HandbookManager {
 
         menuItems.push({ type: 'separator' })
 
-        menuItems.push({ id: 'window', label: 'Current Window', enabled: !!this.currentPage?.hasWindow(), submenu: [
-            { label: 'Back', click: () => this.currentPage.window.webContents.goBack() },
-            { label: 'Forward', click: () => this.currentPage.window.webContents.goForward() },
-            { type: 'separator' },
-            { label: 'Refresh', click: () => this.currentPage.window.reload() },
-            { label: 'Reload', click: () => this.currentPage.window.reset() },
-            { type: 'separator' },
-            { label: 'Copy URL', click: () => clipboard.writeText(this.currentPage.window.webContents.getURL()) },
-            { label: 'Open DevTools', click: () => this.currentPage.window.webContents.openDevTools() },
-            { type: 'separator' },
-            { label: 'Mute / Unmute', click: () => this.currentPage.window.toggleMute() },
-            { label: 'Show / Hide', click: () => this.currentPage.window.toggleVisibility() },
-            { label: 'Close', click: () => this.currentPage.closeWindow() },
-        ]})
+        const activePages = this.getAllActivePages()
 
         if (activePages.length > 0) {
-            menuItems.push({ type: 'separator' })
+            const activePagesMenu = { label: 'Active Pages', submenu: [] }
+            menuItems.push(activePagesMenu)
 
-            if (activePages.length > 1) {
-                menuItems.push({ id: 'close-other-windows', label: 'Close Other Windows', click: () => 
-                    activePages.filter(p => !this.isCurrentPage(p)).forEach(p => p.closeWindow())
+            if (this.currentPage.hasWindow()) {
+                activePagesMenu.submenu.push({
+                    label: this.currentPage.getLabelWithStatus(), 
+                    submenu: this.createPageSubmenu(this.currentPage)
                 })
+
+                activePages.length > 1 && activePagesMenu.submenu.push({ type: 'separator' })
             }
 
-            menuItems.push({ id: 'close-all-windows', label: 'Close All Windows', click: () => {
-                activePages.forEach(p => p.closeWindow())
-            }})
+            if (activePages.length > 1 || !this.isCurrentPage(activePages[0])) {
+                const otherActivePages = activePages.filter(p => !this.isCurrentPage(p))
+                
+                otherActivePages.forEach(p => {
+                    activePagesMenu.submenu.push({ label: p.getLabelWithStatus(), submenu: this.createPageSubmenu(p) })
+                })
+
+                menuItems.push({ label: 'Close Other Pages', click: () => 
+                    otherActivePages.forEach(p => p.closeWindow())
+                })
+            }
         }
+
+        menuItems.push({ label: 'Close All Pages', enabled: !!activePages.length, click: () => {
+            activePages.forEach(p => p.closeWindow())
+        }})
         
         menuItems.push({ type: 'separator' })
 
@@ -251,6 +252,36 @@ class HandbookManager {
         this.contextMenu = Menu.buildFromTemplate(menuItems)
 
         if (OS.IS_LINUX) { this.tray.setContextMenu(this.contextMenu) }
+    }
+
+    /**
+     * Create page submenu in the context menu.
+     * @param {Page} page 
+     */
+    createPageSubmenu(page) {
+        const win = page.window
+        
+        return this.isCurrentPage(page) ?
+            [
+                { label: win.isVisible() ? 'Hide' : 'Show', click: () => win.toggleVisibility() },
+                { label: win.isMuted() ? 'Unmute' : 'Mute', click: () => win.toggleMute() },
+                { label: 'Close', click: () => page.closeWindow() },
+                { type: 'separator' },
+                { label: 'Back', click: () => win.webContents.goBack() },
+                { label: 'Forward', click: () => win.webContents.goForward() },
+                { type: 'separator' },
+                { label: 'Refresh', click: () => win.reload() },
+                { label: 'Reload', click: () => win.reset() },
+                { type: 'separator' },
+                { label: 'Copy URL', click: () => clipboard.writeText(win.webContents.getURL()) },
+                { label: 'Open DevTools', click: () => win.webContents.openDevTools() },
+            ] : 
+            [
+                { label: 'Show', click: () => this.selectPage(page, true) },
+                { label: win.isMuted() ? 'Unmute' : 'Mute', click: () => win.toggleMute() },
+                { label: 'Close', click: () => page.closeWindow() },
+            ]
+
     }
 
     registerDynamicContextMenu() {
@@ -275,9 +306,9 @@ class HandbookManager {
      * Select the page, configure the window, and show it if necessary. If trying to select the current page,
      * only toggle the visibility.
      * @param {Page} page Page to be selected.
-     * @param {boolean} show If true, the page is shown. Otherwise, the page visibility will not be changed.
+     * @param {true | void} forceShow If true, the page is shown. Otherwise, the page's visibility will not be changed.
      */
-    selectPage(page, show) {
+    selectPage(page, forceShow) {
         if (this.isCurrentPage(page)) { return this.togglePage() }
 
         this.setupPageWindow(page)
@@ -285,8 +316,8 @@ class HandbookManager {
         const oldPage = this.currentPage
         this.currentPage = page
 
-        show && !page.window.isVisible() && this.togglePage()
-        oldPage?.hasWindow() && oldPage.closeWindow(true)
+        forceShow && !page.window.isVisible() && this.togglePage()
+        oldPage?.hasWindow() && oldPage.hideWindow()
     }
 
     /**
@@ -330,11 +361,16 @@ class HandbookManager {
     }
 
     /**
-     * Return all pages including not manageable ones (e.g. "Clipboard URL" page).
-     * @returns {Page[]} List of all pages.
+     * Return all pages.
+     * @param {true | void} excludeCustomPages Exclude custom pages (e.g. "Clipboard URL" page).
+     * @returns {Page[]} List containing all pages.
      */
-    getAllPages() {
-        return [...this.pages, this.fromClipboardPage]
+    getAllPages(excludeCustomPages) {
+        const pages = [...this.pages]
+        if (!excludeCustomPages) {
+            pages.push(this.fromClipboardPage)
+        }
+        return pages
     }
 
     /**

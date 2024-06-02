@@ -236,12 +236,12 @@ class HandbookWindow extends BrowserWindow {
             .on('did-create-window', (window) => {
                 const showHandler = () => window.show()
                 const hideHandler = () => window.hide()
-                super.on('show', showHandler)
-                super.on('hide', hideHandler)
+                this.on('show', showHandler)
+                this.on('hide', hideHandler)
 
                 window.on('close', () => {
-                    super.off('show', showHandler)
-                    super.off('hide', hideHandler)
+                    this.off('show', showHandler)
+                    this.off('hide', hideHandler)
                 })
 
                 contextMenu({ window: window })

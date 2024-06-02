@@ -67,16 +67,22 @@ class Page {
     }
 
     /**
-     * Destroy page's window. If the "hideIfPersistent" is true, the window is going to be hidden instead.
-     * @param {true | void} hideIfPersistent If true, persistent windows will be hidden instead of closed.
+     * Hide page's window. If the page is not persistent, (force) close the window.
      */
-    closeWindow(hideIfPersistent) {
-        if (hideIfPersistent && this.persist) {
+    hideWindow() {
+        if (this.persist) {
             this.window.isMaximized() && this.window.unmaximize()
             this.window.hide()
         } else {
-            this.window.forceClose()
+            this.closeWindow()
         }
+    }
+
+    /**
+     * Try to close window normally, if it fails, then destroy the window.
+     */
+    closeWindow() {
+        this.window.forceClose()
     }
 
     /**
