@@ -114,7 +114,7 @@ class HandbookManager {
         }
 
         if (!this.#currentPage.hasWindow()) {
-            this.#setupPageWindow(this.#currentPage)
+            this.#setupCurrentPage()
             return
         }
 
@@ -123,17 +123,18 @@ class HandbookManager {
 
     /**
      * Set up the window page, creating it if it does not exist, and set the window bounds.
-     * @param {Page} page 
      */
-    #setupPageWindow(page) {
-        if (!page.hasWindow()) {
-            page.createWindow()
-            page.getWindow().on('state-change', () => {
+    #setupCurrentPage() {
+        if (!this.#currentPage.hasWindow()) {
+            this.#currentPage.createWindow()
+            this.#currentPage.getWindow().on('state-change', () => {
                 this.#refreshContextMenu()
                 this.#updateTrayIcon()
             })
+            this.#refreshContextMenu()
+            this.#updateTrayIcon()
         }
-        page.updateWindowBounds()
+        this.#currentPage.updateWindowBounds()
     }
 
     /**
@@ -314,10 +315,9 @@ class HandbookManager {
     #selectPage(page) {
         if (this.#isCurrentPage(page)) { return this.#setupOrTogglePage() }
 
-        this.#setupPageWindow(page)
-
         const oldPage = this.#currentPage
         this.#currentPage = page
+        this.#setupCurrentPage()
 
         !page.getWindow().isVisible() && page.getWindow().show()
         oldPage?.hasWindow() && oldPage.suspendWindow()
