@@ -1,15 +1,18 @@
-const { ipcRenderer } = require('electron')
-const getSettings = async (id) => await ipcRenderer.invoke('storage.settings', id)
-const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY <= actionAreaHeight
+const $bridge = (({ ipcRenderer }, EventEmitter) => {
+    const $bus = new EventEmitter()
+    ipcRenderer.on('storage.settings.updated', (_e, id, value) => $bus.emit(`settings.${id}.updated`, value))
+    return {
+        onSettingsUpdated: (id, fn) => $bus.on(`settings.${id}.updated`, fn),
+        getSettings: async (id) => await ipcRenderer.invoke('storage.settings', id),
+        notifyManager: (e, ...args) => ipcRenderer.send(`manager.currentPage.${e}`, ...args)
+    }
+}) (require('electron'), require('node:events'))
 
-// Mini event bus to capture settings changes and call the listeners
-const fns = {}
-ipcRenderer.on('storage.settings.updated', (_e, id, value) => fns[id]?.forEach(fn => fn.call(this, value)))
-const onSettingsUpdated = (id, fn) => (fns[id] ?? (fns[id] = [])).push(fn)
+const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY <= actionAreaHeight
 
 // Register actions after DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
-    const showFrame = await getSettings('show_frame')
+    const showFrame = await $bridge.getSettings('show_frame')
 
     setupShortcut()
     !showFrame && registerActions()
@@ -19,8 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Actions Logic
 
 async function registerActions() {
-    let actionArea = await getSettings('action_area')
-    onSettingsUpdated('action_area', (value) => actionArea = value)
+    let actionArea = await $bridge.getSettings('action_area')
+    $bridge.onSettingsUpdated('action_area', (value) => actionArea = value)
 
     const originalCursor = document.body.style.cursor
 
@@ -28,13 +31,13 @@ async function registerActions() {
         if (!isLeftClickInActionArea(e, actionArea)) { return }
         e.preventDefault()
         e.stopImmediatePropagation()
-        ipcRenderer.send('manager.currentPage.toggleMaximize')
+        $bridge.notifyManager('toggleMaximize')
     }, true)
 
     document.addEventListener('mousedown', (e) => {
         if (!isLeftClickInActionArea(e, actionArea)) { return }
 
-        ipcRenderer.send('manager.currentPage.dragStart')
+        $bridge.notifyManager('dragStart')
 
         const offsetX = e.screenX
         const offsetY = e.screenY
@@ -43,7 +46,7 @@ async function registerActions() {
     
         const onMouseMove = (e) => {
             e.preventDefault()
-            ipcRenderer.send('manager.currentPage.dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
+            $bridge.notifyManager('dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
         }
     
         const onMouseUp = () => {
@@ -58,13 +61,13 @@ async function registerActions() {
 }
 
 async function setupShortcut() {
-    let hideShortcut = await getSettings('hide_shortcut')
-    onSettingsUpdated('hide_shortcut', (value) => hideShortcut = value)
+    let hideShortcut = await $bridge.getSettings('hide_shortcut')
+    $bridge.onSettingsUpdated('hide_shortcut', (value) => hideShortcut = value)
 
     document.addEventListener('keydown', (e) => {
         if (hideShortcut && hideShortcut === getKeyCombination(e)) {
             e.preventDefault()
-            ipcRenderer.send('manager.currentPage.hide')
+            $bridge.notifyManager('hide')
         }
     })
 }
