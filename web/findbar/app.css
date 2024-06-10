@@ -1,0 +1,39 @@
+.divider {
+    width: 1px;
+    height: 100%;
+    background-color: #ccc;
+}
+
+#find-bar {
+    color: #626262;
+    font-size: .75rem;
+}
+
+#find-input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+#control-btns {
+    display: flex;
+    font-size: 1rem;
+    user-select: none;
+}
+
+#control-btns > * {
+    border-radius: 50%;
+    cursor: default;
+    width: 28px;
+    line-height: 28px;
+    text-align: center;
+    transition: .1s linear all;
+}
+
+#control-btns > *:hover {
+    background-color: #ccc;
+}
+
+#control-btns > *:active {
+    background-color: #bbb;
+}
