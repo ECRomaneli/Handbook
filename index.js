@@ -9,7 +9,7 @@ app.whenReady().then(() => {
     app.dock.hide()
   }
   app.on('window-all-closed', () => {})
-  //testFindBar()
+  testFindBar()
 
   Manager.getInstance()
 })

@@ -1,27 +1,72 @@
-.divider {
-    width: 1px;
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    height: 100vh;
+}
+
+nav[data-theme="light"] {
+    --bg-color: #fff;
+    --color: #626262;
+    --input-color: #626262;
+    --btn-hover-color: #ccc;
+    --btn-active-color: #bbb;
+}
+
+nav[data-theme="dark"] {
+    --bg-color: #1f1f1f;
+    --color: #a9a9aa;
+    --input-color: #e3e3e3;
+    --btn-hover-color: #333;
+    --btn-active-color: #444;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    width: 100%;
     height: 100%;
-    background-color: #ccc;
-}
-
-#find-bar {
-    color: #626262;
+    padding: .75rem;
+    font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    background-color: var(--bg-color);
+    color: var(--color);
     font-size: .75rem;
+    border-radius: 10px;
 }
 
-#find-input {
+nav > :not(:last-child) {
+    margin-right: .75rem;
+}
+
+input {
+    width: 100%;
     background-color: transparent;
+    color: var(--input-color);
     border: none;
     outline: none;
 }
 
-#control-btns {
+.divider {
+    width: 2px;
+    height: 100%;
+    background-color: var(--btn-hover-color);
+}
+
+.btn-group {
     display: flex;
     font-size: 1rem;
     user-select: none;
 }
 
-#control-btns > * {
+.btn-group > :not(:last-child) {
+    margin-right: .5rem;
+}
+
+.btn-group > div {
     border-radius: 50%;
     cursor: default;
     width: 28px;
@@ -30,10 +75,10 @@
     transition: .1s linear all;
 }
 
-#control-btns > *:hover {
-    background-color: #ccc;
+.btn-group > div:hover {
+    background-color: var(--btn-hover-color);
 }
 
-#control-btns > *:active {
-    background-color: #bbb;
+.btn-group > div:active {
+    background-color: var(--btn-active-color);
 }
