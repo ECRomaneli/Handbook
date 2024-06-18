@@ -1,4 +1,4 @@
-const { app } = require('electron')
+const { app, globalShortcut } = require('electron')
 const { Manager } = require('./lib/manager')
 const { OS } = require('./lib/constants')
 
@@ -7,6 +7,7 @@ app.whenReady().then(() => {
     app.dock.hide()
   }
   app.on('window-all-closed', () => {})
+  app.on('quit', () => { globalShortcut.unregisterAll() })
 
   Manager.getInstance()
 })
