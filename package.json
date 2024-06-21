@@ -49,12 +49,12 @@
     "@electron-forge/maker-squirrel": "^7.3.0",
     "@electron-forge/maker-zip": "^7.3.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.3.0",
-    "electron": "^30.0.7",
+    "electron": "^31.0.2",
     "gh-release": "^7.0.2"
   },
   "dependencies": {
     "electron-context-menu": "^3.6.1",
-    "electron-findbar": "^0.5.0",
+    "electron-findbar": "^0.6.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "vue": "^3.4.19"
