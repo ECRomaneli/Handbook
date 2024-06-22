@@ -12,28 +12,28 @@ jobs:
           - os: macos-14 # M1
             package: darwin-universal
             extension: app
-            source: out/make/zip/darwin/universal/handbook*.zip
-            target: out/make/handbook-darwin-arm64.zip
+            source: out/make/zip/darwin/universal/Handbook*.zip
+            target: out/make/Handbook-darwin-arm64.zip
           - os: macos-13
             package: darwin-x64
             extension: app
-            source: out/make/zip/darwin/x64/handbook*.zip
-            target: out/make/handbook-darwin-x64.zip
+            source: out/make/zip/darwin/x64/Handbook*.zip
+            target: out/make/Handbook-darwin-x64.zip
           - os: ubuntu-22.04
             package: linux-x64
             extension: deb
             source: out/make/deb/x64/handbook*.deb
-            target: out/make/handbook-x64.deb
+            target: out/make/Handbook-x64-Setup.deb
           - os: ubuntu-22.04
             package: linux-x64
             extension: rpm
-            source: out/make/rpm/x64/handbook*.rpm
-            target: out/make/handbook-x64.rpm
+            source: out/make/rpm/x64/Handbook*.rpm
+            target: out/make/Handbook-x64-Setup.rpm
           - os: windows-2022
             package: win32-x64
             extension: exe
-            source: out/make/squirrel.windows/x64/handbook*.exe
-            target: out/make/handbook-x64.exe
+            source: out/make/squirrel.windows/x64/Handbook*.exe
+            target: out/make/Handbook-x64-Setup.exe
 
     runs-on: ${{ matrix.os }}
 
