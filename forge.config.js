@@ -21,7 +21,7 @@ const pkg = require('./package.json'),
 module.exports = {
   packagerConfig: {
     icon: data.iconIcns,
-    executableName: data.name,
+    executableName: process.platform === 'linux' ? data.name : data.productName,
     appCategoryType: 'public.app-category.utilities',
     appCopyright: data.copyright,
     asar: true,
