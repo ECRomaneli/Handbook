@@ -46,16 +46,29 @@ Read about the app signature in "[About App Signature](#about-app-signature)".
 
 ### Mac OS
 
-Download the zip file for the correct processor architecture, unzip it, and copy `handbook.app` to the "Applications" folder.
+#### Download the ZIP File
 
-### Troubleshooting
+ [Download the ZIP file](https://github.com/ECRomaneli/Handbook/releases) corresponding to your processor architecture (e.g., `Handbook-darwin-x64.zip` for Intel processors or `Handbook-darwin-arm64.zip` for Apple Silicon).
+
+#### Unzip the File
+
+- Locate the downloaded ZIP file in your Downloads folder or the location where you saved it.
+- Double-click the ZIP file to unzip it. This will create a Handbook.app file.
+
+#### Copy to Applications Folder
+
+- Open Finder and navigate to the location of the Handbook.app file.
+- Drag and drop Handbook.app into the **"Applications" folder**. 
+    - Alternatively, you can right-click on `Handbook.app`, select "Copy", then navigate to the "Applications" folder and select "Paste".
+
+#### Troubleshooting
 
 #### Security Warning
 
 As Handbook is not signed, it may not open directly and could trigger a security warning. To bypass it:
 
 1. Open the "Applications" folder.
-2. Press "Ctrl + Left Click" on the Handbook icon.
+2. Press `Ctrl + Left Click` on the Handbook icon.
 3. Select "Open" in the context menu.
 4. Proceed to "Open" the app in the security warning screen.
 
@@ -65,27 +78,68 @@ After these steps, the app will no longer present the warning.
 
 Source: [Apple Support](https://support.apple.com/en-us/guide/mac-help/mh40616/mac).
 
-### Debian-based distributions
+### Linux distributions
 
-1. Download the .deb package.
-2. Open a terminal window.
-3. Navigate to the directory where the .deb package is located using the `cd` command.
-4. Run the command `sudo dpkg -i handbook-x64.deb`.
-5. Enter your password when prompted.
-6. After installation, you can launch the application from the application menu.
+#### Download the right Package
+- Visit the [Handbook releases page](https://github.com/ECRomaneli/Handbook/releases) and download the package suitable for your system (e.g. `.dev` for Debian-based distributions and `.rpm` for Red Hat-based).
 
-### Red Hat-based distributions
+#### Open a Terminal Window
+- Press `Ctrl + Alt + T` to open a terminal window.
 
-1. Download the .rpm package.
-2. Open a terminal window.
-3. Navigate to the directory where the .rpm package is located using the `cd` command.
-4. Run the command `sudo rpm -i handbook-x64.rpm`.
-5. Enter your password when prompted.
-6. After installation, you can launch the application from the application menu.
+#### Navigate to the Download Directory
+- Use the `cd` command to navigate to the directory where the package is located. For example, if the package is in your Downloads folder, you can use:
+    ```bash
+    cd ~/Downloads
+    ```
+
+#### Install the Package
+
+##### Debian-based (DEB)
+
+- Run the following command to install the package, replacing `Handbook-x64-Setup.deb` with the actual filename if it is different:
+    ```bash
+    sudo dpkg -i Handbook-x64-Setup.deb
+    ```
+- When prompted, enter your password to authorize the installation.
+
+##### Red Hat-based (RPM)
+
+- Run the following command to install the package, replacing `Handbook-x64-Setup.rpm` with the actual filename if it is different:
+    ```bash
+    sudo rpm -i Handbook-x64-Setup.rpm
+    ```
+- When prompted, enter your password to authorize the installation.
+
+#### Launch Handbook
+ - After the installation is complete, you can launch Handbook from the application menu.
 
 ### Windows
 
-Download the `.exe` executable, open it, and follow the steps.
+#### Download the Installer
+
+Download the [Handbook-x64-Setup.exe](https://github.com/ECRomaneli/Handbook/releases) from release page.
+
+#### Run the Installer
+
+- Locate the downloaded Handbook-x64-Setup.exe file in your Downloads folder or the location you saved it.
+- Double-click the file to open it and begin the installation process.
+- Follow the on-screen instructions to complete the installation.
+- Wait for the depackaging process to finish.
+- Once the installation is complete, the app will be available in the desktop and the application menu.
+
+#### Verify the Tray Icons
+
+- Look for the Handbook icon in the system tray. This is located in the bottom-right corner of your screen, near the clock.
+
+#### Expand the Tray Icons
+
+- If you don't see the Handbook icon in the system tray, it might be hidden.
+- Click the upward arrow (^) icon to expand the tray icons.
+
+#### Pin the Handbook Icon for Quick Access
+
+- Find the Handbook icon in the expanded tray.
+- Click and drag the Handbook icon from the expanded tray area to the main area of the system tray. This will ensure it is always visible and easily accessible.
 
 ## Getting Started
 

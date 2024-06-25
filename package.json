@@ -1,5 +1,6 @@
 {
   "name": "handbook",
+  "productName": "Handbook",
   "version": "1.0.0",
   "description": "Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use. Its primary goal is to assist in managing RAM memory efficiently while providing quick access to essential information. With Handbook, users can seamlessly optimize their workflow by accessing necessary data without cluttering their screen space.",
   "author": "ECRomaneli",
@@ -12,9 +13,13 @@
   "bugs": { "url": "https://github.com/ECRomaneli/Handbook/issues" },
   "keywords": [
     "handbook",
+    "hand book",
+    "BrowserWindow",
     "browser",
     "electron",
+    "chrome",
     "chromium",
+    "romaneli",
     "ecromaneli"
   ],
   "main": "index.js",
@@ -54,7 +59,7 @@
   },
   "dependencies": {
     "electron-context-menu": "^3.6.1",
-    "electron-findbar": "^0.6.1",
+    "electron-findbar": "^0.6.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "vue": "^3.4.19"
