@@ -18,9 +18,9 @@ app.component('PageTable', {
                             <img @click="removePage(index)" class="svg-icon square-24 c-pointer" :src="$image.src('trash')" alt="remove page" title="Remove">
                         </div>
                     </td>
-                    <td><input type="text" v-model="page.label"   placeholder="Label"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
-                    <td><input type="text" v-model="page.url"     placeholder="URL"     class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
-                    <td><input type="text" v-model="page.session" placeholder="Default" class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)"></input></td>
+                    <td><input type="text" v-model="page.label"   placeholder="Label"   class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)" /></td>
+                    <td><input type="text" v-model="page.url"     placeholder="URL"     class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)" /></td>
+                    <td><input type="text" v-model="page.session" placeholder="Default" class="form-control" @mousedown="draggable = false" @mouseleave="draggable = true" @blur="emitUpdate(page)" /></td>
                     <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" name="persist" v-model="page.persist" @change="emitUpdate(page)"></div></td>
                 </tr>
                 <tr class="c-pointer" @click="addPage()">
