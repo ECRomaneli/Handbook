@@ -46,7 +46,7 @@ app.component('PageTable', {
                 const last = this.list[this.list.length - 1]
                 if (!last.label && !last.url) { return }
             }
-            this.list.push({ label: '', url: '', session: '', persist: false })
+            this.list.push({ id: `${Date.now()}${this.list.length}`, label: '', url: '', session: '', persist: false })
         },
 
         removePage(index) { this.$emit('remove', this.$clone(this.list.splice(index, 1)[0])) },
