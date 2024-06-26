@@ -1,23 +1,22 @@
-const $bridge = (({ ipcRenderer }, EventEmitter) => {
+const $bridge = ((ipc, EventEmitter) => {
     const $bus = new EventEmitter()
-    ipcRenderer.on('storage.settings.updated', (_e, id, value) => $bus.emit(`settings.${id}.updated`, value))
+    ipc.on('storage.settings.updated', (_e, id, value) => $bus.emit(`settings.${id}.updated`, value))
     return {
         onSettingsUpdated: (id, fn) => $bus.on(`settings.${id}.updated`, fn),
-        getSettings: async (id) => await ipcRenderer.invoke('storage.settings', id),
-        notifyManager: (e, ...args) => ipcRenderer.send(`manager.currentPage.${e}`, ...args)
+        getSettings: async (id) => await ipc.invoke('storage.settings', id),
+        notifyManager: (e, ...args) => ipc.send(`manager.currentPage.${e}`, ...args)
     }
-}) (require('electron'), require('node:events'))
-
-const isLeftClickInActionArea = (event, actionAreaHeight) => event.button === 0 && event.clientY <= actionAreaHeight
+}) (require('electron').ipcRenderer, require('node:events'))
 
 // Register actions after DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
-    const showFrame = await $bridge.getSettings('show_frame')
-
     setupShortcut()
+
+    const showFrame = await $bridge.getSettings('show_frame')
     !showFrame && registerActions()
+
     console.info('Preloaded')
-})
+}, true)
 
 // Actions Logic
 
@@ -26,6 +25,7 @@ async function registerActions() {
     $bridge.onSettingsUpdated('action_area', (value) => actionArea = value)
 
     const originalCursor = document.body.style.cursor
+    const isLeftClickInActionArea = (e, height) => e.button === 0 && e.clientY <= height
 
     document.addEventListener('dblclick', (e) => {
         if (!isLeftClickInActionArea(e, actionArea)) { return }
