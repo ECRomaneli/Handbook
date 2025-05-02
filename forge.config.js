@@ -1,5 +1,5 @@
-const pkg = require('./package.json'),
-      data = {
+import pkg from './package.json' with { type: 'json' }
+const data = {
         homepage: pkg.homepage,
         license: pkg.license,
         copyright: `${pkg.license} license - Copyright (c) ${new Date().getFullYear()} Emerson Capuchi Romaneli`,
@@ -18,7 +18,7 @@ const pkg = require('./package.json'),
 // https://electron.github.io/packager/main/interfaces/Options.html
 // https://www.electronforge.io/config/configuration
 
-module.exports = {
+export default {
   packagerConfig: {
     icon: data.iconIcns,
     executableName: process.platform === 'linux' ? data.name : data.productName,

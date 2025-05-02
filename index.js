@@ -1,10 +1,12 @@
-const { app, globalShortcut } = require('electron')
+import { app, globalShortcut } from 'electron'
+import squirrel from 'electron-squirrel-startup'
+
 
 // Squirrel startup handling
-process.platform === 'win32' && require('electron-squirrel-startup') && app.quit()
+process.platform === 'win32' && squirrel && app.quit()
 
-const { OS } = require('./lib/constants')
-const { Manager } = require('./lib/manager')
+import { OS } from './lib/constants.js';
+import { Manager } from './lib/manager.js';
 
 app.on('window-all-closed', () => {})
 app.on('quit', () => { globalShortcut.unregisterAll() })
