@@ -1,5 +1,10 @@
 const Vue = require("vue")
-window.addEventListener('load', () => { app.mount('#app') })
+window.addEventListener('load', async () => {
+    // await loadScripts('providers')
+    // await loadScripts('plugins')
+    // await loadScripts('components')
+    app.mount('#app')
+})
 
 const app = Vue.createApp({
     template: /*html*/ `
@@ -10,14 +15,14 @@ const app = Vue.createApp({
         </div>
         <div class="w-100 d-flex flex-column pt-4">
             <div>
-                <span class="h5 ps-4">Settings</span>
+                <span class="h5 ps-4">Preferences</span>
             </div>
             <ul class="inline-tabs mt-3 px-4">
                 <li @click="tab = 'pages'">
                     <button class="tab" :class="{ active: tab === 'pages' }">Pages</button>
                 </li>
-                <li @click="tab = 'window'">
-                    <button class="tab" :class="{ active: tab === 'window' }">Window</button>
+                <li @click="tab = 'settings'">
+                    <button class="tab" :class="{ active: tab === 'settings' }">Settings</button>
                 </li>
                 <li @click="tab = 'about'">
                     <button class="tab" :class="{ active: tab === 'about' }">About</button>
@@ -28,8 +33,8 @@ const app = Vue.createApp({
                 <div class="tab-pane show" :class="{ active: tab === 'pages' }">
                     <page-settings></page-settings>
                 </div>
-                <div class="tab-pane container" :class="{ active: tab === 'window' }">
-                    <window-settings></window-settings>
+                <div class="tab-pane container" :class="{ active: tab === 'settings' }">
+                    <settings></settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>

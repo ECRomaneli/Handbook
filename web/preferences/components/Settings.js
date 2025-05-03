@@ -1,4 +1,4 @@
-app.component('WindowSettings', {
+app.component('Settings', {
     template: /*html*/ `
         <template v-if="inputs">
             <div class="h6 mt-2">General</div>
@@ -53,29 +53,29 @@ app.component('WindowSettings', {
             this.inputs = { 
                 general: [
                     {
-                        id: this.$const.WindowSettings.TRAY_LONGPRESS,
+                        id: this.$const.Settings.TRAY_LONGPRESS,
                         label: 'Tray icon long-press timeout',
                         description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
-                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.WindowSettings.TRAY_LONGPRESS), unit: 'ms' }
+                        data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.Settings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                     {
-                        id: this.$const.WindowSettings.ACTION_AREA,
+                        id: this.$const.Settings.ACTION_AREA,
                         label: 'Action area height',
                         description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
-                        data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.WindowSettings.ACTION_AREA), unit: 'px' }
+                        data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.Settings.ACTION_AREA), unit: 'px' }
                     },
                 ],
                 appearance: [
                     {
-                        id: this.$const.WindowSettings.SHOW_FRAME,
+                        id: this.$const.Settings.SHOW_FRAME,
                         label: 'Show frame',
-                        data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
                     },
                     {
-                        id: this.$const.WindowSettings.APP_THEME,
+                        id: this.$const.Settings.APP_THEME,
                         label: 'Preferred theme',
                         description: 'Specify the favorite appearance. It may take a few minutes to affect websites.',
-                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.APP_THEME), 
+                        data: { type: 'select', value: await storage.getSettings(this.$const.Settings.APP_THEME), 
                             options: [
                                 { label: 'System', value: 'system' },
                                 { label: 'Light',  value: 'light'  },
@@ -84,10 +84,10 @@ app.component('WindowSettings', {
                         }
                     },
                     {
-                        id: this.$const.WindowSettings.TRAY_ICON_THEME,
+                        id: this.$const.Settings.TRAY_ICON_THEME,
                         label: 'Tray icon theme',
                         description: 'Force the tray icon appearance.',
-                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.TRAY_ICON_THEME), 
+                        data: { type: 'select', value: await storage.getSettings(this.$const.Settings.TRAY_ICON_THEME), 
                             options: [
                                 { label: 'Preferred', value: 'system' },
                                 { label: 'Light',     value: 'light'  },
@@ -97,30 +97,30 @@ app.component('WindowSettings', {
                         }
                     },
                     {
-                        id: this.$const.WindowSettings.BACKGROUND_COLOR,
+                        id: this.$const.Settings.BACKGROUND_COLOR,
                         label: 'Background color',
                         description: 'Background color for loading windows.',
-                        data: { type: 'color', value: await storage.getSettings(this.$const.WindowSettings.BACKGROUND_COLOR) }
+                        data: { type: 'color', value: await storage.getSettings(this.$const.Settings.BACKGROUND_COLOR) }
                     },
                     {
-                        id: this.$const.WindowSettings.FOCUS_OPACITY,
+                        id: this.$const.Settings.FOCUS_OPACITY,
                         label: 'Opacity when focused',
                         description: 'Opacity when window is focused. Linux is not supported.',
-                        data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.WindowSettings.FOCUS_OPACITY), unit: '%' }
+                        data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.FOCUS_OPACITY), unit: '%' }
                     },
                     {
-                        id: this.$const.WindowSettings.BLUR_OPACITY,
+                        id: this.$const.Settings.BLUR_OPACITY,
                         label: 'Opacity when blurred',
                         description: 'Opacity when window is blurred. Linux is not supported.',
-                        data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.WindowSettings.BLUR_OPACITY), unit: '%' }
+                        data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.BLUR_OPACITY), unit: '%' }
                     },
                 ],
                 bounds: [
                     {
-                        id: this.$const.WindowSettings.RESET_BOUNDS,
+                        id: this.$const.Settings.RESET_BOUNDS,
                         label: 'Reset bounds to defaults on restart',
                         description: 'On restart the app, reset windows to default state. Choose "None" to disable it.',
-                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.RESET_BOUNDS), 
+                        data: { type: 'select', value: await storage.getSettings(this.$const.Settings.RESET_BOUNDS), 
                             options: [
                                 { label: 'None',            value: ''         },
                                 { label: 'Position',        value: 'position' },
@@ -129,42 +129,42 @@ app.component('WindowSettings', {
                         }
                     },
                     {
-                        id: this.$const.WindowSettings.SHARE_BOUNDS,
+                        id: this.$const.Settings.SHARE_BOUNDS,
                         label: 'Share size and position',
                         description: 'If enabled, all windows will share the same size and position when swapping between them.',
-                        data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHARE_BOUNDS) }
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHARE_BOUNDS) }
                     },
                     {
-                        id: this.$const.WindowSettings.DEFAULT_POSITION,
+                        id: this.$const.Settings.DEFAULT_POSITION,
                         label: 'Default Position',
                         description: 'New window default positioning.',
-                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.DEFAULT_POSITION), options: options }
+                        data: { type: 'select', value: await storage.getSettings(this.$const.Settings.DEFAULT_POSITION), options: options }
                     },
                     {
-                        id: this.$const.WindowSettings.DEFAULT_WIDTH,
+                        id: this.$const.Settings.DEFAULT_WIDTH,
                         label: 'Default width',
                         description: 'New window default width.',
-                        data: { type: 'number', value: await storage.getSettings(this.$const.WindowSettings.DEFAULT_WIDTH), unit: 'px' }
+                        data: { type: 'number', value: await storage.getSettings(this.$const.Settings.DEFAULT_WIDTH), unit: 'px' }
                     },
                     {
-                        id: this.$const.WindowSettings.DEFAULT_HEIGHT,
+                        id: this.$const.Settings.DEFAULT_HEIGHT,
                         label: 'Default height',
                         description: 'New window default height.',
-                        data: { type: 'number', value: await storage.getSettings(this.$const.WindowSettings.DEFAULT_HEIGHT), unit: 'px' }
+                        data: { type: 'number', value: await storage.getSettings(this.$const.Settings.DEFAULT_HEIGHT), unit: 'px' }
                     }
                 ],
                 shortcuts: [
                     {
-                        id: this.$const.WindowSettings.HIDE_SHORTCUT,
+                        id: this.$const.Settings.HIDE_SHORTCUT,
                         label: 'Hide when focused',
                         description: 'Shortcut to hide when window is focused',
-                        data: { type: 'key', value: await storage.getSettings(this.$const.WindowSettings.HIDE_SHORTCUT) }
+                        data: { type: 'key', value: await storage.getSettings(this.$const.Settings.HIDE_SHORTCUT) }
                     },
                     {
-                        id: this.$const.WindowSettings.GLOBAL_SHORTCUT,
+                        id: this.$const.Settings.GLOBAL_SHORTCUT,
                         label: 'Toggle window',
                         description: '[EXPERIMENTAL] Shortcut to toggle window visibility.',
-                        data: { type: 'key', value: await storage.getSettings(this.$const.WindowSettings.GLOBAL_SHORTCUT) }
+                        data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
                     }
                 ]
             }
