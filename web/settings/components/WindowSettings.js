@@ -72,14 +72,27 @@ app.component('WindowSettings', {
                         data: { type: 'bool', value: await storage.getSettings(this.$const.WindowSettings.SHOW_FRAME) }
                     },
                     {
-                        id: this.$const.WindowSettings.WINDOW_THEME,
+                        id: this.$const.WindowSettings.APP_THEME,
                         label: 'Preferred theme',
-                        description: 'Specify the favorite appearance for pages. The website must support the theme selected. It may take a few minutes to affect some websites.',
-                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.WINDOW_THEME), 
+                        description: 'Specify the favorite appearance. It may take a few minutes to affect websites.',
+                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.APP_THEME), 
                             options: [
                                 { label: 'System', value: 'system' },
                                 { label: 'Light',  value: 'light'  },
                                 { label: 'Dark',   value: 'dark'   }
+                            ]
+                        }
+                    },
+                    {
+                        id: this.$const.WindowSettings.TRAY_ICON_THEME,
+                        label: 'Tray icon theme',
+                        description: 'Force the tray icon appearance.',
+                        data: { type: 'select', value: await storage.getSettings(this.$const.WindowSettings.TRAY_ICON_THEME), 
+                            options: [
+                                { label: 'Preferred', value: 'system' },
+                                { label: 'Light',     value: 'light'  },
+                                { label: 'Dark',      value: 'dark'   },
+                                { label: 'Gray',      value: 'gray'   }
                             ]
                         }
                     },
