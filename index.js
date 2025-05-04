@@ -1,7 +1,6 @@
 import { app, globalShortcut } from 'electron'
 import squirrel from 'electron-squirrel-startup'
 
-
 // Squirrel startup handling
 process.platform === 'win32' && squirrel && app.quit()
 
