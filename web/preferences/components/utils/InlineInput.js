@@ -27,7 +27,8 @@ app.component('InlineInput', {
                     </select>
                 </div>
                 <div v-else-if="data.type === 'key'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="search" class="form-control" 
+                    <input type="search" class="form-control"
+                        @focus="updateInputWithTargetValue($event, '')"
                         @keydown="captureKey($event)" 
                         @keypress="preventKeyPressing($event)" 
                         @keyup="preventKeyPressing($event)"
@@ -38,6 +39,7 @@ app.component('InlineInput', {
             </div>
         </div>
     `,
+    inject: [ '$const' ],
     emits: [ 'update' ],
     props: { input: Object },
     data() { return { data: this.input.data } },
@@ -53,62 +55,14 @@ app.component('InlineInput', {
             e.target.value = e.target.keyComb
         },
 
-        getKeyCombination2(event) {
-            let key = event.key.toLowerCase()
-        
-            // Handle arrows (e.g. ArrowLeft => Left)
-            if (key.indexOf('arrow') === 0) { key = key.slice(5) }
-            
-            key = key.charAt(0).toUpperCase() + key.slice(1)
-        
-            // Handle dead keys that needs a second key to work properly
-            if (key === 'Dead') { return '' }
-            
-            // Format some keys
-            if (key === 'Control') { key = 'Ctrl' }
-            else if (key === 'Escape') { key = 'Esc' }
-        
-            // Handle combinations
-            let keyComb = key
-            if (event.shiftKey && key !== 'Shift')  { keyComb = 'Shift+' + keyComb }
-            if (event.metaKey && key !== 'Meta')    { keyComb = 'Meta+' + keyComb  }
-            if (event.altKey && key !== 'Alt')      { keyComb = 'Alt+' + keyComb   }
-            if (event.ctrlKey && key !== 'Ctrl')    { keyComb = 'Ctrl+' + keyComb  } 
-        
-            return keyComb
-        },
-
-        updateInputWithTargetValue(event) {
-            if (this.input.data.value !== event.target.value) {
-                this.input.data.value = event.target.value
+        updateInputWithTargetValue(event, value = event.target.value) {
+            if (this.input.data.value !== value) {
+                this.input.data.value = value
                 this.$emit('update', this.input)
             }
         },
 
-        getKeyCombination(event) {
-            // Detect platform
-            const getOS = () => {
-                // Try userAgentData (modern API)
-                if (navigator.userAgentData) {
-                    const platform = navigator.userAgentData.platform
-                    if (platform === 'macOS') return 'mac'
-                    if (platform === 'Windows') return 'windows'
-                    if (platform === 'Linux') return 'linux'
-                }
-                
-                // Fallback to userAgent (more compatible)
-                const userAgent = navigator.userAgent
-                if (/Mac/.test(userAgent)) return 'mac'
-                if (/Linux/.test(userAgent)) return 'linux'
-                if (/Windows/.test(userAgent)) return 'windows'
-                
-                return 'unknown'
-            }
-            
-            const os = getOS()
-            const isMac = os === 'mac'
-            const isLinux = os === 'linux'
-            
+        getKeyCombination(event) {            
             // Handle the "Process" key issue on Linux
             let key = event.key
             if (key === 'Process') {
@@ -157,15 +111,15 @@ app.component('InlineInput', {
             if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
             if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
 
-            if (isMac) {
+            if (this.$const.OS.IS_DARWIN) {
                 if (event.altKey && key !== 'Alt' && key !== 'Option') modifiers.push('Option')
                 if (event.metaKey && key !== 'Meta' && key !== 'Command') modifiers.push('Command')
             } else {
                 if (event.altKey && key !== 'Alt') modifiers.push('Alt')
-                if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(isLinux ? 'Super' : 'Win') }
+                if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(this.$const.OS.IS_LINUX ? 'Super' : 'Win') }
             }
             
-            return modifiers.length > 0 ? [...modifiers, key].join('+') : key
+            return modifiers.length > 0 ? [...modifiers, key].join('+') : ""
         }
     }
 })

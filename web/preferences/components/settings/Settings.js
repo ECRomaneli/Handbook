@@ -1,28 +1,12 @@
 app.component('Settings', {
     template: /*html*/ `
-        <template v-if="inputs">
-            <div class="h6 mt-2">General</div>
-            <template v-for="(input) in inputs.general" :key="input.id">
-                <hr class="text-black-50">
-                <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
-            </template>
-
-            <div class="h6 mt-4">Appearance</div>
-            <template v-for="(input) in inputs.appearance" :key="input.id">
-                <hr class="text-black-50">
-                <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
-            </template>
-            
-            <div class="h6 mt-4">Bounds</div>
-            <template v-for="(input) in inputs.bounds" :key="input.id">
-                <hr class="text-black-50">
-                <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
-            </template>
-
-            <div class="h6 mt-4">Shortcuts</div>
-            <template v-for="(input) in inputs.shortcuts" :key="input.id">
-                <hr class="text-black-50">
-                <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
+        <template v-if="inputs" v-for="(section, i) in Object.keys(inputs)" :key="section">
+            <div class="h6" :class="{ 'mt-2': !i, 'mt-4': i }">{{ section }}</div>
+            <template v-for="(input) in inputs[section]" :key="input.id">
+                <template v-if="!input.disabled">
+                    <hr class="text-black-50">
+                    <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
+                </template>
             </template>
         </template>
         <span v-else>Loading...</span>
@@ -51,11 +35,12 @@ app.component('Settings', {
             })
     
             this.inputs = { 
-                general: [
+                General: [
                     {
                         id: this.$const.Settings.TRAY_LONGPRESS,
                         label: 'Tray icon long-press timeout',
                         description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
+                        disabled: !this.$const.OS.IS_DARWIN,
                         data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.Settings.TRAY_LONGPRESS), unit: 'ms' }
                     },
                     {
@@ -65,7 +50,7 @@ app.component('Settings', {
                         data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.Settings.ACTION_AREA), unit: 'px' }
                     },
                 ],
-                appearance: [
+                Appearance: [
                     {
                         id: this.$const.Settings.SHOW_FRAME,
                         label: 'Show frame',
@@ -88,8 +73,14 @@ app.component('Settings', {
                         label: 'Tray icon theme',
                         description: 'Force the tray icon appearance.',
                         data: { type: 'select', value: await storage.getSettings(this.$const.Settings.TRAY_ICON_THEME), 
-                            options: [
-                                { label: 'Preferred', value: 'system' },
+                            options: this.$const.OS.IS_WIN32 ? [
+                                { label: 'Preferred', value: 'preferred' },
+                                { label: 'System',    value: 'system' },
+                                { label: 'Light',     value: 'light'  },
+                                { label: 'Dark',      value: 'dark'   },
+                                { label: 'Gray',      value: 'gray'   }
+                            ] : [
+                                { label: 'Preferred', value: 'preferred' },
                                 { label: 'Light',     value: 'light'  },
                                 { label: 'Dark',      value: 'dark'   },
                                 { label: 'Gray',      value: 'gray'   }
@@ -105,17 +96,19 @@ app.component('Settings', {
                     {
                         id: this.$const.Settings.FOCUS_OPACITY,
                         label: 'Opacity when focused',
-                        description: 'Opacity when window is focused. Linux is not supported.',
+                        description: 'Opacity when window is focused.',
+                        disabled: this.$const.OS.IS_LINUX,
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.FOCUS_OPACITY), unit: '%' }
                     },
                     {
                         id: this.$const.Settings.BLUR_OPACITY,
                         label: 'Opacity when blurred',
-                        description: 'Opacity when window is blurred. Linux is not supported.',
+                        description: 'Opacity when window is blurred.',
+                        disabled: this.$const.OS.IS_LINUX,
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.BLUR_OPACITY), unit: '%' }
                     },
                 ],
-                bounds: [
+                Bounds: [
                     {
                         id: this.$const.Settings.RESET_BOUNDS,
                         label: 'Reset bounds to defaults on restart',
@@ -153,17 +146,17 @@ app.component('Settings', {
                         data: { type: 'number', value: await storage.getSettings(this.$const.Settings.DEFAULT_HEIGHT), unit: 'px' }
                     }
                 ],
-                shortcuts: [
+                Shortcuts: [
                     {
                         id: this.$const.Settings.HIDE_SHORTCUT,
                         label: 'Hide when focused',
-                        description: 'Shortcut to hide when window is focused',
+                        description: 'Shortcut to hide when window is focused. Minimum of two keys. The supported keys vary by OS.',
                         data: { type: 'key', value: await storage.getSettings(this.$const.Settings.HIDE_SHORTCUT) }
                     },
                     {
                         id: this.$const.Settings.GLOBAL_SHORTCUT,
                         label: 'Toggle window',
-                        description: '[EXPERIMENTAL] Shortcut to toggle window visibility.',
+                        description: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
                         data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
                     }
                 ]
