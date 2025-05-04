@@ -4,7 +4,7 @@ app.component('Settings', {
             <div class="h6" :class="{ 'mt-2': !i, 'mt-4': i }">{{ section }}</div>
             <template v-for="(input) in inputs[section]" :key="input.id">
                 <template v-if="!input.disabled">
-                    <hr class="text-black-50">
+                    <hr class="input-divider">
                     <inline-input :input="input" @update="emitUpdate(input)"></inline-input>
                 </template>
             </template>
@@ -19,7 +19,7 @@ app.component('Settings', {
     methods: {
         emitUpdate(input) {
             this.$remote.storage.setSettings(input.id, input.data.value)
-            this.$emit('update', this.$clone(input))
+            this.$emit('update', this.$clone(input), input.data.value)
         },
 
         capitalize(str) {
@@ -72,7 +72,7 @@ app.component('Settings', {
                         id: this.$const.Settings.TRAY_ICON_THEME,
                         label: 'Tray icon theme',
                         description: 'Force the tray icon appearance.',
-                        disabled: !this.$const.OS.IS_DARWIN,
+                        disabled: this.$const.OS.IS_DARWIN,
                         data: { type: 'select', value: await storage.getSettings(this.$const.Settings.TRAY_ICON_THEME), 
                             options: [
                                 { label: 'System',    value: 'system'    },

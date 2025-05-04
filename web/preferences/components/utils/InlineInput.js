@@ -3,23 +3,23 @@ app.component('InlineInput', {
         <div class="d-flex justify-content-between my-2">
             <div class="d-flex flex-column me-2">
                 <label class="small">{{ input.label }}</label>
-                <span v-if="input.description" class="smallest text-black-50">{{ input.description }}</span>
+                <span v-if="input.description" class="smallest input-description">{{ input.description }}</span>
             </div>
             <div>
                 <div v-if="data.type === 'text'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
+                    <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" spellcheck="false">
                     <span v-if="data.unit" class="input-group-text">{{ data.unit }}</span>
                 </div>
                 <div v-if="data.type === 'color'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
-                    <span class="input-group-text" :style="'background-color:'+data.value+';border-color:'+data.value">&nbsp;</span>
+                    <input type="color" class="input-group-text px-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
+                    <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" spellcheck="false">
                 </div>
                 <div v-if="data.type === 'number'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="number" :min="data.min" :max="data.max" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
+                    <input type="number" :min="data.min" :max="data.max" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" spellcheck="false">
                     <span v-if="data.unit" class="input-group-text">{{ data.unit }}</span>
                 </div>
                 <div v-else-if="data.type === 'bool'" class="form-check form-switch" style="padding-left: 120px">
-                    <input class="form-check-input" type="checkbox" role="switch" v-model="data.value" @change="$emit('update', input)">
+                    <input class="form-check-input" type="checkbox" role="switch" v-model="data.value" @change="$emit('update', input)" spellcheck="false">
                 </div>
                 <div v-else-if="data.type === 'select'" class="input-group-sm">
                     <select class="value-selector input-group-text" v-model="data.value" @change="$emit('update', input)" style="width: 120px">
@@ -34,7 +34,8 @@ app.component('InlineInput', {
                         @keyup="preventKeyPressing($event)"
                         @blur="updateInputWithTargetValue($event)" 
                         :value="data.value" 
-                        :aria-label="input.label">
+                        :aria-label="input.label"
+                        spellcheck="false">
                 </div>
             </div>
         </div>

@@ -34,7 +34,7 @@ const app = Vue.createApp({
                     <page-settings></page-settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'settings' }">
-                    <settings></settings>
+                    <settings @update="onSettingsUpdate"></settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>
@@ -43,10 +43,21 @@ const app = Vue.createApp({
         </div>
     `,
 
-    inject: [ '$remote' ],
-    data() { return { tab: 'pages' } },
-    created() { this.enableDragWindow() },
+    inject: [ '$remote', '$const' ],
+    data() { return { tab: 'pages', themeEl: document.getElementById('app') } },
+    created() {
+        this.loadTheme()
+        this.enableDragWindow()
+    },
     methods: {
+        async loadTheme() {
+            this.setTheme(await this.$remote.storage.getSettings(this.$const.Settings.APP_THEME))
+        },
+
+        onSettingsUpdate(input, value) {
+            if (input.id === this.$const.Settings.APP_THEME) { this.setTheme(value) }
+        },
+
         enableDragWindow() {
             document.addEventListener('mousedown', (e) => {
                 if (e.button !== 0 || e.pageY > 100) { return }
@@ -79,6 +90,15 @@ const app = Vue.createApp({
                 document.addEventListener('mousemove', onMouseMove)
                 document.addEventListener('mouseup', onMouseUp, true)
             }, true)
+        },
+
+        setTheme(theme) {
+            switch (theme) {
+                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
+                case 'dark': theme = 'dark'; break
+                default: theme = 'light'
+            }
+            this.themeEl.setAttribute('data-theme', theme)
         }
     }
 })

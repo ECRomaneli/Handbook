@@ -1,17 +1,11 @@
 app.component('AboutTab', {
     template: /*html*/ `
-        <div>
+        <div class="about">
             <div class="mt-2 mb-4 d-flex justify-content-center">
                 <img class="me-2" :src="$image.src('book-open')" style="width: 28px">
                 <span class="h3">Handbook</span>
             </div>
-            <pre ref="license" class="smallest text-black-50" style="
-                background-color: beige;
-                border: 1px dashed lightgray;
-                padding: 10px;
-                border-radius: 8px;
-                margin: 0 -36px;
-            "></pre>
+            <pre ref="license" class="smallest"></pre>
         </div>
     `,
     inject: [ '$image' ],
