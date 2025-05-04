@@ -74,5 +74,6 @@ jobs:
       with:
         files: ${{ matrix.target }}
         fail_on_unmatched_files: true
+        prerelease: ${{ contains(github.ref, '-nightly') }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
