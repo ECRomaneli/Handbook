@@ -13,9 +13,9 @@ app.use({
             },
 
             window: {
-                dragstart: () => { ipcRenderer.send('settings.dragStart') },
-                dragging: (offset) => { ipcRenderer.send('settings.dragging', offset) },
-                close: () => { ipcRenderer.send('settings.close') }
+                dragstart: () => { ipcRenderer.send('preferences.dragStart') },
+                dragging: (offset) => { ipcRenderer.send('preferences.dragging', offset) },
+                close: () => { ipcRenderer.send('preferences.close') }
             }
         }
 
