@@ -1,8 +1,8 @@
 const Vue = require("vue")
 window.addEventListener('load', async () => {
-    // await loadScripts('providers')
-    // await loadScripts('plugins')
-    // await loadScripts('components')
+    await loadScripts('providers')
+    await loadScripts('plugins')
+    await loadScripts('components')
     app.mount('#app')
 })
 
