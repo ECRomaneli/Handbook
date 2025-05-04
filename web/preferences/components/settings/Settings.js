@@ -72,18 +72,14 @@ app.component('Settings', {
                         id: this.$const.Settings.TRAY_ICON_THEME,
                         label: 'Tray icon theme',
                         description: 'Force the tray icon appearance.',
+                        disabled: !this.$const.OS.IS_DARWIN,
                         data: { type: 'select', value: await storage.getSettings(this.$const.Settings.TRAY_ICON_THEME), 
-                            options: this.$const.OS.IS_WIN32 ? [
+                            options: [
+                                { label: 'System',    value: 'system'    },
                                 { label: 'Preferred', value: 'preferred' },
-                                { label: 'System',    value: 'system' },
-                                { label: 'Light',     value: 'light'  },
-                                { label: 'Dark',      value: 'dark'   },
-                                { label: 'Gray',      value: 'gray'   }
-                            ] : [
-                                { label: 'Preferred', value: 'preferred' },
-                                { label: 'Light',     value: 'light'  },
-                                { label: 'Dark',      value: 'dark'   },
-                                { label: 'Gray',      value: 'gray'   }
+                                { label: 'Light',     value: 'light'     },
+                                { label: 'Dark',      value: 'dark'      },
+                                { label: 'Gray',      value: 'gray'      }
                             ]
                         }
                     },
