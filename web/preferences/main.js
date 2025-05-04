@@ -9,7 +9,7 @@ window.addEventListener('load', async () => {
 const app = Vue.createApp({
     template: /*html*/ `
         <div class="exit-btn" @click="$remote.window.close()">
-            <svg class="square-16" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#000'>
+            <svg class="square-16" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
                 <path d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/>
             </svg>
         </div>
@@ -51,27 +51,34 @@ const app = Vue.createApp({
             document.addEventListener('mousedown', (e) => {
                 if (e.button !== 0 || e.pageY > 100) { return }
         
-                this.$remote.window.dragstart()
-        
+                const style = document.body.style
                 const offsetX = e.screenX
                 const offsetY = e.screenY
-        
-                document.body.style.cursor = 'move'
+                let isDragging = false
             
                 const onMouseMove = (e) => {
+                    if ((e.buttons & 1) === 0) { onMouseUp(); return }
                     e.preventDefault()
+                    e.stopImmediatePropagation()
+                    if (!isDragging) {
+                        isDragging = true
+                        this.$remote.window.dragstart()
+                        style.setProperty('cursor', 'move', 'important')
+                        style.setProperty('user-select', 'none', 'important')
+                    }
                     this.$remote.window.dragging({ x: e.screenX - offsetX, y: e.screenY - offsetY })
                 }
             
                 const onMouseUp = () => {
-                    document.body.style.cursor = ''
+                    style.removeProperty('cursor')
+                    style.removeProperty('user-select')
                     document.removeEventListener('mousemove', onMouseMove)
                     document.removeEventListener('mouseup', onMouseUp)
                 }
             
                 document.addEventListener('mousemove', onMouseMove)
-                document.addEventListener('mouseup', onMouseUp)
-            })
+                document.addEventListener('mouseup', onMouseUp, true)
+            }, true)
         }
     }
 })

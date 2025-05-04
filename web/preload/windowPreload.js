@@ -24,7 +24,6 @@ async function registerActions() {
     let actionArea = await $bridge.getSettings('action_area')
     $bridge.onSettingsUpdated('action_area', (value) => actionArea = value)
 
-    const originalCursor = document.body.style.cursor
     const isLeftClickInActionArea = (e, height) => e.button === 0 && e.clientY <= height
 
     document.addEventListener('dblclick', (e) => {
@@ -37,26 +36,35 @@ async function registerActions() {
     document.addEventListener('mousedown', (e) => {
         if (!isLeftClickInActionArea(e, actionArea)) { return }
 
-        $bridge.notifyManager('dragStart')
-
+        const style = document.body.style
+        const originalCursor = style.cursor
+        const originalUserSelect = style.userSelect
         const offsetX = e.screenX
-        const offsetY = e.screenY
-
-        document.body.style.setProperty('cursor', 'move', 'important')
+        const offsetY = e.screenY        
+        let isDragging = false
     
         const onMouseMove = (e) => {
+            if ((e.buttons & 1) === 0) { onMouseUp(); return }
             e.preventDefault()
+            e.stopImmediatePropagation()
+            if (!isDragging) {
+                isDragging = true
+                $bridge.notifyManager('dragStart')
+                style.setProperty('cursor', 'move', 'important')
+                style.setProperty('user-select', 'none', 'important')
+            }
             $bridge.notifyManager('dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
         }
     
         const onMouseUp = () => {
-            document.body.style.cursor = originalCursor
+            style.setProperty('cursor', originalCursor)
+            style.setProperty('user-select', originalUserSelect)
             document.removeEventListener('mousemove', onMouseMove)
             document.removeEventListener('mouseup', onMouseUp)
         }
     
         document.addEventListener('mousemove', onMouseMove)
-        document.addEventListener('mouseup', onMouseUp)
+        document.addEventListener('mouseup', onMouseUp, true)
     }, true)
 }
 
