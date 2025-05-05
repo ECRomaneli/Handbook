@@ -1,7 +1,7 @@
 {
   "name": "handbook",
   "productName": "Handbook",
-  "version": "1.0.0",
+  "version": "1.0.0-debug",
   "description": "Create small, movable, and easily concealable windows for quick use.",
   "author": "ECRomaneli",
   "license": "MIT",
