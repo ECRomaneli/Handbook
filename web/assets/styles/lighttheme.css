@@ -1,46 +1,40 @@
-#app {
+[data-theme="light"] {
     color-scheme: light;
+    
+    /* Main colors */
     --background-color: #f6f8fa;
     --color: #1F2328;
     --divider-border-color: #d8dee4;
-    --scrollbar-background-color: #969696;
-    --scrollbar-track-color: #e8e8e8;
-}
-
-#app #body {
-    --background-color: #fff;
-    --background-w-alpha-color: #fffffffa;
     --border-color: #d0d7de;
-    --active-background-color: #e8ecef;
-    --active-border-color: #919191;
-}
 
-#app #sidebar {
-    --search-color: #858e98;
-    --hover-search-background-color: #ad884611;
-    --hover-search-border-color: #ad8846;
-}
+    /* Table colors */
+    --table-header-background: #e8ecef;
+    --table-header-border: #e5e5e5;
+    --table-body-border: #e8ecef;
+    --table-body-color: #555;
 
-#app .inline-tabs {
-    --active-tab-border-color: #f78166;
-    --tab-color: var(--color);
-}
+    /* Form elements */
+    --input-background: #fff;
+    --input-color: #1F2328;
+    --input-border: #d0d7de;
+    --input-divider-color: #bbb;
 
-#app .table {
-    --border-color: #e5e5e5;
-    --body-color: #555;
-}
+    /* Tab styling */
+    --tab-active-color: #1F2328;
+    --tab-active-border: #f78166;
+    --tab-hover-background: #e8ecef;
 
-#app .svg-icon {
-    filter: brightness(.7);
-}
+    /* Button colors */
+    --btn-secondary-background: #e8ecef;
+    --btn-secondary-border: #d0d7de;
+    --btn-secondary-color: #1F2328;
+    --btn-secondary-hover: #d0d7de;
 
-#app .btn-secondary {
-    background-color: var(--bs-border-color);
-    color: var(--bs-black);
-    border-color: var(--bs-gray-400);
-}
+    /* Scrollbar */
+    --scrollbar-thumb: #969696;
+    --scrollbar-track: #e8e8e8;
 
-#app .btn-secondary:hover {
-    background-color: var(--bs-gray-500);
+    .input-group-text {
+        background-color: #e9ecef !important;
+    }
 }

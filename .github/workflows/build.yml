@@ -2,7 +2,8 @@ name: Build release files
 
 on:
   push:
-    tags: [ '*' ]
+    branches: [master, develop]
+    tags: ['v*']
   workflow_dispatch:
 jobs:
   build:
@@ -64,10 +65,15 @@ jobs:
       run: npm run make:${{ matrix.package }}-${{ matrix.extension }} -- --skip-package
 
     - name: Rename Binaries
+      if: startsWith(github.ref, 'refs/tags/')
       run: mv ${{ matrix.source }} ${{ matrix.target }}
 
     - name: Upload files to a GitHub release
-      uses: svenstaro/upload-release-action@2.9.0
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
       with:
-        file: ${{ matrix.target }}
-        overwrite: true
+        files: ${{ matrix.target }}
+        fail_on_unmatched_files: true
+        prerelease: ${{ contains(github.ref, '-nightly') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

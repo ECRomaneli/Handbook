@@ -1,21 +1,37 @@
 /* APP ================================ */
 
+body {
+    background-color: transparent;
+}
+
 #app {
+    --border-radius: .25rem;
+    --margin: .5rem;
+    --font-monospace: var(--bs-font-monospace);
+
     display: flex;
     height: 100vh;
     background-color: var(--background-color);
     color: var(--color);
-
-    --border-radius: .25rem;
-    --margin: .5rem;
-    --font-monospace: var(--bs-font-monospace);
+    border-radius: 8px;
 }
 
 #body {
     display: flex;
     overflow: auto;
     width: 100%;
+    background-color: var(--background-color);
+    color: var(--color);
 }
+
+.exit-btn svg {
+    fill: var(--color);
+}
+
+.exit-btn:hover {
+    background-color: var(--divider-border-color);
+}
+
 
 /* TABS =============================== */
 
@@ -29,7 +45,7 @@
 
 .inline-tabs .tab {
     background-color: transparent;
-    color: var(--tab-color);
+    color: var(--color);
     font-size: 14px;
     font-weight: bold;
     padding: 8px 16px;
@@ -47,16 +63,47 @@
 
 .inline-tabs .tab.active {
     cursor: default;
-    color: var(--color);
-    border-bottom: 2px solid var(--active-tab-border-color);
+    color: var(--tab-active-color);
+    border-bottom: 2px solid var(--tab-active-border);
 }
 
-/* INLINE INPUT ======================= */
+/* INPUT ======================= */
 
-.input-group-sm>.btn, .input-group-sm>.form-control, .input-group-sm>.form-select, .input-group-sm>.input-group-text {
+.form-control, .input-group-text {
+    background-color: var(--input-background) !important;
+    color: var(--input-color) !important;
+    border-color: var(--input-border);
+}
+
+.input-group-sm>.form-control, .input-group-sm>.form-select, .input-group-sm>.input-group-text {
     padding: 0 0.5rem;
     font-size: .875rem;
+    height: 23px;
 }
+
+.input-group-sm>[type="color"] {
+    width: 30px;
+    border: 0;
+}
+
+.input-description {
+    color: #888;
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary-background);
+    border-color: var(--btn-secondary-border);
+    color: var(--btn-secondary-color) !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.input-divider {
+    border-color: var(--input-divider-color);
+}
+
 
 /* TABLE ============================== */
 
@@ -64,27 +111,20 @@
     word-break: break-word;
     cursor: default;
     font-size: .75em;
-    border-color: var(--border-color);
+    color: var(--color);
+    border-color: var(--table-header-border);
     margin: 14px 0;
 }
 
 .table > thead {
-    background-color: var(--border-color);
+    background-color: var(--table-header-background);
     color: var(--color);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--table-header-border);
 }
 
 .table > tbody > tr > td {
-    color: var(--body-color) !important;
-}
-
-.table > tbody > tr > td.highlight {
-    font-weight: bolder;
-    color: var(--color) !important;
-}
-
-.table.table-hover > tbody > tr:hover {
-    background-color: var(--active-background-color);
+    color: var(--table-body-color) !important;
+    border-color: var(--table-body-border);
 }
 
 /* MAP TABLE ======================= */
@@ -167,6 +207,17 @@
     background-color: var(--divider-border-color);
 }
 
+/* ABOUT ============================== */
+
+.about pre {
+    background-color: #d5d5a414;
+    border: 1px dashed #8b8b50;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 0px -36px;
+    color: var(--color);
+}
+
 /* GENERICS =========================== */
 
 .c-pointer {
@@ -185,6 +236,10 @@
 
 .svg-icon {
     -webkit-user-drag: none;
+}
+
+.svg-icon {
+    filter: brightness(.7);
 }
 
 .square-24 {

@@ -6,9 +6,9 @@
         "type": "node",
         "request": "launch",
         "cwd": "${workspaceFolder}",
-        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+        "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron",
         "windows": {
-          "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+          "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron.exe"
         },
         "args" : ["."],
         "outputCapture": "std"
