@@ -93,12 +93,15 @@ const app = Vue.createApp({
         },
 
         setTheme(theme) {
-            switch (theme) {
-                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
-                case 'dark': theme = 'dark'; break
-                default: theme = 'light'
-            }
-            this.themeEl.setAttribute('data-theme', theme)
+            setTimeout(() => {
+                switch (theme) {
+                    case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
+                    case 'dark': theme = 'dark'; break
+                    default: theme = 'light'
+                }
+                this.themeEl.setAttribute('data-theme', theme)
+            }, 100)
+            
         }
     }
 })
