@@ -55,7 +55,7 @@ const app = Vue.createApp({
         },
 
         onSettingsUpdate(input, value) {
-            if (input.id === this.$const.Settings.APP_THEME) { this.setTheme(value) }
+            if (input.id === this.$const.Settings.APP_THEME) { setTimeout(() => this.setTheme(value), 100) }
         },
 
         enableDragWindow() {
@@ -93,15 +93,12 @@ const app = Vue.createApp({
         },
 
         setTheme(theme) {
-            setTimeout(() => {
-                switch (theme) {
-                    case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
-                    case 'dark': theme = 'dark'; break
-                    default: theme = 'light'
-                }
-                this.themeEl.setAttribute('data-theme', theme)
-            }, 100)
-            
+            switch (theme) {
+                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
+                case 'dark': theme = 'dark'; break
+                default: theme = 'light'
+            }
+            this.themeEl.setAttribute('data-theme', theme)
         }
     }
 })
