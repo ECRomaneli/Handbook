@@ -8,7 +8,7 @@
         "cwd": "${workspaceFolder}",
         "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron",
         "windows": {
-          "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron.cmd"
+          "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron.exe"
         },
         "args" : ["."],
         "outputCapture": "std"
