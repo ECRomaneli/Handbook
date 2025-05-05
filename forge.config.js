@@ -12,7 +12,8 @@ const data = {
         category: 'Network',
         iconPng: 'assets/img/icons/app/book.png',
         iconIco: 'assets/img/icons/app/book.ico',
-        iconIcns: 'assets/img/icons/app/book',
+        iconIcns: 'assets/img/icons/app/book.icns',
+        icon: 'assets/img/icons/app/book',
       }
 
 // https://electron.github.io/packager/main/interfaces/Options.html
@@ -20,7 +21,7 @@ const data = {
 
 export default {
   packagerConfig: {
-    icon: data.iconIcns,
+    icon: data.icon,
     executableName: process.platform === 'linux' ? data.name : data.productName,
     appCategoryType: 'public.app-category.utilities',
     appCopyright: data.copyright,
