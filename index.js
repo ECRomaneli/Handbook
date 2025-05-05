@@ -3,6 +3,11 @@ import { app, globalShortcut } from 'electron'
 import { OS } from './lib/constants.js';
 import { Manager } from './lib/manager.js';
 
+if (!app.requestSingleInstanceLock()) {
+  console.error('Another instance is already running')
+  app.quit()
+}
+
 app.on('window-all-closed', () => {})
 app.on('quit', () => { globalShortcut.unregisterAll() })
 
