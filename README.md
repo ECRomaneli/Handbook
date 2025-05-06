@@ -1,6 +1,6 @@
 <p align='center'>
     <a href="https://github.com/ECRomaneli/handbook">
-        <img src="https://i.postimg.cc/kgVvYbKG/handbook-logo.png" alt='Handbook' width="70%">
+        <img src="https://i.postimg.cc/R0PpDYdB/handbook-logo.png" alt='Handbook' width="70%">
     </a>
 </p>
 <p align='center'>
