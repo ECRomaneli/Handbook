@@ -1,27 +1,19 @@
 <p align='center'>
-    <a href="https://github.com/ECRomaneli/handbook" style='text-decoration:none'>
-        <img src="https://i.postimg.cc/RZ2Pvy5v/handbook.png" alt='Handbook'>
+    <a href="https://github.com/ECRomaneli/handbook">
+        <img src="https://i.postimg.cc/R0PpDYdB/handbook-logo.png" alt='Handbook' width="70%">
     </a>
 </p>
 <p align='center'>
     Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use
 </p>
 <p align='center'>
-    <a href="https://github.com/ECRomaneli/handbook/tags" style='text-decoration:none'>
-        <img src="https://img.shields.io/github/v/tag/ecromaneli/handbook?label=version&sort=semver&style=for-the-badge" alt="Version">
-    </a>
+    <a href="https://github.com/ECRomaneli/handbook/tags"><img src="https://img.shields.io/github/v/tag/ecromaneli/handbook?label=version&sort=semver&style=for-the-badge" alt="Version"></a>
     &nbsp;
-    <a href="https://github.com/ECRomaneli/handbook/commits/master" style='text-decoration:none'>
-        <img src="https://img.shields.io/github/last-commit/ecromaneli/handbook?style=for-the-badge" alt="Last Commit">
-    </a>
+    <a href="https://github.com/ECRomaneli/handbook/commits/master"><img src="https://img.shields.io/github/last-commit/ecromaneli/handbook?style=for-the-badge" alt="Last Commit"></a>
     &nbsp;
-    <a href="https://github.com/ECRomaneli/handbook/blob/master/LICENSE" style='text-decoration:none'>
-        <img src="https://img.shields.io/github/license/ecromaneli/handbook?style=for-the-badge" alt="License">
-    </a>
+    <a href="https://github.com/ECRomaneli/handbook/blob/master/LICENSE"><img src="https://img.shields.io/github/license/ecromaneli/handbook?style=for-the-badge" alt="License"></a>
     &nbsp;
-    <a href="https://github.com/ECRomaneli/handbook/issues" style='text-decoration:none'>
-        <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=for-the-badge" alt="Contributions Welcome">
-    </a>
+    <a href="https://github.com/ECRomaneli/handbook/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=for-the-badge" alt="Contributions Welcome"></a>
 </p>
 
 ## Objective
