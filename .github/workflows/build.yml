@@ -3,7 +3,7 @@ name: Build release files
 on:
   push:
     branches: [master, develop]
-    tags: ['v*']
+    tags: ['*']
   workflow_dispatch:
 jobs:
   build:
@@ -14,27 +14,27 @@ jobs:
             package: darwin-universal
             extension: app
             source: out/make/zip/darwin/universal/Handbook*.zip
-            target: out/make/Handbook-v{version}-darwin-arm64.zip
+            target: out/make/Handbook-{version}-darwin-arm64.zip
           - os: macos-13
             package: darwin-x64
             extension: app
             source: out/make/zip/darwin/x64/Handbook*.zip
-            target: out/make/Handbook-v{version}-darwin-x64.zip
+            target: out/make/Handbook-{version}-darwin-x64.zip
           - os: ubuntu-22.04
             package: linux-x64
             extension: deb
             source: out/make/deb/x64/handbook*.deb
-            target: out/make/Handbook-v{version}-x64-Setup.deb
+            target: out/make/Handbook-{version}-x64-Setup.deb
           - os: ubuntu-22.04
             package: linux-x64
             extension: rpm
             source: out/make/rpm/x64/Handbook*.rpm
-            target: out/make/Handbook-v{version}-x64-Setup.rpm
+            target: out/make/Handbook-{version}-x64-Setup.rpm
           - os: windows-2022
             package: win32-x64
             extension: exe
             source: out/make/squirrel.windows/x64/Handbook*.exe
-            target: out/make/Handbook-v{version}-x64-Setup.exe
+            target: out/make/Handbook-{version}-x64-Setup.exe
 
     runs-on: ${{ matrix.os }}
 
@@ -57,8 +57,9 @@ jobs:
     - name: Extract Version from Tag
       id: extract_version
       run: |
-        if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-          VERSION=${GITHUB_REF#refs/tags/v}
+        if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          # Extract tag name without the refs/tags/ prefix
+          VERSION=${GITHUB_REF#refs/tags/}
         else
           VERSION="1.0.0-debug"
         fi
