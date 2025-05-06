@@ -22,5 +22,5 @@ app.whenReady().then(() => {
 function startManager() {
   app.on('window-all-closed', () => {})
   app.on('quit', () => { globalShortcut.unregisterAll() })
-  Manager.getInstance()
+  Manager.start()
 }
