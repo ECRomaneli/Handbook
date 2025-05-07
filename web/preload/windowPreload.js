@@ -39,8 +39,6 @@ async function registerActions() {
         const style = document.body.style
         const originalCursor = style.cursor
         const originalUserSelect = style.userSelect
-        const offsetX = e.screenX
-        const offsetY = e.screenY        
         let isDragging = false
     
         const onMouseMove = (e) => {
@@ -53,17 +51,17 @@ async function registerActions() {
                 style.setProperty('cursor', 'move', 'important')
                 style.setProperty('user-select', 'none', 'important')
             }
-            $bridge.notifyManager('dragging', { x: e.screenX - offsetX, y: e.screenY - offsetY })
+            $bridge.notifyManager('dragging')
         }
     
         const onMouseUp = () => {
             style.setProperty('cursor', originalCursor)
             style.setProperty('user-select', originalUserSelect)
-            document.removeEventListener('mousemove', onMouseMove)
-            document.removeEventListener('mouseup', onMouseUp)
+            document.removeEventListener('mousemove', onMouseMove, true)
+            document.removeEventListener('mouseup', onMouseUp, true)
         }
     
-        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mousemove', onMouseMove, true)
         document.addEventListener('mouseup', onMouseUp, true)
     }, true)
 }
