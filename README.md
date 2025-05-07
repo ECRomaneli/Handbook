@@ -57,7 +57,23 @@ Read about the app signature in "[About App Signature](#about-app-signature)".
 
 #### Security Warning
 
-As Handbook is not signed, it may not open directly and could trigger a security warning. To bypass it:
+As Handbook is not signed, it may trigger a security warning and fail to open directly.
+
+The steps to bypass this warning can vary depending on your macOS version. For the most up-to-date instructions, refer to the official [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
+
+#### Latest version
+
+1. On a Mac, select the Apple menu > System Settings and click "Privacy & Security" in the sidebar. (You may need to scroll down.)
+2. Go to Security and click Open.
+3. Click "Open Anyway."
+4. Enter your login password and click OK.
+
+> This button is available for about an hour after attempting to open the app.
+
+Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
+
+
+#### Ventura 13 or lower
 
 1. Open the "Applications" folder.
 2. Press `Ctrl + Left Click` on the Handbook icon.
@@ -68,7 +84,7 @@ After these steps, the app will no longer present the warning.
 
 > If the "Open" button does not show, try it twice.
 
-Source: [Apple Support](https://support.apple.com/en-us/guide/mac-help/mh40616/mac).
+Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
 
 ### Linux distributions
 

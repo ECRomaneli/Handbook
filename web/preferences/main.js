@@ -63,8 +63,6 @@ const app = Vue.createApp({
                 if (e.button !== 0 || e.pageY > 100) { return }
         
                 const style = document.body.style
-                const offsetX = e.screenX
-                const offsetY = e.screenY
                 let isDragging = false
             
                 const onMouseMove = (e) => {
@@ -77,17 +75,17 @@ const app = Vue.createApp({
                         style.setProperty('cursor', 'move', 'important')
                         style.setProperty('user-select', 'none', 'important')
                     }
-                    this.$remote.window.dragging({ x: e.screenX - offsetX, y: e.screenY - offsetY })
+                    this.$remote.window.dragging()
                 }
             
                 const onMouseUp = () => {
                     style.removeProperty('cursor')
                     style.removeProperty('user-select')
-                    document.removeEventListener('mousemove', onMouseMove)
-                    document.removeEventListener('mouseup', onMouseUp)
+                    document.removeEventListener('mousemove', onMouseMove, true)
+                    document.removeEventListener('mouseup', onMouseUp, true)
                 }
             
-                document.addEventListener('mousemove', onMouseMove)
+                document.addEventListener('mousemove', onMouseMove, true)
                 document.addEventListener('mouseup', onMouseUp, true)
             }, true)
         },
