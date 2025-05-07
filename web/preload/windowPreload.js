@@ -147,15 +147,15 @@ function getKeyCombination(event) {
     // Build modifier combination with platform-specific ordering
     const modifiers = []
     
-    if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
-    if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
-
     if (isMac) {
-        if (event.altKey && key !== 'Alt' && key !== 'Option') modifiers.push('Option')
-        if (event.metaKey && key !== 'Meta' && key !== 'Command') modifiers.push('Command')
+        if (key === 'Meta') { key = 'Command' }
+        else if (key === 'Alt') { key = 'Option' }
+        if (event.altKey && key !== 'Option') modifiers.push('Option')
+        if (event.metaKey && key !== 'Command') modifiers.push('Command')
     } else {
+        if (key === 'Meta') { key = this.$const.OS.IS_LINUX ? 'Super' : 'Win' }
         if (event.altKey && key !== 'Alt') modifiers.push('Alt')
-        if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(isLinux ? 'Super' : 'Win') }
+        if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(this.$const.OS.IS_LINUX ? 'Super' : 'Win') }
     }
     
     return modifiers.length > 0 ? [...modifiers, key].join('+') : key

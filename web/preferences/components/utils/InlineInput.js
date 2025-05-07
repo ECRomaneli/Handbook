@@ -113,9 +113,12 @@ app.component('InlineInput', {
             if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
 
             if (this.$const.OS.IS_DARWIN) {
-                if (event.altKey && key !== 'Alt' && key !== 'Option') modifiers.push('Option')
-                if (event.metaKey && key !== 'Meta' && key !== 'Command') modifiers.push('Command')
+                if (key === 'Meta') { key = 'Command' }
+                else if (key === 'Alt') { key = 'Option' }
+                if (event.altKey && key !== 'Option') modifiers.push('Option')
+                if (event.metaKey && key !== 'Command') modifiers.push('Command')
             } else {
+                if (key === 'Meta') { key = this.$const.OS.IS_LINUX ? 'Super' : 'Win' }
                 if (event.altKey && key !== 'Alt') modifiers.push('Alt')
                 if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(this.$const.OS.IS_LINUX ? 'Super' : 'Win') }
             }
