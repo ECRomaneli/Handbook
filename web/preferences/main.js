@@ -44,8 +44,11 @@ const app = Vue.createApp({
     `,
 
     inject: [ '$remote', '$const' ],
-    data() { return { tab: 'pages', themeEl: document.getElementById('app') } },
+    data() { return { tab: 'pages', appEl: document.getElementById('app') } },
     created() {
+        if (this.$const.OS.IS_LINUX) {
+            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
+        }
         this.loadTheme()
         this.enableDragWindow()
     },
@@ -96,7 +99,7 @@ const app = Vue.createApp({
                 case 'dark': theme = 'dark'; break
                 default: theme = 'light'
             }
-            this.themeEl.setAttribute('data-theme', theme)
+            this.appEl.setAttribute('data-theme', theme)
         }
     }
 })
