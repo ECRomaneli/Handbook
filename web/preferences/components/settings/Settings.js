@@ -1,7 +1,7 @@
 app.component('Settings', {
     template: /*html*/ `
         <template v-if="inputs" v-for="(section, i) in Object.keys(inputs)" :key="section">
-            <div class="h6" :class="{ 'mt-2': !i, 'mt-4': i }">{{ section }}</div>
+            <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-3': !i, 'mt-5': i }">{{ section }}</div>
             <template v-for="(input) in inputs[section]" :key="input.id">
                 <template v-if="!input.disabled">
                     <hr class="input-divider">
@@ -49,13 +49,6 @@ app.component('Settings', {
                         description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
                         data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.Settings.ACTION_AREA), unit: 'px' }
                     },
-                ],
-                Appearance: [
-                    {
-                        id: this.$const.Settings.SHOW_FRAME,
-                        label: 'Show frame',
-                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
-                    },
                     {
                         id: this.$const.Settings.APP_THEME,
                         label: 'Preferred theme',
@@ -82,6 +75,13 @@ app.component('Settings', {
                                 { label: 'Gray',      value: 'gray'      }
                             ]
                         }
+                    }
+                ],
+                Appearance: [
+                    {
+                        id: this.$const.Settings.SHOW_FRAME,
+                        label: 'Show frame',
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
                     },
                     {
                         id: this.$const.Settings.BACKGROUND_COLOR,
@@ -103,6 +103,13 @@ app.component('Settings', {
                         disabled: this.$const.OS.IS_LINUX,
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.BLUR_OPACITY), unit: '%' }
                     },
+                    {
+                        id: this.$const.Settings.KEEP_OPACITY_MAXIMIZED,
+                        label: 'Keep opacity when maximized',
+                        description: 'Ignore the blur opacity if the window is maximized.',
+                        disabled: !this.$const.OS.IS_LINUX,
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_MAXIMIZED) }
+                    }
                 ],
                 Bounds: [
                     {
@@ -157,6 +164,10 @@ app.component('Settings', {
                     }
                 ]
             }
+        },
+
+        hasEnabledInputs(section) {
+            return this.inputs[section].some(i => i.disabled !== true)
         }
     }
 })
