@@ -1,7 +1,7 @@
 const Vue = require("vue")
 window.addEventListener('load', async () => {
-    await loadScripts('providers')
-    await loadScripts('plugins')
+    await loadScripts('../utils/providers')
+    await loadScripts('../utils/plugins')
     await loadScripts('components')
     app.mount('#app')
 })
@@ -99,6 +99,7 @@ const app = Vue.createApp({
                 case 'dark': theme = 'dark'; break
                 default: theme = 'light'
             }
+            this.appEl.setAttribute('data-bs-theme', theme)
             this.appEl.setAttribute('data-theme', theme)
         }
     }

@@ -11,7 +11,7 @@ app.component('InlineInput', {
                     <span v-if="data.unit" class="input-group-text">{{ data.unit }}</span>
                 </div>
                 <div v-if="data.type === 'color'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="color" class="input-group-text px-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
+                    <input type="color" class="input-group-text px-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" style="z-index: 1; cursor: pointer">
                     <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" spellcheck="false">
                 </div>
                 <div v-if="data.type === 'number'" class="input-group input-group-sm float-end" style="width: 120px">

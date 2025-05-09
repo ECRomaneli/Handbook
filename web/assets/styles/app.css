@@ -116,8 +116,8 @@ body {
     margin: 14px 0;
 }
 
-.table > thead {
-    background-color: var(--table-header-background);
+.table > thead > tr > th {
+    background: var(--table-header-background);
     color: var(--color);
     border-bottom: 1px solid var(--table-header-border);
 }
@@ -125,6 +125,7 @@ body {
 .table > tbody > tr > td {
     color: var(--table-body-color) !important;
     border-color: var(--table-body-border);
+    background-color: transparent;
 }
 
 /* MAP TABLE ======================= */
