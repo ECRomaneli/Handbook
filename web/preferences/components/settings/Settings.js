@@ -107,7 +107,7 @@ app.component('Settings', {
                         id: this.$const.Settings.KEEP_OPACITY_MAXIMIZED,
                         label: 'Keep opacity when maximized',
                         description: 'Ignore the blur opacity if the window is maximized.',
-                        disabled: !this.$const.OS.IS_LINUX,
+                        disabled: this.$const.OS.IS_LINUX,
                         data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_MAXIMIZED) }
                     }
                 ],
