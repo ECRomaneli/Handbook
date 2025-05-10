@@ -43,7 +43,13 @@ app.component('InlineInput', {
     inject: [ '$const' ],
     emits: [ 'update' ],
     props: { input: Object },
-    data() { return { data: this.input.data } },
+    data() { return {
+        data: this.input.data,
+        keyMap: {
+            'Meta': this.$const.OS.IS_DARWIN ? 'Command' : this.$const.OS.IS_LINUX ? 'Super' : 'Win',
+            'Alt': this.$const.OS.IS_DARWIN ? 'Option' : 'Alt'
+        }
+    } },
     methods: {
         captureKey(e) {
             e.preventDefault()
@@ -108,20 +114,14 @@ app.component('InlineInput', {
             
             // Build modifier combination with platform-specific ordering
             const modifiers = []
-            
+
+            if (key === 'Meta') { key = this.keyMap['Meta'] }
+            else if (key === 'Alt') { key = this.keyMap['Alt'] }
+        
             if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
             if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
-
-            if (this.$const.OS.IS_DARWIN) {
-                if (key === 'Meta') { key = 'Command' }
-                else if (key === 'Alt') { key = 'Option' }
-                if (event.altKey && key !== 'Option') modifiers.push('Option')
-                if (event.metaKey && key !== 'Command') modifiers.push('Command')
-            } else {
-                if (key === 'Meta') { key = this.$const.OS.IS_LINUX ? 'Super' : 'Win' }
-                if (event.altKey && key !== 'Alt') modifiers.push('Alt')
-                if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(this.$const.OS.IS_LINUX ? 'Super' : 'Win') }
-            }
+            if (event.metaKey && key !== this.keyMap['Meta']) { modifiers.push(this.keyMap['Meta']) }
+            if (event.altKey && key !== this.keyMap['Alt']) modifiers.push(this.keyMap['Alt'])
             
             return modifiers.length > 0 ? [...modifiers, key].join('+') : ""
         }

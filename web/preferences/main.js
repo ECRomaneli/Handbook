@@ -1,7 +1,7 @@
 const Vue = require("vue")
 window.addEventListener('load', async () => {
-    await loadScripts('../utils/providers')
-    await loadScripts('../utils/plugins')
+    await loadScripts('../util/providers')
+    await loadScripts('../util/plugins')
     await loadScripts('components')
     app.mount('#app')
 })
@@ -46,22 +46,35 @@ const app = Vue.createApp({
     inject: [ '$remote', '$const' ],
     data() { return { tab: 'pages', appEl: document.getElementById('app') } },
     created() {
-        if (this.$const.OS.IS_LINUX) {
-            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
-        }
+        this.setupLinuxSpecificStyles()
         this.loadTheme()
-        this.enableDragWindow()
+        this.setupWindowDrag()
     },
     methods: {
         async loadTheme() {
             this.setTheme(await this.$remote.storage.getSettings(this.$const.Settings.APP_THEME))
         },
 
+        setupLinuxSpecificStyles() {
+            if (!this.$const.OS.IS_LINUX) { return }
+            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
+        },
+
         onSettingsUpdate(input, value) {
             if (input.id === this.$const.Settings.APP_THEME) { setTimeout(() => this.setTheme(value), 100) }
         },
 
-        enableDragWindow() {
+        setTheme(theme) {
+            switch (theme) {
+                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
+                case 'dark': theme = 'dark'; break
+                default: theme = 'light'
+            }
+            this.appEl.setAttribute('data-bs-theme', theme)
+            this.appEl.setAttribute('data-theme', theme)
+        },
+
+        setupWindowDrag() {
             let isDragging = false
 
             document.addEventListener('mousedown', (e) => {
@@ -93,16 +106,6 @@ const app = Vue.createApp({
                 document.addEventListener('mousemove', onMouseMove, true)
                 document.addEventListener('mouseup', onMouseUp, true)
             }, true)
-        },
-
-        setTheme(theme) {
-            switch (theme) {
-                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
-                case 'dark': theme = 'dark'; break
-                default: theme = 'light'
-            }
-            this.appEl.setAttribute('data-bs-theme', theme)
-            this.appEl.setAttribute('data-theme', theme)
         }
     }
 })
