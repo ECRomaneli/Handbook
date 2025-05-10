@@ -34,7 +34,7 @@ const app = Vue.createApp({
                     <page-settings></page-settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'settings' }">
-                    <settings @update="onSettingsUpdate"></settings>
+                    <settings></settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>

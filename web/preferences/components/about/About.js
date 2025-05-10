@@ -8,6 +8,7 @@ app.component('AboutTab', {
             <pre ref="license" class="smallest"></pre>
             <div class="text-center mt-3">
                 <span class="smallest">Visit the project on </span><a href="https://github.com/ecromaneli/Handbook" target="_blank" class="smallest">GitHub</a>
+            </div>
         </div>
     `,
     inject: [ '$image' ],
