@@ -62,11 +62,12 @@ const app = Vue.createApp({
         },
 
         enableDragWindow() {
+            let isDragging = false
+
             document.addEventListener('mousedown', (e) => {
-                if (e.button !== 0 || e.pageY > 100) { return }
+                if (e.button !== 0 || e.pageY > 100 || isDragging) { return }
         
                 const style = document.body.style
-                let isDragging = false
             
                 const onMouseMove = (e) => {
                     if ((e.buttons & 1) === 0) { onMouseUp(); return }
@@ -86,6 +87,7 @@ const app = Vue.createApp({
                     style.removeProperty('user-select')
                     document.removeEventListener('mousemove', onMouseMove, true)
                     document.removeEventListener('mouseup', onMouseUp, true)
+                    isDragging = false
                 }
             
                 document.addEventListener('mousemove', onMouseMove, true)

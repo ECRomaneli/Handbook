@@ -33,13 +33,13 @@ async function registerActions() {
         $bridge.notifyManager('toggleMaximize')
     }, true)
 
+    let isDragging = false
     document.addEventListener('mousedown', (e) => {
-        if (!isLeftClickInActionArea(e, actionArea)) { return }
+        if (!isLeftClickInActionArea(e, actionArea) || isDragging) { return }
 
         const style = document.body.style
         const originalCursor = style.cursor
         const originalUserSelect = style.userSelect
-        let isDragging = false
     
         const onMouseMove = (e) => {
             if ((e.buttons & 1) === 0) { onMouseUp(); return }
@@ -59,6 +59,7 @@ async function registerActions() {
             style.setProperty('user-select', originalUserSelect)
             document.removeEventListener('mousemove', onMouseMove, true)
             document.removeEventListener('mouseup', onMouseUp, true)
+            isDragging = false
         }
     
         document.addEventListener('mousemove', onMouseMove, true)
