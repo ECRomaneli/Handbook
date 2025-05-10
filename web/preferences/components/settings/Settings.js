@@ -104,11 +104,17 @@ app.component('Settings', {
                         data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.BLUR_OPACITY), unit: '%' }
                     },
                     {
-                        id: this.$const.Settings.KEEP_OPACITY_MAXIMIZED,
+                        id: this.$const.Settings.KEEP_OPACITY_WHEN_MAXIMIZED,
                         label: 'Keep opacity when maximized',
                         description: 'Ignore the blur opacity if the window is maximized.',
                         disabled: this.$const.OS.IS_LINUX,
-                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_MAXIMIZED) }
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_WHEN_MAXIMIZED) }
+                    },
+                    {
+                        id: this.$const.Settings.ALLOW_FULLSCREEN,
+                        label: 'Allow fullscreen',
+                        description: 'Allow the window to enter fullscreen mode. If disabled, the media, when in fullscreen, will fit the window.',
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
                     }
                 ],
                 Bounds: [
