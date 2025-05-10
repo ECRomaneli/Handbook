@@ -44,34 +44,30 @@ const app = Vue.createApp({
     `,
 
     inject: [ '$remote', '$const' ],
-    data() { return { tab: 'pages', appEl: document.getElementById('app') } },
-    created() {
+    data() { return { tab: 'pages', appEl: document.getElementById('app'), themeChangeListener: null } },
+    beforeMount() {
+        this.setupBootstrapTheme()
         this.setupLinuxSpecificStyles()
-        this.loadTheme()
         this.setupWindowDrag()
     },
+    unmounted() {
+        this.removeBootstrapThemeListener()
+    },
     methods: {
-        async loadTheme() {
-            this.setTheme(await this.$remote.storage.getSettings(this.$const.Settings.APP_THEME))
-        },
-
         setupLinuxSpecificStyles() {
             if (!this.$const.OS.IS_LINUX) { return }
             this.appEl.style.setProperty('border', '1px solid var(--border-color)')
         },
 
-        onSettingsUpdate(input, value) {
-            if (input.id === this.$const.Settings.APP_THEME) { setTimeout(() => this.setTheme(value), 100) }
+        setupBootstrapTheme() {
+            const matchMedia = window.matchMedia('(prefers-color-scheme: dark)')
+            this.themeChangeListener = (ev) => this.appEl.setAttribute('data-bs-theme', ev.matches ? 'dark' : 'light')
+            matchMedia.addEventListener('change', this.themeChangeListener)
+            this.themeChangeListener(matchMedia)
         },
 
-        setTheme(theme) {
-            switch (theme) {
-                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
-                case 'dark': theme = 'dark'; break
-                default: theme = 'light'
-            }
-            this.appEl.setAttribute('data-bs-theme', theme)
-            this.appEl.setAttribute('data-theme', theme)
+        removeBootstrapThemeListener() {
+            window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.themeChangeListener)
         },
 
         setupWindowDrag() {

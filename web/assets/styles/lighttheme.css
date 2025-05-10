@@ -1,38 +1,40 @@
-[data-theme="light"] {
-    color-scheme: light;
-    
-    /* Main colors */
-    --background-color: #f6f8fa;
-    --color: #1F2328;
-    --divider-border-color: #d8dee4;
-    --border-color: #d0d7de;
+@media (prefers-color-scheme: light) {
+    :root {
+        color-scheme: light;
+        
+        /* Main colors */
+        --background-color: #f6f8fa;
+        --color: #1F2328;
+        --divider-border-color: #d8dee4;
+        --border-color: #d0d7de;
 
-    /* Table colors */
-    --table-header-background: #e8ecef;
-    --table-header-border: #e5e5e5;
-    --table-body-border: #e8ecef;
-    --table-body-color: #555;
+        /* Table colors */
+        --table-header-background: #e8ecef;
+        --table-header-border: #e5e5e5;
+        --table-body-border: #e8ecef;
+        --table-body-color: #555;
 
-    /* Form elements */
-    --input-background: #fff;
-    --input-color: #1F2328;
-    --input-border: #d0d7de;
-    --input-divider-color: #bbb;
+        /* Form elements */
+        --input-background: #fff;
+        --input-color: #1F2328;
+        --input-border: #d0d7de;
+        --input-divider-color: #bbb;
 
-    /* Tab styling */
-    --tab-active-color: #1F2328;
-    --tab-active-border: #f78166;
-    --tab-hover-background: #e8ecef;
+        /* Tab styling */
+        --tab-active-color: #1F2328;
+        --tab-active-border: #f78166;
+        --tab-hover-background: #e8ecef;
 
-    /* Button colors */
-    --btn-secondary-background: #e8ecef;
-    --btn-secondary-border: #d0d7de;
-    --btn-secondary-color: #1F2328;
-    --btn-secondary-hover: #d0d7de;
+        /* Button colors */
+        --btn-secondary-background: #e8ecef;
+        --btn-secondary-border: #d0d7de;
+        --btn-secondary-color: #1F2328;
+        --btn-secondary-hover: #d0d7de;
 
-    /* Scrollbar */
-    --scrollbar-thumb: #969696;
-    --scrollbar-track: #e8e8e8;
+        /* Scrollbar */
+        --scrollbar-thumb: #969696;
+        --scrollbar-track: #e8e8e8;
+    }
 
     .input-group-text {
         background-color: #e9ecef !important;
