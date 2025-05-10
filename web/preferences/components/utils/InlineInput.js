@@ -11,7 +11,7 @@ app.component('InlineInput', {
                     <span v-if="data.unit" class="input-group-text">{{ data.unit }}</span>
                 </div>
                 <div v-if="data.type === 'color'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="color" class="input-group-text px-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label">
+                    <input type="color" class="input-group-text px-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" style="z-index: 1; cursor: pointer">
                     <input type="text" class="form-control pe-0" v-model="data.value" @blur="$emit('update', input)" :aria-label="input.label" spellcheck="false">
                 </div>
                 <div v-if="data.type === 'number'" class="input-group input-group-sm float-end" style="width: 120px">
@@ -43,7 +43,13 @@ app.component('InlineInput', {
     inject: [ '$const' ],
     emits: [ 'update' ],
     props: { input: Object },
-    data() { return { data: this.input.data } },
+    data() { return {
+        data: this.input.data,
+        keyMap: {
+            'Meta': this.$const.OS.IS_DARWIN ? 'Command' : this.$const.OS.IS_LINUX ? 'Super' : 'Win',
+            'Alt': this.$const.OS.IS_DARWIN ? 'Option' : 'Alt'
+        }
+    } },
     methods: {
         captureKey(e) {
             e.preventDefault()
@@ -108,17 +114,14 @@ app.component('InlineInput', {
             
             // Build modifier combination with platform-specific ordering
             const modifiers = []
-            
+
+            if (key === 'Meta') { key = this.keyMap['Meta'] }
+            else if (key === 'Alt') { key = this.keyMap['Alt'] }
+        
             if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
             if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
-
-            if (this.$const.OS.IS_DARWIN) {
-                if (event.altKey && key !== 'Alt' && key !== 'Option') modifiers.push('Option')
-                if (event.metaKey && key !== 'Meta' && key !== 'Command') modifiers.push('Command')
-            } else {
-                if (event.altKey && key !== 'Alt') modifiers.push('Alt')
-                if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(this.$const.OS.IS_LINUX ? 'Super' : 'Win') }
-            }
+            if (event.metaKey && key !== this.keyMap['Meta']) { modifiers.push(this.keyMap['Meta']) }
+            if (event.altKey && key !== this.keyMap['Alt']) modifiers.push(this.keyMap['Alt'])
             
             return modifiers.length > 0 ? [...modifiers, key].join('+') : ""
         }
