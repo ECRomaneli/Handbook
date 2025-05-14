@@ -14,6 +14,12 @@
 		--table-body-border: #333;
 		--table-body-color: #e0e0e0;
 
+		/* Accordion colors */
+		--accordion-background: #1a1a1a;
+		--accordion-border: #313131;
+		--accordion-header-background: #202020;
+		--accordion-active-header-background: #333;
+
 		/* Form elements */
 		--input-background: #1a1a1a;
 		--input-color: #e0e0e0;
@@ -61,5 +67,9 @@
 	/* Map table adjustments */
 	.map-table textarea:focus {
 		background-color: var(--input-background);
+	}
+
+	.accordion-button::after {
+		filter: grayscale(1);
 	}
 }

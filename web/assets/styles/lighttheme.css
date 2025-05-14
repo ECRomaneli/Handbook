@@ -14,6 +14,12 @@
         --table-body-border: #e8ecef;
         --table-body-color: #555;
 
+        /* Accordion colors */
+        --accordion-background: #fafafa;
+		--accordion-border: #e5e5e5;
+		--accordion-header-background: #f7f9f9;
+		--accordion-active-header-background: #e8ecef;
+
         /* Form elements */
         --input-background: #fff;
         --input-color: #1F2328;

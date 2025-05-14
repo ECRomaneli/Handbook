@@ -21,6 +21,9 @@ const app = Vue.createApp({
                 <li @click="tab = 'pages'">
                     <button class="tab" :class="{ active: tab === 'pages' }">Pages</button>
                 </li>
+                <li @click="tab = 'permissions'">
+                    <button class="tab" :class="{ active: tab === 'permissions' }">Permissions</button>
+                </li>
                 <li @click="tab = 'settings'">
                     <button class="tab" :class="{ active: tab === 'settings' }">Settings</button>
                 </li>
@@ -30,8 +33,11 @@ const app = Vue.createApp({
             </ul>
 
             <div class="tab-content p-3 overflow-auto">
-                <div class="tab-pane show" :class="{ active: tab === 'pages' }">
-                    <page-settings></page-settings>
+                <div class="tab-pane" :class="{ active: tab === 'pages' }">
+                    <pages></pages>
+                </div>
+                <div class="tab-pane container" :class="{ active: tab === 'permissions' }">
+                    <permissions></permissions>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'settings' }">
                     <settings></settings>

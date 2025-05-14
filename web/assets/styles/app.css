@@ -208,6 +208,23 @@ body {
     background-color: var(--divider-border-color);
 }
 
+/* PERMISSIONS ======================== */
+
+.accordion-item {
+    background-color: var(--accordion-background);
+    border: var(--accordion-border) solid 1px;
+}
+
+.accordion-button {
+    background-color: var(--accordion-header-background);
+    color: var(--color);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--accordion-active-header-background);
+    color: var(--color);
+}
+
 /* ABOUT ============================== */
 
 .about pre {
@@ -260,6 +277,17 @@ body {
 
 .smallest {
     font-size: .75em;
+}
+
+/* Remove Chrome's blue outline on button clicks */
+button:focus, 
+.btn:focus,
+.accordion-button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 @media (max-width: 1460px) {

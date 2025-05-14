@@ -1,4 +1,4 @@
-app.component('PageSettings', {
+app.component('Pages', {
     template: /*html*/ `
     <div v-if="pages" class="d-flex flex-column align-items-center">
         <page-table class="overflow-hidden rounded" :pages="pages" @update="storePages" @remove="storePages"></page-table>

@@ -9,7 +9,11 @@ app.use({
                 setPages: (pages) => { ipcRenderer.send('storage.pages.updated', pages) },
 
                 getSettings: async (id) => ipcRenderer.invoke('storage.settings', id),
-                setSettings: (id, newValue) => { ipcRenderer.send('storage.settings.updated', id, newValue) }
+                setSettings: (id, newValue) => { ipcRenderer.send('storage.settings.updated', id, newValue) },
+
+                getPermissions: async (session, url, permission) => ipcRenderer.invoke('storage.permissions', session, url, permission),
+                setPermission: (session, url, permission, value) => ipcRenderer.send('storage.permissions.updated', session, url, permission, value),
+                revokePermissions: (session, url, permission) => ipcRenderer.send('storage.permissions.revoke', session, url, permission)
             },
 
             window: {
