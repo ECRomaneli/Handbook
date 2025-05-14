@@ -16,6 +16,12 @@ app.use({
                 revokePermissions: (session, url, permission) => ipcRenderer.send('storage.permissions.revoke', session, url, permission)
             },
 
+            preferences: {
+                emitReady: () => { ipcRenderer.send('preferences.ready') },
+                onPermissionsUpdated: (callback) => { ipcRenderer.on('preferences.permissions.updated', (_, permissions) => { callback(permissions) }) },
+                onPermissionsQuery: (callback) => { ipcRenderer.on('preferences.permissions.query', (_, query) => { callback(query) }) }
+            },
+
             window: {
                 dragstart: () => { ipcRenderer.send('preferences.dragStart') },
                 dragging: () => { ipcRenderer.send('preferences.dragging') },

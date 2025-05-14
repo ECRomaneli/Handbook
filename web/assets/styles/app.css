@@ -107,13 +107,20 @@ body {
 
 /* TABLE ============================== */
 
+.table-container {
+    border: 1px solid var(--table-border);
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
 .table {
     word-break: break-word;
     cursor: default;
     font-size: .75em;
     color: var(--color);
     border-color: var(--table-header-border);
-    margin: 14px 0;
+    background-color: var(--table-background);
 }
 
 .table > thead > tr > th {
@@ -124,8 +131,12 @@ body {
 
 .table > tbody > tr > td {
     color: var(--table-body-color) !important;
-    border-color: var(--table-body-border);
     background-color: transparent;
+    border: none;
+}
+
+.table > tbody > tr:not(:last-child) {
+    border-bottom: 1px solid var(--table-body-border);
 }
 
 /* MAP TABLE ======================= */
@@ -210,6 +221,10 @@ body {
 
 /* PERMISSIONS ======================== */
 
+#permissionsAccordion small {
+    font-size: .8em;
+}
+
 .accordion-item {
     background-color: var(--accordion-background);
     border: var(--accordion-border) solid 1px;
@@ -223,6 +238,12 @@ body {
 .accordion-button:not(.collapsed) {
     background-color: var(--accordion-active-header-background);
     color: var(--color);
+}
+
+.permission-badge {
+    font-size: xx-small;
+    background-color: var(--badge-bg-low-key) !important;
+    color: var(--badge-text-low-key) !important;
 }
 
 /* ABOUT ============================== */

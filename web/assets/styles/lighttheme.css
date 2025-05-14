@@ -9,6 +9,8 @@
         --border-color: #d0d7de;
 
         /* Table colors */
+        --table-background: #fafafa;
+		--table-border: #e5e5e5;
         --table-header-background: #e8ecef;
         --table-header-border: #e5e5e5;
         --table-body-border: #e8ecef;
@@ -19,6 +21,10 @@
 		--accordion-border: #e5e5e5;
 		--accordion-header-background: #f7f9f9;
 		--accordion-active-header-background: #e8ecef;
+
+        /* Badges */
+        --badge-bg-low-key: #e3e3e3;
+        --badge-text-low-key: #1F2328;
 
         /* Form elements */
         --input-background: #fff;

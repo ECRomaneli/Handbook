@@ -1,7 +1,10 @@
 const Vue = require("vue")
+const SearchEngine = require("@ecromaneli/search-engine")
+
 window.addEventListener('load', async () => {
     await loadScripts('../util/providers')
     await loadScripts('../util/plugins')
+    await loadScripts('plugins')
     await loadScripts('components')
     app.mount('#app')
 })
@@ -56,10 +59,19 @@ const app = Vue.createApp({
         this.setupLinuxSpecificStyles()
         this.setupWindowDrag()
     },
-    unmounted() {
-        this.removeBootstrapThemeListener()
+    mounted() {
+        this.setupPermissionsListener()
+        this.$nextTick(this.emitReady)
     },
     methods: {
+        emitReady() {
+            this.$remote.preferences.emitReady()
+        },
+
+        setupPermissionsListener() {
+            this.$remote.preferences.onPermissionsQuery(() => { this.tab = 'permissions' })
+        },
+
         setupLinuxSpecificStyles() {
             if (!this.$const.OS.IS_LINUX) { return }
             this.appEl.style.setProperty('border', '1px solid var(--border-color)')
@@ -70,10 +82,6 @@ const app = Vue.createApp({
             this.themeChangeListener = (ev) => this.appEl.setAttribute('data-bs-theme', ev.matches ? 'dark' : 'light')
             matchMedia.addEventListener('change', this.themeChangeListener)
             this.themeChangeListener(matchMedia)
-        },
-
-        removeBootstrapThemeListener() {
-            window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.themeChangeListener)
         },
 
         setupWindowDrag() {

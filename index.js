@@ -1,7 +1,7 @@
 import { app, globalShortcut } from 'electron'
 
 import { OS } from './lib/constants.js'
-import { Manager } from './lib/manager.js'
+import Manager from './lib/manager.js'
 
 if (app.isPackaged) { console.trace = console.debug = () => {} }
 

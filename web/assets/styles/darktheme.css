@@ -9,9 +9,11 @@
 		--border-color: #555;
 
 		/* Table colors */
+		--table-background: #1c1c1c;
+		--table-border: #313131;
 		--table-header-background: #333;
 		--table-header-border: #676767;
-		--table-body-border: #333;
+		--table-body-border: #272727;
 		--table-body-color: #e0e0e0;
 
 		/* Accordion colors */
@@ -19,6 +21,10 @@
 		--accordion-border: #313131;
 		--accordion-header-background: #202020;
 		--accordion-active-header-background: #333;
+
+		/* Badges */
+		--badge-bg-low-key: #3d3d3d;
+		--badge-text-low-key: #e0e0e0;
 
 		/* Form elements */
 		--input-background: #1a1a1a;
