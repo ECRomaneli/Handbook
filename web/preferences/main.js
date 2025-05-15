@@ -2,8 +2,7 @@ const Vue = require("vue")
 const SearchEngine = require("@ecromaneli/search-engine")
 
 window.addEventListener('load', async () => {
-    await loadScripts('../util/providers')
-    await loadScripts('../util/plugins')
+    await loadScripts('providers')
     await loadScripts('plugins')
     await loadScripts('components')
     app.mount('#app')
