@@ -1,0 +1,213 @@
+:root {
+  --bg-color: #f1f3f4;
+  --modal-bg: #fff;
+  --text-color: #202124;
+  --border-color: #ddd;
+  --tab-active-color: #1a73e8;
+  --item-active-bg: #f1f7fd;
+  --item-border: #ccc;
+  --btn-bg: #1a73e8;
+  --btn-text: #fff;
+  --btn-cancel-bg: #fff;
+  --btn-cancel-text: #333;
+  --scrollbar-thumb: #969696;
+  --scrollbar-track: #e8e8e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #202124;
+    --modal-bg: #303134;
+    --text-color: #e8eaed;
+    --border-color: #5f6368;
+    --tab-active-color: #8ab4f8;
+    --item-active-bg: #114977;
+    --item-border: #5f6368;
+    --btn-bg: #8ab4f8;
+    --btn-text: #202124;
+    --btn-cancel-bg: #3c4043;
+    --btn-cancel-text: #e8eaed;
+    --scrollbar-thumb: #676767;
+    --scrollbar-track: #333;
+  }
+}
+body {
+  font-family: Arial, sans-serif;
+  background: transparent;
+  color: var(--text-color);
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.modal {
+  background: var(--modal-bg);
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.linux-border .modal {
+  border: 1px solid var(--border-color);
+}
+.modal-header {
+  -webkit-app-region: drag;
+  app-region: drag;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: normal;
+  color: var(--text-color);
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  cursor: pointer;
+  user-select: none;
+  color: var(--text-color);
+}
+.tab.active {
+  border-bottom: 3px solid var(--tab-active-color);
+  font-weight: bold;
+  color: var(--tab-active-color);
+}
+.content {
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 12px;
+  height: 100%;
+  overflow-y: auto;
+}
+.item {
+  width: 100%;
+  border: 1px solid var(--item-border);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  max-width: 240px;
+  background: var(--modal-bg);
+}
+.item.selected {
+  border-color: var(--tab-active-color);
+  background-color: var(--item-active-bg);
+  font-weight: bold;
+}
+.item .item-preview {
+  height: 100px;
+  background-color: #000;
+}
+.item .item-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.item-label {
+  display: flex;
+  padding: 8px;
+  font-size: small;
+  text-align: center;
+  color: var(--text-color);
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.item-label > img {
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+}
+.item-label > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.modal-footer {
+  padding: 12px 16px;
+  text-align: right;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn.cancel {
+  background: var(--btn-cancel-bg);
+  color: var(--btn-cancel-text);
+}
+.btn.share {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+.audio-option {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+/* For browsers that support accent-color */
+.audio-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+/* Group the buttons together on the right */
+.footer-buttons {
+  display: flex;
+  gap: 8px;
+}
+/* Scrollbar styling for WebKit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+@media (min-width: 290px) {
+  .item {
+    width: calc(50% - 8px);
+  }
+}
+
+@media (min-width: 540px) {
+  .item {
+    width: calc(33.3332% - 10px);
+  }
+}
+
+@media (min-width: 790px) {
+  .item {
+    width: calc(25% - 11px);
+  }
+}
+
+@media (min-width: 1040px) {
+  .item {
+    width: calc(20% - 12px);
+  }
+}
