@@ -62,6 +62,13 @@
     cancelBtn.addEventListener('click', () => { $bridge.close() })
     shareBtn.addEventListener('click', () => { selectedSource !== null && $bridge.close({ id: selectedSource.id, name: selectedSource.name, shareAudio: audioCheckbox?.checked }) })
 
+    // Add keyboard event listener for ESC key
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            $bridge.close()
+        }
+    })
+
     let sources = { 'screen': [], 'window': [] }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -73,5 +80,6 @@
             renderTab(sources['screen'])
         })
         $bridge.ready()
+        cancelBtn.focus()
     })
 }) ()
