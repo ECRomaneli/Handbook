@@ -26,7 +26,7 @@ app.component('Pages', {
         },
 
         importPages() {
-            this.$exporter.import('.json', (status, data) => {
+            this.$exporter.import((status, data) => {
                 if (!status) { return }
 
                 const importedPages = JSON.parse(data)
@@ -37,7 +37,7 @@ app.component('Pages', {
         },
 
         exportPages() {
-            this.$exporter.export('application/json', JSON.stringify(this.pages, null, 2))
+            this.$exporter.export('application/json', JSON.stringify(this.pages, null, 2), 'pages.json')
         }
     }
 })

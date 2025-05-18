@@ -15,6 +15,12 @@
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --radius: 8px;
             --transition: all 0.3s ease;
+            --switch-width: 36px;
+            --switch-height: 20px;
+            --switch-padding: 2px;
+            --switch-bg-off: #ccc;
+            --switch-bg-on: var(--primary);
+            --switch-knob-color: #fff;
         }
 
         body {
@@ -166,6 +172,68 @@
             background-color: #fff;
             border-radius: 50%;
         }
+        
+        /* Audio Switch Styling */
+        .audio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        /* Hide default checkbox */
+        .audio-option input[type="checkbox"] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        /* Create the switch container */
+        .audio-option label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 8px;
+        }
+
+        /* Create toggle switch */
+        .audio-option label::before {
+            content: '';
+            display: inline-block;
+            width: var(--switch-width);
+            height: var(--switch-height);
+            background: var(--switch-bg-off);
+            border-radius: var(--switch-height);
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        /* Create the knob/circle */
+        .audio-option label::after {
+            content: '';
+            position: absolute;
+            width: calc(var(--switch-height) - var(--switch-padding) * 2);
+            height: calc(var(--switch-height) - var(--switch-padding) * 2);
+            border-radius: 50%;
+            background: var(--switch-knob-color);
+            top: var(--switch-padding);
+            left: var(--switch-padding);
+            transition: 0.2s;
+        }
+
+        /* Move the knob when checked */
+        .audio-option input:checked + label::before {
+            background: var(--switch-bg-on);
+        }
+
+        .audio-option input:checked + label::after {
+            left: calc(var(--switch-width) - var(--switch-height) + var(--switch-padding));
+        }
+
+        /* Focus style for accessibility */
+        .audio-option input:focus + label::before {
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -183,6 +251,10 @@
         </div>
         
         <div class="controls">
+            <div class="audio-option">
+                <input type="checkbox" id="audioToggle" />
+                <label for="audioToggle">Compartilhar áudio do sistema</label>
+            </div>
             <button id="shareBtn" class="btn">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -199,6 +271,7 @@
             const screenVideo = document.getElementById('screenVideo');
             const screenPreview = document.querySelector('.screen-preview');
             const statusText = document.getElementById('status');
+            const audioToggle = document.getElementById('audioToggle');
             
             let stream = null;
             let isSharing = false;
@@ -206,30 +279,26 @@
             shareBtn.addEventListener('click', async () => {
                 try {
                     if (isSharing) {
-                        // Parar compartilhamento
-                        if (stream) {
-                            stream.getTracks().forEach(track => track.stop());
-                        }
-                        screenVideo.srcObject = null;
-                        screenPreview.classList.remove('active');
-                        statusText.textContent = 'Aguardando compartilhamento...';
-                        statusText.classList.remove('active');
-                        shareBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Compartilhar Tela';
-                        shareBtn.classList.remove('stop');
-                        isSharing = false;
+                        stopSharing();
                     } else {
                         // Iniciar compartilhamento
+                        const shareAudio = audioToggle.checked;
+                        
                         stream = await navigator.mediaDevices.getDisplayMedia({
                             video: {
                                 cursor: "always"
                             },
-                            audio: false
+                            audio: shareAudio // Usa a configuração do switch
                         });
                         
                         screenVideo.srcObject = stream;
                         screenPreview.classList.add('active');
-                        statusText.textContent = 'Compartilhamento ativo';
+                        
+                        // Atualiza o status para indicar se o áudio está sendo compartilhado
+                        const audioStatus = shareAudio ? ' com áudio' : '';
+                        statusText.textContent = `Compartilhamento ativo${audioStatus}`;
                         statusText.classList.add('active');
+                        
                         shareBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Parar Compartilhamento';
                         shareBtn.classList.add('stop');
                         isSharing = true;

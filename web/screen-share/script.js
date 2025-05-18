@@ -5,13 +5,13 @@
      */
     const $bridge = ((ipc, EventEmitter) => {
         const $bus = new EventEmitter()
-        ipc.on('screenShare.open', (_e, data) => { console.log(data); $bus.emit('screenShare.open', data) })
+        ipc.on('screenShare.open', (_e, data) => { $bus.emit('screenShare.open', data) })
         return {
             onOpen: (fn) => $bus.on('screenShare.open', fn),
             ready: () => ipc.send('screenShare.ready'),
             close: (...args) => ipc.send('screenShare.close', ...args)
         }
-    })(require('electron').ipcRenderer, require('node:events'))
+    }) (require('electron').ipcRenderer, require('node:events'))
 
     const INVALID_BASE64 = 'data:image/png;base64,'
     const title = document.getElementById('title')
@@ -48,7 +48,7 @@
 
     function disableAudioCheckbox() {
         audioCheckbox.checked = false
-        audioCheckbox.parentElement.style.display = 'none'
+        audioCheckbox.parentElement.innerHTML = ''
     }
 
     tabs.forEach(tab => {
@@ -67,7 +67,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (process.platform === 'linux') { document.body.classList.add('linux-border') }
         $bridge.onOpen((data) => {
-            console.log('data:', data)
             if (!data.shareAudioBtn) { disableAudioCheckbox() }
             if (data.requesterUrl) { title.innerText = `Choose what to share with ${data.requesterUrl}` }
             sources = data.sources

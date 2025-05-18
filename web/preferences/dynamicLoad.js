@@ -43,3 +43,5 @@ async function loadScripts(directoryPath) {
         })
     }))
 }
+
+export { loadScripts }

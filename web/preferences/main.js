@@ -1,5 +1,5 @@
 const Vue = require("vue")
-const SearchEngine = require("@ecromaneli/search-engine")
+const { loadScripts } = require('./dynamicLoad.js')
 
 window.addEventListener('load', async () => {
     await loadScripts('providers')

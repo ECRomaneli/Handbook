@@ -4,7 +4,7 @@
   --text-color: #202124;
   --border-color: #ddd;
   --tab-active-color: #1a73e8;
-  --item-active-bg: #f1f7fd;
+  --item-active-bg: #e0effd;
   --item-border: #ccc;
   --btn-bg: #1a73e8;
   --btn-text: #fff;
@@ -12,6 +12,12 @@
   --btn-cancel-text: #333;
   --scrollbar-thumb: #969696;
   --scrollbar-track: #e8e8e8;
+  --switch-width: 36px;
+  --switch-height: 20px;
+  --switch-padding: 2px;
+  --switch-bg-off: #ccc;
+  --switch-bg-on: var(--tab-active-color);
+  --switch-knob-color: #fff;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -28,10 +34,13 @@
     --btn-cancel-text: #e8eaed;
     --scrollbar-thumb: #676767;
     --scrollbar-track: #333;
+    --switch-bg-off: #5f6368;
+    --switch-bg-on: #215ab7;
+    --switch-knob-color: #fff;
   }
 }
 body {
-  font-family: Arial, sans-serif;
+  font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   background: transparent;
   color: var(--text-color);
   display: flex;
@@ -115,7 +124,7 @@ body {
 }
 .item-label {
   display: flex;
-  padding: 8px;
+  padding: 6px;
   font-size: small;
   text-align: center;
   color: var(--text-color);
@@ -157,18 +166,27 @@ body {
 .btn.share {
   background: var(--btn-bg);
   color: var(--btn-text);
+  transition: 0.2s;
 }
-.audio-option {
+.btn.share:disabled {
+  opacity: 0.5;
+  filter: grayscale(30%);
+  cursor: not-allowed;
+}
+.switch {
   font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 5px;
   cursor: pointer;
+  user-select: none;
 }
-/* For browsers that support accent-color */
-.audio-option input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+/* Hide default checkbox */
+.switch input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
 }
 /* Group the buttons together on the right */
 .footer-buttons {
@@ -210,4 +228,52 @@ body {
   .item {
     width: calc(20% - 12px);
   }
+}
+
+/* Create the switch container */
+.switch label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  position: relative; /* Adiciona contexto de posicionamento */
+}
+
+/* Create toggle switch */
+.switch label::before {
+  content: '';
+  display: inline-block;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  background: var(--switch-bg-off);
+  border-radius: var(--switch-height);
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+/* Create the knob/circle */
+.switch label::after {
+  content: '';
+  position: absolute;
+  width: calc(var(--switch-height) - var(--switch-padding) * 2);
+  height: calc(var(--switch-height) - var(--switch-padding) * 2);
+  border-radius: 50%;
+  background: var(--switch-knob-color);
+  top: calc((var(--switch-height) - (var(--switch-height) - var(--switch-padding) * 2)) / 2);
+  left: var(--switch-padding);
+  transition: 0.2s;
+}
+
+/* Move the knob when checked */
+.switch input:checked + label::before {
+  background: var(--switch-bg-on);
+}
+
+.switch input:checked + label::after {
+  left: calc(var(--switch-width) - var(--switch-height) + var(--switch-padding));
+}
+
+/* Focus style for accessibility */
+.switch input:focus + label::before {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }

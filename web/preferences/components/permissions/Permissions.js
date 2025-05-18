@@ -1,3 +1,5 @@
+const SearchEngine = require("@ecromaneli/search-engine")
+
 app.component('Permissions', {
     template: /*html*/ `
         <div v-if="permissions" class="d-flex flex-column">
@@ -99,9 +101,9 @@ app.component('Permissions', {
 
         filterPermissions() {
             const filterableList = []
-            for (session in this.permissions) {
+            for (const session in this.permissions) {
                 const sessionData = this.permissions[session]
-                for (url in sessionData) {
+                for (const url in sessionData) {
                     const permissions = sessionData[url]
                     filterableList.push({ session, url, permissions, permission: Object.keys(permissions) })
                 }
