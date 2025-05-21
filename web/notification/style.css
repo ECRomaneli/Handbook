@@ -1,37 +1,36 @@
 :root {
   --bg-color: #f1f3f4;
-  --modal-bg: #fff;
+  --modal-bg: #f3f3f3;
   --text-color: #202124;
-  --border-color: #ddd;
-  --tab-active-color: #1a73e8;
-  --item-active-bg: #e0effd;
-  --item-border: #ccc;
-  --btn-bg: #1a73e8;
-  --btn-text: #fff;
-  --btn-cancel-bg: #fff;
-  --btn-cancel-text: #333;
+  --border-color: #ccc;
+  --accent-color: #1a73e8;
+  --accent-bg: #e0effd;
+  --btn-bg: #e5e5e5;
+  --btn-hover-bg: #d9d9d9;
+  --btn-active-bg: #e9cec1;
+  --btn-text: #333;
   --scrollbar-thumb: #969696;
   --scrollbar-track: #e8e8e8;
   --switch-width: 36px;
   --switch-height: 20px;
   --switch-padding: 2px;
   --switch-bg-off: #ccc;
-  --switch-bg-on: var(--tab-active-color);
+  --switch-bg-on: var(--accent-color);
   --switch-knob-color: #fff;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-color: #202124;
     --modal-bg: #303134;
     --text-color: #e8eaed;
     --border-color: #5f6368;
-    --tab-active-color: #8ab4f8;
-    --item-active-bg: #114977;
-    --item-border: #5f6368;
-    --btn-bg: #8ab4f8;
-    --btn-text: #202124;
-    --btn-cancel-bg: #3c4043;
-    --btn-cancel-text: #e8eaed;
+    --accent-color: #8ab4f8;
+    --accent-bg: #114977;
+    --btn-bg: #3c4043;
+    --btn-hover-bg: #43484c;
+    --btn-active-bg: #864324;
+    --btn-text: #e8eaed;
     --scrollbar-thumb: #676767;
     --scrollbar-track: #333;
     --switch-bg-off: #5f6368;
@@ -39,6 +38,7 @@
     --switch-knob-color: #fff;
   }
 }
+
 body {
   font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   background: transparent;
@@ -47,132 +47,53 @@ body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
   overflow: hidden;
 }
-.modal {
-  background: var(--modal-bg);
-  border-radius: 8px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+
 .linux-border .modal {
   border: 1px solid var(--border-color);
 }
-.modal-header {
+
+.modal {
+  background: var(--modal-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
   -webkit-app-region: drag;
   app-region: drag;
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: normal;
-  color: var(--text-color);
-}
-.tabs {
   display: flex;
-  border-bottom: 1px solid var(--border-color);
-}
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 12px 0;
-  cursor: pointer;
-  user-select: none;
-  color: var(--text-color);
-}
-.tab.active {
-  border-bottom: 3px solid var(--tab-active-color);
-  font-weight: bold;
-  color: var(--tab-active-color);
-}
-.modal-content {
-  padding: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 12px;
+  gap: 16px;
   height: 100%;
-  overflow-y: auto;
-}
-.item {
-  width: 100%;
-  border: 1px solid var(--item-border);
-  border-radius: 4px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  max-width: 240px;
-  background: var(--modal-bg);
-}
-.item.selected {
-  border-color: var(--tab-active-color);
-  background-color: var(--item-active-bg);
-  font-weight: bold;
-}
-.item .item-preview {
-  height: 100px;
-  background-color: #000;
-}
-.item .item-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.item-label {
-  display: flex;
-  padding: 6px;
-  font-size: small;
-  text-align: center;
-  color: var(--text-color);
-  max-width: 100%;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-}
-.item-label > img {
-  width: 13px;
-  height: 13px;
-  margin-right: 6px;
-}
-.item-label > span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-.modal-footer {
-  text-align: right;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
 }
+
+.modal-content .title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.modal-content .message {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .btn {
-  padding: 8px 16px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-}
-.btn.cancel {
-  background: var(--btn-cancel-bg);
-  color: var(--btn-cancel-text);
-}
-.btn.share {
   background: var(--btn-bg);
   color: var(--btn-text);
-  transition: 0.2s;
 }
-.btn.share:disabled {
-  opacity: 0.5;
-  filter: grayscale(30%);
-  cursor: not-allowed;
-}
+
 .switch {
   font-size: 0.9rem;
   display: flex;
@@ -181,6 +102,7 @@ body {
   cursor: pointer;
   user-select: none;
 }
+
 /* Hide default checkbox */
 .switch input[type="checkbox"] {
   height: 0;
@@ -188,46 +110,41 @@ body {
   visibility: hidden;
   position: absolute;
 }
+
 /* Group the buttons together on the right */
 .footer-buttons {
   display: flex;
-  gap: 8px;
+  width: 100%;
+  gap: 1px;
 }
+
+.footer-buttons button {
+  width: 100%;
+  user-select: none;
+  transition: .2s linear background-color;
+}
+
+.footer-buttons button:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.footer-buttons button:focus {
+  background-color: var(--btn-active-bg);
+}
+
 /* Scrollbar styling for WebKit browsers */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
-}
-
-@media (min-width: 290px) {
-  .item {
-    width: calc(50% - 8px);
-  }
-}
-
-@media (min-width: 540px) {
-  .item {
-    width: calc(33.3332% - 10px);
-  }
-}
-
-@media (min-width: 790px) {
-  .item {
-    width: calc(25% - 11px);
-  }
-}
-
-@media (min-width: 1040px) {
-  .item {
-    width: calc(20% - 12px);
-  }
 }
 
 /* Create the switch container */
@@ -276,4 +193,9 @@ body {
 /* Focus style for accessibility */
 .switch input:focus + label::before {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove Chrome's blue outline on button clicks */
+button:focus {
+    outline: none !important;
 }
