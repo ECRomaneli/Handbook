@@ -9,40 +9,33 @@
         return {
             setHeight: (height) => ipc.send('notification.setHeight', height),
             onOpen: (fn) => $bus.on('notification.open', fn),
-            ready: () => ipc.send('notification.ready'),
             close: (...args) => ipc.send('notification.close', ...args)
         }
     }) (require('electron').ipcRenderer, require('node:events'))
 
-    const title = document.getElementById('title')
-    const message = document.getElementById('message')
-    const optionLabel = document.getElementById('option-label')
-    const buttons = document.getElementById('buttons')
-    let optionCheckbox = document.getElementById('option-checkbox')
-
-    function render(data) {
+    function render(els, data) {
         let defaultBtn = null
-        title.innerText = data.title
-        message.innerHTML = data.message
-        buttons.innerHTML = ''
+        els.title.innerText = data.title
+        els.message.innerHTML = data.message
+        els.buttons.innerHTML = ''
         data.buttons.forEach((btn, i) => {
             const button = document.createElement('button')
             button.classList.add('btn')
             button.tabIndex = i + 1
             button.innerText = btn
             button.addEventListener('click', () => {
-                $bridge.close({ response: i, checkboxChecked: optionCheckbox?.checked })
+                $bridge.close({ response: i, checkboxChecked: els.optionCheckbox?.checked })
             })
-            buttons.appendChild(button)
+            els.buttons.appendChild(button)
             if (data.cancelId === i) { button.id = 'cancel-btn' }
             if (data.defaultId === i) { defaultBtn = button }
         })
         if (data.checkboxLabel) {
-            optionCheckbox.checked = data.checkboxChecked ?? false
-            optionLabel.innerText = data.checkboxLabel
+            els.optionCheckbox.checked = data.checkboxChecked ?? false
+            els.optionLabel.innerText = data.checkboxLabel
         } else {
-            optionCheckbox.parentElement.innerHTML = ''
-            optionCheckbox = void 0
+            els.optionCheckbox.parentElement.innerHTML = ''
+            els.optionCheckbox = void 0
         }
         $bridge.setHeight(document.body.offsetHeight)
         defaultBtn?.focus()
@@ -56,8 +49,15 @@
     })
 
     document.addEventListener('DOMContentLoaded', () => {
+        const elements = {
+            title: document.getElementById('title'),
+            message: document.getElementById('message'),
+            optionLabel: document.getElementById('option-label'),
+            optionCheckbox: document.getElementById('option-checkbox'),
+            buttons: document.getElementById('buttons')
+        }
+
         if (process.platform === 'linux') { document.body.classList.add('linux-border') }
-        $bridge.onOpen((data) => { render(data) })
-        $bridge.ready()
-    })
+        $bridge.onOpen((data) => { render(elements, data) })
+    }, true)
 }) ()
