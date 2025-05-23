@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Permissions Test</title>
+    <style>
+        :root {
+            /* Main colors */
+            --primary: #4a6cf7;
+            --primary-hover: #3a5bd9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            
+            /* Background colors */
+            --bg-main: #f5f7ff;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --bg-canvas: #1a1a1a;
+            --bg-item: rgba(0, 0, 0, 0.05);
+            --bg-select: #ffffff;
+            --bg-log: #f5f5f5;
+            
+            /* Text colors */
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #6c757d;
+            --text-light: #ffffff;
+            --text-log: #333333;
+            --text-log-time: #999999;
+            
+            /* Status */
+            --status-pending-bg: #e9ecef;
+            --status-pending-text: #6c757d;
+            --status-granted-bg: #d4edda;
+            --status-granted-text: #28a745;
+            --status-denied-bg: #f8d7da;
+            --status-denied-text: #dc3545;
+            
+            /* UI Elements */
+            --border-color: #ced4da;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --grid-color: #333333;
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark mode background colors */
+                --bg-main: #121212;
+                --bg-card: #1e1e1e;
+                --bg-input: #333333;
+                --bg-item: rgba(255, 255, 255, 0.05);
+                --bg-select: #333333;
+                --bg-log: #2a2a2a;
+                
+                /* Dark mode text colors */
+                --text-primary: #f8f9fa;
+                --text-secondary: #cccccc;
+                --text-muted: #adb5bd;
+                --text-log: #e0e0e0;
+                --text-log-time: #888888;
+                
+                /* Dark mode status */
+                --status-pending-bg: #343a40;
+                --status-pending-text: #adb5bd;
+                --status-granted-bg: #204829;
+                --status-granted-text: #75c687;
+                --status-denied-bg: #491217;
+                --status-denied-text: #ea868f;
+                
+                /* Dark mode UI elements */
+                --border-color: #555555;
+                --grid-color: #444444;
+
+                --scrollbar-thumb: #676767;
+                --scrollbar-track: #333;
+            }
+
+            /* Scrollbar styling for WebKit browsers */
+            ::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+                }
+
+                ::-webkit-scrollbar-thumb {
+                background: var(--scrollbar-thumb);
+                border-radius: 5px;
+                }
+
+                ::-webkit-scrollbar-track {
+                background: var(--scrollbar-track);
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: var(--bg-canvas);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #camera {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            gap: 1rem;
+        }
+
+        .camera-icon {
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+
+        .db-meter-container {
+            width: 100%;
+            height: 200px;
+            background-color: var(--bg-canvas);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        #db-meter {
+            width: 100%;
+            height: 100%;
+        }
+
+        .audio-level {
+            margin-top: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .permission-status {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            background: var(--bg-item);
+        }
+
+        .status-label {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .status-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-value.pending {
+            background-color: var(--status-pending-bg);
+            color: var(--status-pending-text);
+        }
+
+        .status-value.granted {
+            background-color: var(--status-granted-bg);
+            color: var(--status-granted-text);
+        }
+
+        .status-value.denied {
+            background-color: var(--status-denied-bg);
+            color: var(--status-denied-text);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--text-light);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.stop {
+            background-color: var(--danger);
+        }
+
+        .btn.stop:hover {
+            background-color: #bd2130;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .device-selector {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-select);
+            color: var(--text-primary);
+        }
+
+        .level-bar {
+            width: 100%;
+            height: 20px;
+            background-color: var(--status-pending-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .level-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.1s ease;
+        }
+
+        #events-log {
+            height: 100px; 
+            overflow-y: auto; 
+            font-family: monospace; 
+            font-size: 12px; 
+            background: var(--bg-log); 
+            padding: 10px; 
+            border-radius: 4px;
+            color: var(--text-log);
+        }
+
+        #events-log span {
+            color: var(--text-log-time);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-indicator.active {
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.inactive {
+            background-color: var(--text-muted);
+        }
+
+        .status-indicator.error {
+            background-color: var(--danger);
+        }
+
+        /* Add this to your existing CSS */
+        .small-meter {
+            height: 10px;
+            margin: 3px 0 0 0;
+        }
+
+        /* Screen sharing styles */
+        .container-full {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .screen-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: var(--bg-canvas);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        #screen-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .screen-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            gap: 1rem;
+        }
+
+        .screen-icon {
+            font-size: 4rem;
+            opacity: 0.7;
+        }
+
+        .source-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg-item);
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .source-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .source-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .source-value {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .screen-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .screen-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Media Permissions Test</h1>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-title">
+                <span class="status-indicator" id="camera-indicator"></span>
+                Camera
+            </div>
+            <div class="card-content">
+                <div class="camera-container">
+                    <video id="camera" autoplay playsinline></video>
+                    <div class="camera-placeholder" id="camera-placeholder">
+                        <div class="camera-icon">📷</div>
+                        <div>Click "Start Camera" below</div>
+                    </div>
+                </div>
+                
+                <div class="device-selector">
+                    <select id="camera-select" disabled>
+                        <option value="">Select a camera...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="camera-btn" class="btn">Start Camera</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">
+                <span class="status-indicator" id="mic-indicator"></span>
+                Microphone
+            </div>
+            <div class="card-content">
+                <div class="db-meter-container">
+                    <canvas id="db-meter"></canvas>
+                </div>
+                
+                <div class="audio-level">
+                    <span id="db-value">0 dB</span>
+                </div>
+                
+                <div class="level-bar">
+                    <div class="level-fill" id="volume-meter"></div>
+                </div>
+                
+                <div class="device-selector">
+                    <select id="mic-select" disabled>
+                        <option value="">Select a microphone...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="mic-btn" class="btn">Start Microphone</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Permission Status</div>
+            <div class="card-content">
+                <div class="permission-status">
+                    <div class="status-item">
+                        <div class="status-label">
+                            <span>📷</span>
+                            Camera
+                        </div>
+                        <div class="status-value pending" id="camera-permission">
+                            Waiting...
+                        </div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <span>🎤</span>
+                            Microphone
+                        </div>
+                        <div class="status-value pending" id="mic-permission">
+                            Waiting...
+                        </div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <span>🖥️</span>
+                            Screen Sharing
+                        </div>
+                        <div class="status-value pending" id="screen-permission">
+                            Waiting...
+                        </div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">
+                            <span>🔒</span>
+                            Protocol
+                        </div>
+                        <div class="status-value" id="secure-context">
+                            Checking...
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-label">API Status</div>
+                        <div id="api-status"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <h3>Event Log</h3>
+                    <div id="events-log">
+                        <!-- Events will be added here -->
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="reset-btn" class="btn">Reset Permissions</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Full width screen sharing container -->
+    <div class="container-full">
+        <div class="card">
+            <div class="card-title">
+                <span class="status-indicator" id="screen-indicator"></span>
+                Screen Sharing
+            </div>
+            <div class="card-content">
+                <div class="screen-container">
+                    <video id="screen-video" autoplay playsinline></video>
+                    <div class="screen-placeholder" id="screen-placeholder">
+                        <div class="screen-icon">🖥️</div>
+                        <div>Click one of the options below to share your screen</div>
+                    </div>
+                </div>
+                
+                <div class="source-info" id="source-info" style="display: none;">
+                    <div class="source-details">
+                        <div class="source-label">Source</div>
+                        <div class="source-value" id="source-name">Not sharing</div>
+                    </div>
+                    <div class="source-details">
+                        <div class="source-label">Resolution</div>
+                        <div class="source-value" id="source-resolution">-</div>
+                    </div>
+                    <div class="source-details">
+                        <div class="source-label">Frame Rate</div>
+                        <div class="source-value" id="source-fps">-</div>
+                    </div>
+                    <div class="source-details">
+                        <div class="source-label">Audio Level</div>
+                        <div class="source-value">
+                            <div class="level-bar small-meter">
+                                <div class="level-fill" id="screen-audio-meter"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen-controls">
+                <button id="screen-btn" class="btn">Share Entire Screen</button>
+                <button id="window-btn" class="btn">Share Application Window</button>
+                <button id="tab-btn" class="btn">Share Browser Tab</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Interface elements
+            const cameraBtn = document.getElementById('camera-btn');
+            const micBtn = document.getElementById('mic-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const screenBtn = document.getElementById('screen-btn');
+            const windowBtn = document.getElementById('window-btn');
+            const tabBtn = document.getElementById('tab-btn');
+            const cameraVideo = document.getElementById('camera');
+            const screenVideo = document.getElementById('screen-video');
+            const cameraPlaceholder = document.getElementById('camera-placeholder');
+            const screenPlaceholder = document.getElementById('screen-placeholder');
+            const sourceInfo = document.getElementById('source-info');
+            const sourceName = document.getElementById('source-name');
+            const sourceResolution = document.getElementById('source-resolution');
+            const sourceFps = document.getElementById('source-fps');
+            const cameraSelect = document.getElementById('camera-select');
+            const micSelect = document.getElementById('mic-select');
+            const dbCanvas = document.getElementById('db-meter');
+            const dbValue = document.getElementById('db-value');
+            const volumeMeter = document.getElementById('volume-meter');
+            const cameraPermission = document.getElementById('camera-permission');
+            const micPermission = document.getElementById('mic-permission');
+            const screenPermission = document.getElementById('screen-permission');
+            const secureContext = document.getElementById('secure-context');
+            const cameraIndicator = document.getElementById('camera-indicator');
+            const micIndicator = document.getElementById('mic-indicator');
+            const screenIndicator = document.getElementById('screen-indicator');
+            const apiStatus = document.getElementById('api-status');
+            const eventsLog = document.getElementById('events-log');
+            
+            // Application state
+            let cameraStream = null;
+            let microphoneStream = null;
+            let screenStream = null;
+            let isUsingCamera = false;
+            let isUsingMic = false;
+            let isUsingScreen = false;
+            let audioContext = null;
+            let analyser = null;
+            let microphone = null;
+            let canvasContext = dbCanvas.getContext('2d');
+            let dataArray;
+            let animationId = null;
+            let frameRateInterval = null;
+            let frameCount = 0;
+            let lastTimestamp = 0;
+
+            // Add these variables with the other application state variables
+            let screenAudioContext = null;
+            let screenAudioSource = null;
+            let screenAudioAnalyser = null;
+            let screenAudioData;
+            let screenAudioAnimationId = null;
+            
+            // Initial setup
+            setupCanvas();
+            checkSecureContext();
+            checkMediaDevicesSupport();
+            
+            // Check if we're in a secure context (HTTPS)
+            function checkSecureContext() {
+                if (window.isSecureContext) {
+                    secureContext.textContent = 'Secure (HTTPS)';
+                    secureContext.classList.add('granted');
+                    logEvent('✅ Secure context detected');
+                } else {
+                    secureContext.textContent = 'Insecure (HTTP)';
+                    secureContext.classList.add('denied');
+                    logEvent('⚠️ Insecure context - some features may not work');
+                }
+            }
+            
+            // Check MediaDevices API support
+            function checkMediaDevicesSupport() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    apiStatus.textContent = 'APIs supported';
+                    apiStatus.classList.add('status-value', 'granted');
+                    logEvent('✅ Media APIs supported by browser');
+                    
+                    // Check screen capture support
+                    if (navigator.mediaDevices.getDisplayMedia) {
+                        logEvent('✅ Screen Capture API supported');
+                    } else {
+                        logEvent('❌ Screen Capture API not supported');
+                        screenBtn.disabled = true;
+                        windowBtn.disabled = true;
+                        tabBtn.disabled = true;
+                    }
+                } else {
+                    apiStatus.textContent = 'APIs not supported';
+                    apiStatus.classList.add('status-value', 'denied');
+                    cameraBtn.disabled = true;
+                    micBtn.disabled = true;
+                    screenBtn.disabled = true;
+                    windowBtn.disabled = true;
+                    tabBtn.disabled = true;
+                    logEvent('❌ Media APIs not supported by this browser');
+                }
+            }
+            
+            // Set up the decibel meter canvas
+            function setupCanvas() {
+                dbCanvas.width = dbCanvas.offsetWidth;
+                dbCanvas.height = dbCanvas.offsetHeight;
+                
+                // Draw canvas background
+                canvasContext.fillStyle = '#1a1a1a';
+                canvasContext.fillRect(0, 0, dbCanvas.width, dbCanvas.height);
+                
+                // Draw grid lines
+                canvasContext.strokeStyle = '#333';
+                canvasContext.lineWidth = 1;
+                
+                // Horizontal lines
+                for (let i = 0; i < dbCanvas.height; i += 20) {
+                    canvasContext.beginPath();
+                    canvasContext.moveTo(0, i);
+                    canvasContext.lineTo(dbCanvas.width, i);
+                    canvasContext.stroke();
+                }
+            }
+            
+            // Start camera visualization
+            cameraBtn.addEventListener('click', async () => {
+                try {
+                    if (isUsingCamera) {
+                        stopCamera();
+                    } else {
+                        await startCamera();
+                    }
+                } catch (err) {
+                    handleError(err, 'camera');
+                }
+            });
+            
+            // Start microphone analysis
+            micBtn.addEventListener('click', async () => {
+                try {
+                    if (isUsingMic) {
+                        stopMicrophone();
+                    } else {
+                        await startMicrophone();
+                    }
+                } catch (err) {
+                    handleError(err, 'microphone');
+                }
+            });
+            
+            // Start screen sharing
+            screenBtn.addEventListener('click', async () => {
+                try {
+                    if (isUsingScreen) {
+                        stopScreenShare();
+                    } else {
+                        await startScreenShare('monitor');
+                    }
+                } catch (err) {
+                    handleError(err, 'screen');
+                }
+            });
+            
+            // Start window sharing
+            windowBtn.addEventListener('click', async () => {
+                try {
+                    if (isUsingScreen) {
+                        stopScreenShare();
+                    } else {
+                        await startScreenShare('window');
+                    }
+                } catch (err) {
+                    handleError(err, 'screen');
+                }
+            });
+            
+            // Start tab sharing
+            tabBtn.addEventListener('click', async () => {
+                try {
+                    if (isUsingScreen) {
+                        stopScreenShare();
+                    } else {
+                        await startScreenShare('browser');
+                    }
+                } catch (err) {
+                    handleError(err, 'screen');
+                }
+            });
+            
+            // Reset permissions
+            resetBtn.addEventListener('click', () => {
+                logEvent('🔄 Starting permission reset...');
+                
+                // Stop everything first
+                if (isUsingCamera) stopCamera();
+                if (isUsingMic) stopMicrophone();
+                if (isUsingScreen) stopScreenShare();
+                
+                // Reset status indicators
+                cameraPermission.textContent = 'Waiting...';
+                cameraPermission.className = 'status-value pending';
+                micPermission.textContent = 'Waiting...';
+                micPermission.className = 'status-value pending';
+                screenPermission.textContent = 'Waiting...';
+                screenPermission.className = 'status-value pending';
+                
+                cameraIndicator.className = 'status-indicator inactive';
+                micIndicator.className = 'status-indicator inactive';
+                screenIndicator.className = 'status-indicator inactive';
+                
+                logEvent('✅ Permissions reset');
+            });
+            
+            async function startCamera() {
+                try {
+                    cameraPermission.textContent = 'Requesting...';
+                    logEvent('🔍 Requesting camera permission...');
+                    
+                    const constraints = {
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    };
+                    
+                    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    cameraVideo.srcObject = cameraStream;
+                    cameraPlaceholder.style.display = 'none';
+                    
+                    isUsingCamera = true;
+                    cameraBtn.textContent = 'Stop Camera';
+                    cameraBtn.classList.add('stop');
+                    
+                    cameraPermission.textContent = 'Granted';
+                    cameraPermission.className = 'status-value granted';
+                    cameraIndicator.className = 'status-indicator active';
+                    
+                    logEvent('✅ Camera permission granted');
+                    
+                    // Update device list
+                    await enumerateDevices();
+                    
+                } catch (err) {
+                    handleError(err, 'camera');
+                }
+            }
+            
+            function stopCamera() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraVideo.srcObject = null;
+                    cameraPlaceholder.style.display = 'flex';
+                }
+                
+                isUsingCamera = false;
+                cameraBtn.textContent = 'Start Camera';
+                cameraBtn.classList.remove('stop');
+                cameraIndicator.className = 'status-indicator inactive';
+                
+                logEvent('🛑 Camera stopped');
+            }
+            
+            async function startMicrophone() {
+                try {
+                    micPermission.textContent = 'Requesting...';
+                    logEvent('🔍 Requesting microphone permission...');
+                    
+                    const constraints = { audio: true };
+                    
+                    microphoneStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    // Set up audio analyzer
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(microphoneStream);
+                    
+                    // Connect microphone to analyzer
+                    microphone.connect(analyser);
+                    
+                    // Configure analyzer
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    
+                    // Start visualization
+                    visualizeMicrophone();
+                    
+                    isUsingMic = true;
+                    micBtn.textContent = 'Stop Microphone';
+                    micBtn.classList.add('stop');
+                    
+                    micPermission.textContent = 'Granted';
+                    micPermission.className = 'status-value granted';
+                    micIndicator.className = 'status-indicator active';
+                    
+                    logEvent('✅ Microphone permission granted');
+                    
+                    // Update device list
+                    await enumerateDevices();
+                    
+                } catch (err) {
+                    handleError(err, 'microphone');
+                }
+            }
+            
+            function stopMicrophone() {
+                if (microphoneStream) {
+                    microphoneStream.getTracks().forEach(track => track.stop());
+                }
+                
+                if (audioContext) {
+                    if (microphone) microphone.disconnect();
+                    cancelAnimationFrame(animationId);
+                }
+                
+                isUsingMic = false;
+                micBtn.textContent = 'Start Microphone';
+                micBtn.classList.remove('stop');
+                micIndicator.className = 'status-indicator inactive';
+                
+                // Reset visualization
+                dbValue.textContent = '0 dB';
+                volumeMeter.style.width = '0%';
+                
+                // Clear canvas
+                canvasContext.fillStyle = '#1a1a1a';
+                canvasContext.fillRect(0, 0, dbCanvas.width, dbCanvas.height);
+                
+                // Redraw grid lines
+                canvasContext.strokeStyle = '#333';
+                for (let i = 0; i < dbCanvas.height; i += 20) {
+                    canvasContext.beginPath();
+                    canvasContext.moveTo(0, i);
+                    canvasContext.lineTo(dbCanvas.width, i);
+                    canvasContext.stroke();
+                }
+                
+                logEvent('🛑 Microphone stopped');
+            }
+            
+            async function startScreenShare(preferredType) {
+                try {
+                    screenPermission.textContent = 'Requesting...';
+                    logEvent('🔍 Requesting screen sharing permission...');
+                    
+                    // Request audio as well
+                    const options = { 
+                        video: {
+                            cursor: "always"
+                        },
+                        audio: true // Add this to request audio
+                    };
+                    
+                    // Different options based on sharing type
+                    // const options = { 
+                    //     video: {
+                    //         cursor: "always"
+                    //     },
+                    //     audio: false
+                    // };
+                    
+                    // Add displaySurface constraint based on type if supported
+                    if (preferredType) {
+                        options.video.displaySurface = preferredType;
+                    }
+                    
+                    screenStream = await navigator.mediaDevices.getDisplayMedia(options);
+                    
+                    screenVideo.srcObject = screenStream;
+                    screenPlaceholder.style.display = 'none';
+                    sourceInfo.style.display = 'flex';
+                    
+                    // Get track info
+                    const videoTrack = screenStream.getVideoTracks()[0];
+                    
+                    sourceName.textContent = videoTrack.label || 'Screen';
+                    
+                    // Get video resolution
+                    screenVideo.onloadedmetadata = () => {
+                        sourceResolution.textContent = `${screenVideo.videoWidth}x${screenVideo.videoHeight}`;
+                    };
+                    
+                    // Listen for track ending
+                    videoTrack.addEventListener('ended', () => {
+                        logEvent('⚠️ Screen sharing ended by user');
+                        stopScreenShare();
+                    });
+                    
+                    // Start FPS counter
+                    startFrameRateMonitor();
+                    
+                    // Add this section to initialize audio monitoring if available
+                    const audioTracks = screenStream.getAudioTracks();
+                    if (audioTracks.length > 0) {
+                        setupScreenAudio();
+                        logEvent('✅ Screen audio capture enabled');
+                    }
+                    
+                    // Update buttons
+                    updateScreenButtons(true);
+                    
+                    screenPermission.textContent = 'Granted';
+                    screenPermission.className = 'status-value granted';
+                    screenIndicator.className = 'status-indicator active';
+                    
+                    logEvent(`✅ Screen sharing permission granted: ${videoTrack.label}`);
+                    
+                } catch (err) {
+                    handleError(err, 'screen');
+                }
+            }
+            
+            // Add new function to set up audio analysis
+            function setupScreenAudio() {
+                try {
+                    // Create audio context and analyzer
+                    screenAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    screenAudioAnalyser = screenAudioContext.createAnalyser();
+                    screenAudioSource = screenAudioContext.createMediaStreamSource(screenStream);
+                    
+                    // Connect audio source to analyzer
+                    screenAudioSource.connect(screenAudioAnalyser);
+                    
+                    // Configure analyzer
+                    screenAudioAnalyser.fftSize = 256;
+                    const bufferLength = screenAudioAnalyser.frequencyBinCount;
+                    screenAudioData = new Uint8Array(bufferLength);
+                    
+                    // Start visualization
+                    visualizeScreenAudio();
+                } catch (err) {
+                    console.error('Error setting up screen audio:', err);
+                }
+            }
+            
+            // Add function to visualize the audio level
+            function visualizeScreenAudio() {
+                if (!screenAudioAnalyser || !document.getElementById('screen-audio-meter')) {
+                    return;
+                }
+                
+                // Get data from analyzer
+                screenAudioAnalyser.getByteFrequencyData(screenAudioData);
+                
+                // Calculate average value
+                let sum = 0;
+                for (let i = 0; i < screenAudioData.length; i++) {
+                    sum += screenAudioData[i];
+                }
+                const average = sum / screenAudioData.length;
+                const level = Math.round((average / 255) * 100);
+                
+                // Update the meter
+                const meter = document.getElementById('screen-audio-meter');
+                meter.style.width = `${level}%`;
+                
+                // Change color based on level
+                if (level > 75) meter.style.backgroundColor = '#dc3545';  // Red (loud)
+                else if (level > 50) meter.style.backgroundColor = '#ffc107';  // Yellow (medium)
+                else if (level > 25) meter.style.backgroundColor = '#28a745';  // Green (soft)
+                else meter.style.backgroundColor = '#4a6cf7';  // Blue (quiet)
+                
+                // Continue animation
+                screenAudioAnimationId = requestAnimationFrame(visualizeScreenAudio);
+            }
+            
+            function stopScreenShare() {
+                // Add cleanup for audio resources
+                if (screenAudioAnimationId) {
+                    cancelAnimationFrame(screenAudioAnimationId);
+                    screenAudioAnimationId = null;
+                }
+                
+                if (screenAudioSource) {
+                    screenAudioSource.disconnect();
+                    screenAudioSource = null;
+                }
+                
+                if (screenAudioContext && screenAudioContext.state !== 'closed') {
+                    screenAudioContext.close().catch(() => {});
+                    screenAudioContext = null;
+                }
+                
+                screenAudioAnalyser = null;
+                
+                if (screenStream) {
+                    screenStream.getTracks().forEach(track => track.stop());
+                    screenVideo.srcObject = null;
+                    screenPlaceholder.style.display = 'flex';
+                    sourceInfo.style.display = 'none';
+                }
+                
+                // Stop FPS counter
+                if (frameRateInterval) {
+                    clearInterval(frameRateInterval);
+                    frameRateInterval = null;
+                }
+                
+                // Reset source info
+                sourceName.textContent = 'Not sharing';
+                sourceResolution.textContent = '-';
+                sourceFps.textContent = '-';
+                
+                // Update buttons
+                updateScreenButtons(false);
+                
+                screenIndicator.className = 'status-indicator inactive';
+                
+                logEvent('🛑 Screen sharing stopped');
+            }
+            
+            function updateScreenButtons(isSharing) {
+                isUsingScreen = isSharing;
+                
+                if (isSharing) {
+                    screenBtn.textContent = 'Stop Sharing';
+                    screenBtn.classList.add('stop');
+                    windowBtn.disabled = true;
+                    tabBtn.disabled = true;
+                } else {
+                    screenBtn.textContent = 'Share Entire Screen';
+                    screenBtn.classList.remove('stop');
+                    windowBtn.disabled = false;
+                    tabBtn.disabled = false;
+                    
+                    windowBtn.textContent = 'Share Application Window';
+                    tabBtn.textContent = 'Share Browser Tab';
+                }
+            }
+            
+            function startFrameRateMonitor() {
+                // Reset counters
+                frameCount = 0;
+                lastTimestamp = performance.now();
+                
+                // Create a video frame callback function
+                const frameCallback = () => {
+                    frameCount++;
+                    requestAnimationFrame(frameCallback);
+                };
+                
+                // Start counting frames
+                requestAnimationFrame(frameCallback);
+                
+                // Update FPS every second
+                frameRateInterval = setInterval(() => {
+                    const now = performance.now();
+                    const elapsed = (now - lastTimestamp) / 1000; // seconds
+                    const fps = Math.round(frameCount / elapsed);
+                    
+                    sourceFps.textContent = `${fps} FPS`;
+                    
+                    // Reset for next interval
+                    frameCount = 0;
+                    lastTimestamp = now;
+                }, 1000);
+            }
+            
+            function visualizeMicrophone() {
+                // Get data from analyzer
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average value
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / dataArray.length;
+                
+                // Convert to approximate decibels (relative value)
+                // Note: This is a simplification, not real dB
+                const dB = Math.round((average / 255) * 100);
+                
+                // Update indicator
+                dbValue.textContent = `${dB} dB`;
+                volumeMeter.style.width = `${dB}%`;
+                
+                // Determine color based on intensity
+                let meterColor = '#4a6cf7'; // default blue
+                if (dB > 75) meterColor = '#dc3545'; // red for high
+                else if (dB > 50) meterColor = '#ffc107'; // yellow for medium
+                else if (dB > 25) meterColor = '#28a745'; // green for low
+                
+                volumeMeter.style.backgroundColor = meterColor;
+                
+                // Clear canvas
+                canvasContext.fillStyle = '#1a1a1a';
+                canvasContext.fillRect(0, 0, dbCanvas.width, dbCanvas.height);
+                
+                // Draw grid lines
+                canvasContext.strokeStyle = '#333';
+                for (let i = 0; i < dbCanvas.height; i += 20) {
+                    canvasContext.beginPath();
+                    canvasContext.moveTo(0, i);
+                    canvasContext.lineTo(dbCanvas.width, i);
+                    canvasContext.stroke();
+                }
+                
+                // Draw frequency visualization
+                const barWidth = (dbCanvas.width / dataArray.length) * 2.5;
+                let x = 0;
+                
+                for (let i = 0; i < dataArray.length; i++) {
+                    const barHeight = (dataArray[i] / 255) * dbCanvas.height;
+                    
+                    // Determine color based on frequency
+                    const hue = (i / dataArray.length) * 360;
+                    canvasContext.fillStyle = `hsl(${hue}, 100%, 50%)`;
+                    
+                    canvasContext.fillRect(x, dbCanvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+                
+                // Continue animation
+                animationId = requestAnimationFrame(visualizeMicrophone);
+            }
+            
+            async function enumerateDevices() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    
+                    // Clear previous lists
+                    while (cameraSelect.firstChild) {
+                        cameraSelect.removeChild(cameraSelect.firstChild);
+                    }
+                    while (micSelect.firstChild) {
+                        micSelect.removeChild(micSelect.firstChild);
+                    }
+                    
+                    // Add default option
+                    const defaultCameraOption = document.createElement('option');
+                    defaultCameraOption.value = '';
+                    defaultCameraOption.textContent = 'Select a camera...';
+                    cameraSelect.appendChild(defaultCameraOption);
+                    
+                    const defaultMicOption = document.createElement('option');
+                    defaultMicOption.value = '';
+                    defaultMicOption.textContent = 'Select a microphone...';
+                    micSelect.appendChild(defaultMicOption);
+                    
+                    // Add devices to lists
+                    let hasCameras = false;
+                    let hasMics = false;
+                    
+                    devices.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        
+                        if (device.kind === 'videoinput') {
+                            option.textContent = device.label || `Camera ${cameraSelect.length}`;
+                            cameraSelect.appendChild(option);
+                            hasCameras = true;
+                        } else if (device.kind === 'audioinput') {
+                            option.textContent = device.label || `Microphone ${micSelect.length}`;
+                            micSelect.appendChild(option);
+                            hasMics = true;
+                        }
+                    });
+                    
+                    // Enable selectors if there are devices and permissions
+                    cameraSelect.disabled = !(hasCameras && isUsingCamera);
+                    micSelect.disabled = !(hasMics && isUsingMic);
+                    
+                    if (hasCameras && isUsingCamera) {
+                        logEvent(`📝 Found ${cameraSelect.childElementCount - 1} cameras`);
+                    }
+                    
+                    if (hasMics && isUsingMic) {
+                        logEvent(`📝 Found ${micSelect.childElementCount - 1} microphones`);
+                    }
+                    
+                } catch (err) {
+                    logEvent(`❌ Error enumerating devices: ${err.message}`);
+                    console.error('Error enumerating devices:', err);
+                }
+            }
+            
+            // Change device when selected
+            cameraSelect.addEventListener('change', async () => {
+                if (!cameraSelect.value) return;
+                
+                if (isUsingCamera && cameraStream) {
+                    // Stop current stream
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    
+                    try {
+                        // Start new stream with selected device
+                        cameraStream = await navigator.mediaDevices.getUserMedia({
+                            video: { deviceId: { exact: cameraSelect.value } }
+                        });
+                        
+                        cameraVideo.srcObject = cameraStream;
+                        logEvent(`🔄 Camera changed to: ${cameraSelect.options[cameraSelect.selectedIndex].text}`);
+                    } catch (err) {
+                        handleError(err, 'camera');
+                    }
+                }
+            });
+            
+            micSelect.addEventListener('change', async () => {
+                if (!micSelect.value) return;
+                
+                if (isUsingMic && microphoneStream) {
+                    // Stop current stream
+                    microphoneStream.getTracks().forEach(track => track.stop());
+                    
+                    if (microphone) microphone.disconnect();
+                    cancelAnimationFrame(animationId);
+                    
+                    try {
+                        // Start new stream with selected device
+                        microphoneStream = await navigator.mediaDevices.getUserMedia({
+                            audio: { deviceId: { exact: micSelect.value } }
+                        });
+                        
+                        // Reconnect to analyzer
+                        microphone = audioContext.createMediaStreamSource(microphoneStream);
+                        microphone.connect(analyser);
+                        
+                        // Restart visualization
+                        visualizeMicrophone();
+                        
+                        logEvent(`🔄 Microphone changed to: ${micSelect.options[micSelect.selectedIndex].text}`);
+                    } catch (err) {
+                        handleError(err, 'microphone');
+                    }
+                }
+            });
+            
+            function handleError(error, device) {
+                console.error(`Error accessing ${device}:`, error);
+                
+                let errorMsg = error.message || 'Unknown error';
+                let statusMsg = 'Error';
+                
+                // Check error type
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    statusMsg = 'Denied';
+                    errorMsg = `Permission for ${device} denied by user`;
+                } else if (error.name === 'NotFoundError') {
+                    statusMsg = 'Not found';
+                    errorMsg = `No ${device} found on device`;
+                } else if (error.name === 'NotReadableError') {
+                    statusMsg = 'In use';
+                    errorMsg = `${device} already in use by another application`;
+                } else if (error.name === 'SecurityError') {
+                    statusMsg = 'Blocked';
+                    errorMsg = `Access to ${device} blocked by security policy`;
+                }
+                
+                // Update interface
+                if (device === 'camera') {
+                    cameraPermission.textContent = statusMsg;
+                    cameraPermission.className = 'status-value denied';
+                    cameraIndicator.className = 'status-indicator error';
+                    cameraBtn.textContent = 'Try Again';
+                    cameraBtn.classList.remove('stop');
+                } else if (device === 'microphone') {
+                    micPermission.textContent = statusMsg;
+                    micPermission.className = 'status-value denied';
+                    micIndicator.className = 'status-indicator error';
+                    micBtn.textContent = 'Try Again';
+                    micBtn.classList.remove('stop');
+                } else if (device === 'screen') {
+                    screenPermission.textContent = statusMsg;
+                    screenPermission.className = 'status-value denied';
+                    screenIndicator.className = 'status-indicator error';
+                    updateScreenButtons(false);
+                }
+                
+                logEvent(`❌ ${errorMsg}`);
+            }
+            
+            function logEvent(message) {
+                const now = new Date();
+                const time = now.toTimeString().split(' ')[0];
+                const logItem = document.createElement('div');
+                logItem.innerHTML = `<span>[${time}]</span> ${message}`;
+                eventsLog.appendChild(logItem);
+                eventsLog.scrollTop = eventsLog.scrollHeight;
+            }
+            
+            // List available devices at start
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    let videoCount = 0;
+                    let audioCount = 0;
+                    
+                    devices.forEach(device => {
+                        if (device.kind === 'videoinput') videoCount++;
+                        if (device.kind === 'audioinput') audioCount++;
+                    });
+                    
+                    logEvent(`📝 Detected devices: ${videoCount} cameras, ${audioCount} microphones`);
+                })
+                .catch(err => {
+                    logEvent(`❌ Could not enumerate devices: ${err.message}`);
+                });
+        });
+    </script>
+</body>
+</html>

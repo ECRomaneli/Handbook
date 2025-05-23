@@ -1,25 +1,26 @@
 import pkg from './package.json' with { type: 'json' }
 const data = {
-        homepage: pkg.homepage,
-        license: pkg.license,
-        copyright: `${pkg.license} license - Copyright (c) ${new Date().getFullYear()} Emerson Capuchi Romaneli`,
-        author: pkg.author,
-        version: pkg.version,
-        description: pkg.description,
-        name: pkg.name,
-        productName: pkg.productName,
-        genericName: 'Web Browser',
-        category: 'Network',
-        iconPng: 'assets/img/icons/app/book.png',
-        iconIco: 'assets/img/icons/app/book.ico',
-        iconIcns: 'assets/img/icons/app/book.icns',
-        icon: 'assets/img/icons/app/book',
-      }
+  homepage: pkg.homepage,
+  license: pkg.license,
+  copyright: `${pkg.license} license - Copyright (c) ${new Date().getFullYear()} Emerson Capuchi Romaneli`,
+  author: pkg.author,
+  version: pkg.version,
+  description: pkg.description,
+  name: pkg.name,
+  productName: pkg.productName,
+  genericName: 'Web Browser',
+  category: 'Network',
+  iconPng: 'assets/img/icons/app/book.png',
+  iconIco: 'assets/img/icons/app/book.ico',
+  iconIcns: 'assets/img/icons/app/book.icns',
+  icon: 'assets/img/icons/app/book',
+}
 
 // https://electron.github.io/packager/main/interfaces/Options.html
 // https://www.electronforge.io/config/configuration
 
-export default {
+/** @type {import('@electron-forge/shared-types').ForgeConfig} */
+const config = {
   packagerConfig: {
     icon: data.icon,
     executableName: process.platform === 'linux' ? data.name : data.productName,
@@ -30,7 +31,8 @@ export default {
       '^/assets/img/docs',
       '^/assets/img/icons/app/book.xcf$',
       '^README.md$',
-      '^/lib/debug.js$'
+      '^/lib/debug.js$',
+      '^/tests/'
     ]
   },
   rebuildConfig: {},
@@ -96,4 +98,14 @@ export default {
       config: {}
     },
   ],
-};
+}
+
+if (process.platform === 'darwin') {
+  config.packagerConfig.extendInfo = 'assets/darwin/Info.plist'
+  config.packagerConfig.osxSign = {
+    identity: 'Developer ID Application: Emerson Capuchi Romaneli (ECRomaneli)',
+    entitlements: 'assets/darwin/entitlements.mac.plist'
+  }
+}
+
+export default config
