@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>    
+    <!-- Device access -->
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    <key>com.apple.security.device.microphone</key>
+    <true/>
+    <key>com.apple.security.device.audio-input</key>
+    <true/>
+    
+    <!-- Screen recording -->
+    <key>com.apple.security.device.screen-capture</key>
+    <true/>
+
+    <!-- Bluetooth access -->
+    <key>com.apple.security.device.bluetooth</key>
+    <true/>
+    <key>com.apple.security.bluetooth.peripheral</key>
+    <true/>
+    
+    <!-- Notifications -->
+    <key>com.apple.security.personal-information.location</key>
+    <true/>
+    
+    <!-- Hardware keyboard access -->
+    <key>com.apple.security.device.usb</key>
+    <true/>
+    
+    <!-- Audio output -->
+    <key>com.apple.security.device.audio-output</key>
+    <true/>
+</dict>
+</plist>
