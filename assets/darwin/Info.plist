@@ -19,10 +19,6 @@
     <key>NSScreenCaptureUsageDescription</key>
     <string>This app needs permission to capture your screen for sharing and collaboration features.</string>
     
-    <!-- Notification permissions -->
-    <key>NSUserNotificationAlertStyle</key>
-    <string>alert</string>
-    
     <!-- Location permissions -->
     <key>NSLocationUsageDescription</key>
     <string>This app needs access to your location for providing localized content.</string>
@@ -34,18 +30,5 @@
     <!-- Photo library permissions (if needed) -->
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs access to your photos to allow sharing images.</string>
-    
-    <!-- Continuous background execution -->
-    <key>NSSupportsAutomaticTermination</key>
-    <false/>
-    <key>LSBackgroundOnly</key>
-    <false/>
-    
-    <!-- App Transport Security settings -->
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
 </dict>
 </plist>

@@ -20,7 +20,7 @@
     <key>com.apple.security.bluetooth.peripheral</key>
     <true/>
     
-    <!-- Notifications -->
+    <!-- Locations -->
     <key>com.apple.security.personal-information.location</key>
     <true/>
     
