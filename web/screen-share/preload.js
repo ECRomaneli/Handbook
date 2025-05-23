@@ -8,21 +8,14 @@
         ipc.on('screenShare.open', (_e, data) => { $bus.emit('screenShare.open', data) })
         return {
             onOpen: (fn) => $bus.on('screenShare.open', fn),
-            ready: () => ipc.send('screenShare.ready'),
             close: (...args) => ipc.send('screenShare.close', ...args)
         }
     }) (require('electron').ipcRenderer, require('node:events'))
 
     const INVALID_BASE64 = 'data:image/png;base64,'
-    const title = document.getElementById('title')
-    const tabs = document.querySelectorAll('.tab')
-    const content = document.getElementById('content')
-    const audioCheckbox = document.getElementById('audioCheckbox')
-    const cancelBtn = document.getElementById('cancelBtn')
-    const shareBtn = document.getElementById('shareBtn')
     let selectedSource = null
 
-    function renderTab(tabData) {
+    function renderTab(content, tabData) {
         content.innerHTML = ''
         selectedSource = null
         shareBtn.disabled = true
@@ -46,21 +39,10 @@
         })
     }
 
-    function disableAudioCheckbox() {
-        audioCheckbox.checked = false
-        audioCheckbox.parentElement.innerHTML = ''
+    function disableAudioCheckbox(checkbox) {
+        checkbox.checked = false
+        checkbox.parentElement.innerHTML = ''
     }
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelector('.tab.active').classList.remove('active');
-            tab.classList.add('active')
-            renderTab(sources[tab.dataset.tab])
-        })
-    })
-
-    cancelBtn.addEventListener('click', () => { $bridge.close() })
-    shareBtn.addEventListener('click', () => { selectedSource !== null && $bridge.close({ id: selectedSource.id, name: selectedSource.name, shareAudio: audioCheckbox?.checked }) })
 
     // Add keyboard event listener for ESC key
     document.addEventListener('keydown', (event) => {
@@ -69,17 +51,33 @@
         }
     })
 
-    let sources = { 'screen': [], 'window': [] }
-
     document.addEventListener('DOMContentLoaded', () => {
+        const title = document.getElementById('title')
+        const tabs = document.querySelectorAll('.tab')
+        const content = document.getElementById('content')
+        const audioCheckbox = document.getElementById('audioCheckbox')
+        const cancelBtn = document.getElementById('cancelBtn')
+        const shareBtn = document.getElementById('shareBtn')
+        let sources = { 'screen': [], 'window': [] }
+
         if (process.platform === 'linux') { document.body.classList.add('linux-border') }
         $bridge.onOpen((data) => {
-            if (!data.shareAudioBtn) { disableAudioCheckbox() }
+            if (!data.shareAudioBtn) { disableAudioCheckbox(audioCheckbox) }
             if (data.requesterUrl) { title.innerText = `Choose what to share with ${data.requesterUrl}` }
             sources = data.sources
-            renderTab(sources['screen'])
+            renderTab(content, sources['screen'])
+            cancelBtn.focus()
         })
-        $bridge.ready()
-        cancelBtn.focus()
+    
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelector('.tab.active').classList.remove('active');
+                tab.classList.add('active')
+                renderTab(content, sources[tab.dataset.tab])
+            })
+        })
+    
+        cancelBtn.addEventListener('click', () => { $bridge.close() })
+        shareBtn.addEventListener('click', () => { selectedSource !== null && $bridge.close({ id: selectedSource.id, name: selectedSource.name, shareAudio: audioCheckbox?.checked }) })
     })
 }) ()
