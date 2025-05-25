@@ -32,7 +32,7 @@ async function setupShortcut() {
     $bridge.onSettingsUpdated('hide_shortcut', (value) => hideShortcut = value)
 
     document.addEventListener('keydown', (e) => {
-        if (hideShortcut && hideShortcut === getKeyCombination(e)) {
+        if (hideShortcut && hideShortcut === getAcceleratorByEvent(e)) {
             e.preventDefault()
             e.stopImmediatePropagation()
             $bridge.notifyManager('hide')
@@ -114,115 +114,5 @@ function isLeftClickInActionArea(e, height) {
     return e.button === 0 && e.clientY <= height;
 }
 
-const OS = detectOperatingSystem()
-const IS_DARWIN = OS === 'mac'
-const IS_LINUX = OS === 'linux'
-const KEY_MAP = {
-    'Meta': IS_DARWIN ? 'Command' : IS_LINUX ? 'Super' : 'Win',
-    'Alt': IS_DARWIN ? 'Option' : 'Alt',
-}
-    
-
-/**
- * Gets the key combination string from a keyboard event
- * @param {KeyboardEvent} event - Keyboard event
- * @returns {string} Key combination (e.g., "Ctrl+A")
- */
-function getKeyCombination(event) {    
-    // Handle the "Process" key issue on Linux
-    let key = event.key
-    if (key === 'Process' && event.code) {
-        key = resolveKeyFromCode(event.code)
-    }
-    
-    // Normalize key names
-    key = normalizeKeyName(key)
-    
-    // Build modifier combination with platform-specific ordering
-    const modifiers = []
-
-    if (key === 'Meta') { key = KEY_MAP['Meta'] }
-    else if (key === 'Alt') { key = KEY_MAP['Alt'] }
-
-    if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
-    if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
-    if (event.metaKey && key !== KEY_MAP['Meta']) { modifiers.push(KEY_MAP['Meta']) }
-    if (event.altKey && key !== KEY_MAP['Alt']) modifiers.push(KEY_MAP['Alt'])
-    
-    return modifiers.length > 0 ? [...modifiers, key].join('+') : key
-}
-
-/**
- * Resolves a key from the event code
- * @param {string} code - Event code (e.g., "KeyA", "Digit1")
- * @returns {string} Resolved key
- */
-function resolveKeyFromCode(code) {
-    if (code.startsWith('Key')) {
-        return code.slice(3) // Extract "A" from "KeyA"
-    } else if (code.startsWith('Digit')) {
-        return code.slice(5) // Extract "1" from "Digit1"
-    }
-    
-    switch (code) {
-        case 'Backquote':    return '`'
-        case 'Minus':        return '-'
-        case 'Equal':        return '='
-        case 'BracketLeft':  return '['
-        case 'BracketRight': return ']'
-        case 'Semicolon':    return ';'
-        case 'Quote':        return "'"
-        case 'Backslash':    return '\\'
-        case 'Comma':        return ','
-        case 'Period':       return '.'
-        case 'Slash':        return '/'
-        // For other keys, use the code directly but format it
-        default: return code.replace(/([A-Z])/g, ' $1').trim()
-    }
-}
-
-/**
- * Normalizes key names across platforms
- * @param {string} key - Raw key name from event
- * @returns {string} Normalized key name
- */
-function normalizeKeyName(key) {
-    if (key.toLowerCase().startsWith('arrow')) return key.slice(5)
-    if (key === ' ') return 'Space'
-    if (key === 'Control') return 'Ctrl'
-    if (key === 'Escape') return 'Esc'
-    if (key === 'Dead') return ''
-    
-    // Format key display
-    if (key.length === 1) {
-        return key.toUpperCase()
-    } else if (!['Shift', 'Alt', 'Ctrl', 'Meta', 'Command', 'Option', 'Win'].includes(key)) {
-        return key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-    }
-    
-    return key
-}
-
-/**
- * Detects current operating system
- * @returns {string} 'mac', 'windows', 'linux', or 'unknown'
- */
-function detectOperatingSystem() {
-    // Try userAgentData (modern API)
-    if (navigator.userAgentData) {
-        const platform = navigator.userAgentData.platform
-        if (platform === 'macOS') return 'mac'
-        if (platform === 'Windows') return 'windows'
-        if (platform === 'Linux') return 'linux'
-    }
-    
-    // Fallback to userAgent (more compatible)
-    const userAgent = navigator.userAgent
-    if (/Mac/.test(userAgent)) return 'mac'
-    if (/Linux/.test(userAgent)) return 'linux'
-    if (/Windows/.test(userAgent)) return 'windows'
-    
-    return 'unknown'
-}
-
+function getAcceleratorByEvent(t){return getKeysByEvent(t).join("+")}function getOSKeyCombinationByEvent(t){return getKeysByEvent(t).map((t=>ACCELERATOR_TO_VIEW[t]??t)).join("+")}function getKeysByEvent(t){let e=CODE_TO_ACCELERATOR[t.code];if(!e)return console.error("Key not found:",t.code),[];const n=[];return t.ctrlKey&&"Ctrl"!==e&&n.push("Ctrl"),t.shiftKey&&"Shift"!==e&&n.push("Shift"),t.metaKey&&"Meta"!==e&&n.push("Meta"),t.altKey&&"Alt"!==e&&"AltGr"!==e&&n.push("Alt"),n.push(e),n}function parseToAccelerator(t){return t.split("+").map((t=>t.trim())).map((t=>VIEW_TO_ACCELERATOR[t]??t)).join("+")}function parseToOSKeyCombination(t){return t.split("+").map((t=>t.trim())).map((t=>ACCELERATOR_TO_VIEW[t]??t)).join("+")}function detectOperatingSystem(){if(process&&process.platform)return process.platform;if(navigator.userAgentData){const t=navigator.userAgentData.platform;if("macOS"===t)return"darwin";if("Windows"===t)return"win32";if("Linux"===t)return"linux"}const t=navigator.userAgent;return/Mac/.test(t)?"darwin":/Linux/.test(t)?"linux":/Windows/.test(t)?"win32":"unknown"}const OS=detectOperatingSystem(),IS_DARWIN="darwin"===OS,IS_WIN="win32"===OS,CODE_TO_ACCELERATOR={AltRight:"AltGr",AltLeft:"Alt",MetaLeft:"Meta",MetaRight:"Meta",ControlLeft:"Ctrl",ControlRight:"Ctrl",Escape:"Esc",Tab:"Tab",Space:"Space",Backspace:"Backspace",ShiftLeft:"Shift",ShiftRight:"Shift",NumLock:"Numlock",CapsLock:"Capslock",ScrollLock:"ScrollLock",NumpadEnter:"Enter",Enter:"Enter",PrintScreen:"PrintScreen",Quote:"'",Backquote:"`",Backslash:"\\",Slash:"/",Semicolon:";",BracketLeft:"[",BracketRight:"]",Comma:",",Period:".",Minus:"-",Equal:"=",Insert:"Insert",Delete:"Delete",Home:"Home",End:"End",PageUp:"PageUp",PageDown:"PageDown",ArrowUp:"Up",ArrowDown:"Down",ArrowLeft:"Left",ArrowRight:"Right",F1:"F1",F2:"F2",F3:"F3",F4:"F4",F5:"F5",F6:"F6",F7:"F7",F8:"F8",F9:"F9",F10:"F10",F11:"F12",F12:"F12",Digit0:"0",Digit1:"1",Digit2:"2",Digit3:"3",Digit4:"4",Digit5:"5",Digit6:"6",Digit7:"7",Digit8:"8",Digit9:"9",KeyA:"A",KeyB:"B",KeyC:"C",KeyD:"D",KeyE:"E",KeyF:"F",KeyG:"G",KeyH:"H",KeyI:"I",KeyJ:"J",KeyK:"K",KeyL:"L",KeyM:"M",KeyN:"N",KeyO:"O",KeyP:"P",KeyQ:"Q",KeyR:"R",KeyS:"S",KeyT:"T",KeyU:"U",KeyV:"V",KeyW:"W",KeyX:"X",KeyY:"Y",KeyZ:"Z",Numpad0:"num0",Numpad1:"num1",Numpad2:"num2",Numpad3:"num3",Numpad4:"num4",Numpad5:"num5",Numpad6:"num6",Numpad7:"num7",Numpad8:"num8",Numpad9:"num9",NumpadAdd:"numadd",NumpadDecimal:"numdec",NumpadDivide:"numdiv",NumpadMultiply:"nummult",NumpadSubtract:"numsub"},ACCELERATOR_TO_VIEW={Meta:IS_DARWIN?"Cmd":IS_WIN?"Win":"Super",AltGr:IS_DARWIN?"ROption":"AltGr",Alt:IS_DARWIN?"Option":"Alt",Delete:"Del",num0:"Num 0",num1:"Num 1",num2:"Num 2",num3:"Num 3",num4:"Num 4",num5:"Num 5",num6:"Num 6",num7:"Num 7",num8:"Num 8",num9:"Num 9",numdec:"Num .",numadd:"Num +",numsub:"Num -",numdiv:"Num /",nummult:"Num *"},VIEW_TO_ACCELERATOR={Command:"Meta",Windows:"Meta"};for(const[t,e]of Object.entries(ACCELERATOR_TO_VIEW))VIEW_TO_ACCELERATOR[e]=t;
 document.addEventListener('DOMContentLoaded', initialize, true)
