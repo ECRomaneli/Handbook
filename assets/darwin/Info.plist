@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Camera permissions -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to your camera for video calls and content sharing.</string>
+
+    <!-- Camera continuous use permission -->
+    <key>NSCameraUseContinuityCameraDeviceType</key>
+    <string>This app needs to use your camera continuously for extended video calls and monitoring features.</string>
+
+    
+    <!-- Microphone permissions -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app needs access to your microphone for voice calls and audio recording.</string>
+    
+    <!-- Screen recording permissions -->
+    <key>NSScreenCaptureUsageDescription</key>
+    <string>This app needs permission to capture your screen for sharing and collaboration features.</string>
+    
+    <!-- Location permissions -->
+    <key>NSLocationUsageDescription</key>
+    <string>This app needs access to your location for providing localized content.</string>
+    
+    <!-- Bluetooth permissions (if needed) -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>This app needs access to Bluetooth for connecting to nearby devices.</string>
+    
+    <!-- Photo library permissions (if needed) -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photos to allow sharing images.</string>
+</dict>
+</plist>

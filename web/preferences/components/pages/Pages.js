@@ -1,7 +1,9 @@
-app.component('PageSettings', {
+app.component('Pages', {
     template: /*html*/ `
     <div v-if="pages" class="d-flex flex-column align-items-center">
-        <page-table class="overflow-hidden rounded" :pages="pages" @update="storePages" @remove="storePages"></page-table>
+        <div class="table-container my-3">
+            <page-table class="overflow-hidden m-0" :pages="pages" @update="storePages" @remove="storePages"></page-table>
+        </div>
         <div class="w-100 d-flex justify-content-center">
             <button type="button" class="btn btn-sm btn-secondary w-25 me-2" @click="importPages()">Import</button>
             <button type="button" class="btn btn-sm btn-secondary w-25" @click="exportPages()">Export</button>
@@ -24,7 +26,7 @@ app.component('PageSettings', {
         },
 
         importPages() {
-            this.$exporter.import('.json', (status, data) => {
+            this.$exporter.import((status, data) => {
                 if (!status) { return }
 
                 const importedPages = JSON.parse(data)
@@ -35,7 +37,7 @@ app.component('PageSettings', {
         },
 
         exportPages() {
-            this.$exporter.export('application/json', JSON.stringify(this.pages, null, 2))
+            this.$exporter.export('application/json', JSON.stringify(this.pages, null, 2), 'pages.json')
         }
     }
 })

@@ -107,24 +107,36 @@ body {
 
 /* TABLE ============================== */
 
+.table-container {
+    border: 1px solid var(--table-border);
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
 .table {
     word-break: break-word;
     cursor: default;
     font-size: .75em;
     color: var(--color);
     border-color: var(--table-header-border);
-    margin: 14px 0;
+    background-color: var(--table-background);
 }
 
-.table > thead {
-    background-color: var(--table-header-background);
+.table > thead > tr > th {
+    background: var(--table-header-background);
     color: var(--color);
     border-bottom: 1px solid var(--table-header-border);
 }
 
 .table > tbody > tr > td {
     color: var(--table-body-color) !important;
-    border-color: var(--table-body-border);
+    background-color: transparent;
+    border: none;
+}
+
+.table > tbody > tr:not(:last-child) {
+    border-bottom: 1px solid var(--table-body-border);
 }
 
 /* MAP TABLE ======================= */
@@ -207,6 +219,33 @@ body {
     background-color: var(--divider-border-color);
 }
 
+/* PERMISSIONS ======================== */
+
+#permissionsAccordion small {
+    font-size: .8em;
+}
+
+.accordion-item {
+    background-color: var(--accordion-background);
+    border: var(--accordion-border) solid 1px;
+}
+
+.accordion-button {
+    background-color: var(--accordion-header-background);
+    color: var(--color);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--accordion-active-header-background);
+    color: var(--color);
+}
+
+.permission-badge {
+    font-size: xx-small;
+    background-color: var(--badge-bg-low-key) !important;
+    color: var(--badge-text-low-key) !important;
+}
+
 /* ABOUT ============================== */
 
 .about pre {
@@ -259,6 +298,17 @@ body {
 
 .smallest {
     font-size: .75em;
+}
+
+/* Remove Chrome's blue outline on button clicks */
+button:focus, 
+.btn:focus,
+.accordion-button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 @media (max-width: 1460px) {

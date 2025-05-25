@@ -1,71 +1,81 @@
-[data-theme="dark"] {
-    color-scheme: dark;
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
 
-    /* Main colors */
-    --background-color: #1e1e1e;
-    --color: #e0e0e0;
-    --divider-border-color: #444;
-    --border-color: #555;
-    
-    /* Table colors */
-    --table-header-background: #333;
-    --table-header-border: #676767;
-    --table-body-border: #333;
-    --table-body-color: #e0e0e0;
-    
-    /* Form elements */
-    --input-background: #2d2d2d;
-    --input-color: #e0e0e0;
-    --input-border: #555;
-    --input-divider-color: #676767;
-    --input-check-background: #676767;
-    --input-check-border: #a9a9a9;
-    --input-check-checked: #80b2ff;
-    
-    /* Tab styling */
-    --tab-active-color: #e0e0e0;
-    --tab-active-border: #f78166;
-    --tab-hover-background: #3a3a3a;
-    
-    /* Button colors */
-    --btn-secondary-background: #3d3d3d;
-    --btn-secondary-border: #555;
-    --btn-secondary-color: #e0e0e0;
-    --btn-secondary-hover: #4a4a4a;
-    
-    /* Scrollbar */
-    --scrollbar-thumb: #676767;
-    --scrollbar-track: #333;
-    
-    /* Scrollbar styling for WebKit browsers */
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: var(--scrollbar-thumb);
-      border-radius: 5px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: var(--scrollbar-track);
-    }
-    
-/* .form-check-input {
-      background-color: var(--input-check-background);
-    } */
-  
-    .form-check-input:checked {
-      background-color: var(--input-check-checked);
-    }
+		/* Main colors */
+		--background-color: #1e1e1e;
+		--color: #e0e0e0;
+		--divider-border-color: #444;
+		--border-color: #555;
 
-    .about img, .form-check-input {
-      filter: invert(1);
-    }
-    
-    /* Map table adjustments */
-    .map-table textarea:focus {
-      background-color: var(--input-background);
-    }
+		/* Table colors */
+		--table-background: #1c1c1c;
+		--table-border: #313131;
+		--table-header-background: #333;
+		--table-header-border: #676767;
+		--table-body-border: #272727;
+		--table-body-color: #e0e0e0;
+
+		/* Accordion colors */
+		--accordion-background: #1a1a1a;
+		--accordion-border: #313131;
+		--accordion-header-background: #202020;
+		--accordion-active-header-background: #333;
+
+		/* Badges */
+		--badge-bg-low-key: #3d3d3d;
+		--badge-text-low-key: #e0e0e0;
+
+		/* Form elements */
+		--input-background: #1a1a1a;
+		--input-color: #e0e0e0;
+		--input-border: #333;
+		--input-divider-color: #676767;
+		--input-check-background: #676767;
+		--input-check-border: #a9a9a9;
+		--input-check-checked: #80b2ff;
+
+		/* Tab styling */
+		--tab-active-color: #e0e0e0;
+		--tab-active-border: #f78166;
+		--tab-hover-background: #3a3a3a;
+
+		/* Button colors */
+		--btn-secondary-background: #3d3d3d;
+		--btn-secondary-border: #555;
+		--btn-secondary-color: #e0e0e0;
+		--btn-secondary-hover: #4a4a4a;
+
+		/* Scrollbar */
+		--scrollbar-thumb: #676767;
+		--scrollbar-track: #333;
+	}
+
+	/* Scrollbar styling for WebKit browsers */
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--scrollbar-thumb);
+		border-radius: 5px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--scrollbar-track);
+	}
+
+	.about img {
+		filter: invert(1);
+	}
+
+	/* Map table adjustments */
+	.map-table textarea:focus {
+		background-color: var(--input-background);
+	}
+
+	.accordion-button::after {
+		filter: grayscale(1);
+	}
 }

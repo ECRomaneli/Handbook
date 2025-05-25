@@ -1,4 +1,6 @@
 const Vue = require("vue")
+const { loadScripts } = require('./dynamicLoad.js')
+
 window.addEventListener('load', async () => {
     await loadScripts('providers')
     await loadScripts('plugins')
@@ -21,6 +23,9 @@ const app = Vue.createApp({
                 <li @click="tab = 'pages'">
                     <button class="tab" :class="{ active: tab === 'pages' }">Pages</button>
                 </li>
+                <li @click="tab = 'permissions'">
+                    <button class="tab" :class="{ active: tab === 'permissions' }">Permissions</button>
+                </li>
                 <li @click="tab = 'settings'">
                     <button class="tab" :class="{ active: tab === 'settings' }">Settings</button>
                 </li>
@@ -30,11 +35,14 @@ const app = Vue.createApp({
             </ul>
 
             <div class="tab-content p-3 overflow-auto">
-                <div class="tab-pane show" :class="{ active: tab === 'pages' }">
-                    <page-settings></page-settings>
+                <div class="tab-pane" :class="{ active: tab === 'pages' }">
+                    <pages></pages>
+                </div>
+                <div class="tab-pane container" :class="{ active: tab === 'permissions' }">
+                    <permissions></permissions>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'settings' }">
-                    <settings @update="onSettingsUpdate"></settings>
+                    <settings></settings>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>
@@ -44,29 +52,44 @@ const app = Vue.createApp({
     `,
 
     inject: [ '$remote', '$const' ],
-    data() { return { tab: 'pages', appEl: document.getElementById('app') } },
-    created() {
-        if (this.$const.OS.IS_LINUX) {
-            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
-        }
-        this.loadTheme()
-        this.enableDragWindow()
+    data() { return { tab: 'pages', appEl: document.getElementById('app'), themeChangeListener: null } },
+    beforeMount() {
+        this.setupBootstrapTheme()
+        this.setupLinuxSpecificStyles()
+        this.setupWindowDrag()
+    },
+    mounted() {
+        this.setupPermissionsListener()
+        this.$nextTick(this.emitReady)
     },
     methods: {
-        async loadTheme() {
-            this.setTheme(await this.$remote.storage.getSettings(this.$const.Settings.APP_THEME))
+        emitReady() {
+            this.$remote.preferences.emitReady()
         },
 
-        onSettingsUpdate(input, value) {
-            if (input.id === this.$const.Settings.APP_THEME) { setTimeout(() => this.setTheme(value), 100) }
+        setupPermissionsListener() {
+            this.$remote.preferences.onPermissionsQuery(() => { this.tab = 'permissions' })
         },
 
-        enableDragWindow() {
+        setupLinuxSpecificStyles() {
+            if (!this.$const.OS.IS_LINUX) { return }
+            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
+        },
+
+        setupBootstrapTheme() {
+            const matchMedia = window.matchMedia('(prefers-color-scheme: dark)')
+            this.themeChangeListener = (ev) => this.appEl.setAttribute('data-bs-theme', ev.matches ? 'dark' : 'light')
+            matchMedia.addEventListener('change', this.themeChangeListener)
+            this.themeChangeListener(matchMedia)
+        },
+
+        setupWindowDrag() {
+            let isDragging = false
+
             document.addEventListener('mousedown', (e) => {
-                if (e.button !== 0 || e.pageY > 100) { return }
+                if (e.button !== 0 || e.pageY > 100 || isDragging) { return }
         
                 const style = document.body.style
-                let isDragging = false
             
                 const onMouseMove = (e) => {
                     if ((e.buttons & 1) === 0) { onMouseUp(); return }
@@ -86,20 +109,12 @@ const app = Vue.createApp({
                     style.removeProperty('user-select')
                     document.removeEventListener('mousemove', onMouseMove, true)
                     document.removeEventListener('mouseup', onMouseUp, true)
+                    isDragging = false
                 }
             
                 document.addEventListener('mousemove', onMouseMove, true)
                 document.addEventListener('mouseup', onMouseUp, true)
             }, true)
-        },
-
-        setTheme(theme) {
-            switch (theme) {
-                case 'system': theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; break
-                case 'dark': theme = 'dark'; break
-                default: theme = 'light'
-            }
-            this.appEl.setAttribute('data-theme', theme)
         }
     }
 })

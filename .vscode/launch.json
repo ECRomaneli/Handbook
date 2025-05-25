@@ -6,12 +6,32 @@
         "type": "node",
         "request": "launch",
         "cwd": "${workspaceFolder}",
-        "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron",
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
         "windows": {
-          "runtimeExecutable": "${workspaceFolder}/node_modules/electron/dist/electron.exe"
+          "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.exe"
         },
         "args" : ["."],
         "outputCapture": "std"
+      },
+      {
+        "name": "Debug with Electron Forge",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}",
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge",
+        "windows": {
+          "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge.cmd"
+        },
+        "args": ["start"],
+        "outputCapture": "std",
+        "env": {
+          "ELECTRON_ENABLE_LOGGING": "true",
+          "ELECTRON_ENABLE_STACK_DUMPING": "true",
+          "NODE_ENV": "development"
+        },
+        "sourceMaps": true,
+        "timeout": 30000,
+        "protocol": "inspector"
       }
     ]
 }

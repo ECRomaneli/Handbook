@@ -1,0 +1,204 @@
+:root {
+  --bg-color: #f1f3f4;
+  --modal-bg: #f3f3f3;
+  --text-color: #202124;
+  --border-color: #ccc;
+  --accent-color: #1a73e8;
+  --accent-bg: #e0effd;
+  --btn-bg: #e5e5e5;
+  --btn-hover-bg: #d9d9d9;
+  --btn-active-bg: #e9cec1;
+  --btn-text: #333;
+  --scrollbar-thumb: #969696;
+  --scrollbar-track: #e8e8e8;
+  --switch-width: 36px;
+  --switch-height: 20px;
+  --switch-padding: 2px;
+  --switch-bg-off: #ccc;
+  --switch-bg-on: var(--accent-color);
+  --switch-knob-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #202124;
+    --modal-bg: #1e1e1e;
+    --text-color: #e8eaed;
+    --border-color: #3b3e41;
+    --accent-color: #8ab4f8;
+    --accent-bg: #114977;
+    --btn-bg: #242526;
+    --btn-hover-bg: #2b2d30;
+    --btn-active-bg: #532611;
+    --btn-text: #e8eaed;
+    --scrollbar-thumb: #676767;
+    --scrollbar-track: #333;
+    --switch-bg-off: #5f6368;
+    --switch-bg-on: #215ab7;
+    --switch-knob-color: #fff;
+  }
+}
+
+body {
+  font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  background: transparent;
+  color: var(--text-color);
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.linux-border .modal {
+  border: 1px solid var(--border-color);
+}
+
+.modal {
+  background: var(--modal-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
+  -webkit-app-region: drag;
+  app-region: drag;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content .title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.modal-content .message {
+  font-size: 0.9rem;
+  text-align: center;
+  text-wrap: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.btn {
+  padding: 12px 16px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+
+.switch {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hide default checkbox */
+.switch input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+/* Group the buttons together on the right */
+.footer-buttons {
+  display: flex;
+  width: 100%;
+  gap: 1px;
+}
+
+.footer-buttons button {
+  width: 100%;
+  user-select: none;
+  transition: .2s linear background-color;
+}
+
+.footer-buttons button:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.footer-buttons button:focus {
+  background-color: var(--btn-active-bg);
+}
+
+/* Scrollbar styling for WebKit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+/* Create the switch container */
+.switch label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  position: relative;
+}
+
+/* Create toggle switch */
+.switch label::before {
+  content: '';
+  display: inline-block;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  background: var(--switch-bg-off);
+  border-radius: var(--switch-height);
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+/* Create the knob/circle */
+.switch label::after {
+  content: '';
+  position: absolute;
+  width: calc(var(--switch-height) - var(--switch-padding) * 2);
+  height: calc(var(--switch-height) - var(--switch-padding) * 2);
+  border-radius: 50%;
+  background: var(--switch-knob-color);
+  top: calc((var(--switch-height) - (var(--switch-height) - var(--switch-padding) * 2)) / 2);
+  left: var(--switch-padding);
+  transition: 0.2s;
+}
+
+/* Move the knob when checked */
+.switch input:checked + label::before {
+  background: var(--switch-bg-on);
+}
+
+.switch input:checked + label::after {
+  left: calc(var(--switch-width) - var(--switch-height) + var(--switch-padding));
+}
+
+/* Focus style for accessibility */
+.switch input:focus + label::before {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove Chrome's blue outline on button clicks */
+button:focus {
+    outline: none !important;
+}

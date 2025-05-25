@@ -1,3 +1,7 @@
+/**
+ * Bridge to communicate with main process
+ * Encapsulates IPC communication in a clean API
+ */
 const $bridge = ((ipc, EventEmitter) => {
     const $bus = new EventEmitter()
     ipc.on('storage.settings.updated', (_e, id, value) => $bus.emit(`settings.${id}.updated`, value))
@@ -6,40 +10,73 @@ const $bridge = ((ipc, EventEmitter) => {
         getSettings: async (id) => await ipc.invoke('storage.settings', id),
         notifyManager: (e, ...args) => ipc.send(`manager.currentPage.${e}`, ...args)
     }
-}) (require('electron').ipcRenderer, require('node:events'))
+})(require('electron').ipcRenderer, require('node:events'))
 
-// Register actions after DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
+/**
+ * Initialize preload functionality after DOM is ready
+ */
+async function initialize() {
     setupShortcut()
 
     const showFrame = await $bridge.getSettings('show_frame')
-    !showFrame && registerActions()
+    if (!showFrame) { registerActions() }
 
-    console.info('Preloaded')
-}, true)
+    console.trace('Preloaded')
+}
 
-// Actions Logic
+/**
+ * Sets up keyboard shortcuts
+ */
+async function setupShortcut() {
+    let hideShortcut = await $bridge.getSettings('hide_shortcut')
+    $bridge.onSettingsUpdated('hide_shortcut', (value) => hideShortcut = value)
 
+    document.addEventListener('keydown', (e) => {
+        if (hideShortcut && hideShortcut === getAcceleratorByEvent(e)) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
+            $bridge.notifyManager('hide')
+        }
+    }, true)
+}
+
+/**
+ * Registers all window action handlers
+ */
 async function registerActions() {
     let actionArea = await $bridge.getSettings('action_area')
     $bridge.onSettingsUpdated('action_area', (value) => actionArea = value)
 
-    const isLeftClickInActionArea = (e, height) => e.button === 0 && e.clientY <= height
+    setupMaximizeOnDoubleClick(actionArea)
+    setupWindowDrag(actionArea)
+}
 
+/**
+ * Registers maximize on double click
+ * @param {number} actionArea - Height of the action area
+ */
+function setupMaximizeOnDoubleClick(actionArea) {
     document.addEventListener('dblclick', (e) => {
         if (!isLeftClickInActionArea(e, actionArea)) { return }
         e.preventDefault()
         e.stopImmediatePropagation()
         $bridge.notifyManager('toggleMaximize')
     }, true)
+}
 
+/**
+ * Registers window drag handlers
+ * @param {number} actionArea - Height of the action area
+ */
+function setupWindowDrag(actionArea) {
+    let isDragging = false
+    
     document.addEventListener('mousedown', (e) => {
-        if (!isLeftClickInActionArea(e, actionArea)) { return }
+        if (!isLeftClickInActionArea(e, actionArea) || isDragging) { return }
 
         const style = document.body.style
         const originalCursor = style.cursor
         const originalUserSelect = style.userSelect
-        let isDragging = false
     
         const onMouseMove = (e) => {
             if ((e.buttons & 1) === 0) { onMouseUp(); return }
@@ -59,6 +96,7 @@ async function registerActions() {
             style.setProperty('user-select', originalUserSelect)
             document.removeEventListener('mousemove', onMouseMove, true)
             document.removeEventListener('mouseup', onMouseUp, true)
+            isDragging = false
         }
     
         document.addEventListener('mousemove', onMouseMove, true)
@@ -66,97 +104,15 @@ async function registerActions() {
     }, true)
 }
 
-async function setupShortcut() {
-    let hideShortcut = await $bridge.getSettings('hide_shortcut')
-    $bridge.onSettingsUpdated('hide_shortcut', (value) => hideShortcut = value)
-
-    document.addEventListener('keydown', (e) => {
-        if (hideShortcut && hideShortcut === getKeyCombination(e)) {
-            e.preventDefault()
-            $bridge.notifyManager('hide')
-        }
-    })
+/**
+ * Checks if the click event is in the action area
+ * @param {MouseEvent} e - Mouse event
+ * @param {number} height - Height of action area
+ * @returns {boolean} True if event is a left click in action area
+ */
+function isLeftClickInActionArea(e, height) {
+    return e.button === 0 && e.clientY <= height;
 }
 
-function getKeyCombination(event) {
-    // Detect platform
-    const getOS = () => {
-        // Try userAgentData (modern API)
-        if (navigator.userAgentData) {
-            const platform = navigator.userAgentData.platform
-            if (platform === 'macOS') return 'mac'
-            if (platform === 'Windows') return 'windows'
-            if (platform === 'Linux') return 'linux'
-        }
-        
-        // Fallback to userAgent (more compatible)
-        const userAgent = navigator.userAgent
-        if (/Mac/.test(userAgent)) return 'mac'
-        if (/Linux/.test(userAgent)) return 'linux'
-        if (/Windows/.test(userAgent)) return 'windows'
-        
-        return 'unknown'
-    }
-    
-    const os = getOS()
-    const isMac = os === 'mac'
-    const isLinux = os === 'linux'
-    
-    // Handle the "Process" key issue on Linux
-    let key = event.key
-    if (key === 'Process') {
-        // On Linux, when IME processing occurs, try to get the real key from event.code
-        if (event.code) {
-            // Convert code format (like "KeyA") to actual key value
-            if (event.code.startsWith('Key')) {
-                key = event.code.slice(3) // Extract "A" from "KeyA"
-            } else if (event.code.startsWith('Digit')) {
-                key = event.code.slice(5) // Extract "1" from "Digit1"
-            } else switch (event.code) {
-                case 'Backquote':   key = '`'; break
-                case 'Minus':       key = '-'; break
-                case 'Equal':       key = '='; break
-                case 'BracketLeft': key = '['; break
-                case 'BracketRight':key = ']'; break
-                case 'Semicolon':   key = ';'; break
-                case 'Quote':       key = "'"; break
-                case 'Backslash':   key = '\\'; break
-                case 'Comma':       key = ','; break
-                case 'Period':      key = '.'; break
-                case 'Slash':       key = '/'; break
-                // For other keys, use the code directly but format it
-                default: key = event.code.replace(/([A-Z])/g, ' $1').trim()
-            }
-        } else { key = '' }
-    }
-    
-    // Normalize key names across platforms
-    if (key.toLowerCase().startsWith('arrow')) { key = key.slice(5) }
-    else if (key === ' ') { key = 'Space' } 
-    else if (key === 'Control') { key = 'Ctrl' }
-    else if (key === 'Escape') { key = 'Esc' }
-    else if (key === 'Dead') { return '' }
-    
-    // Format key display
-    if (key.length === 1) {
-        key = key.toUpperCase()
-    } else if (!['Shift', 'Alt', 'Ctrl', 'Meta', 'Command', 'Option', 'Win'].includes(key)) {
-        key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-    }
-    
-    // Build modifier combination with platform-specific ordering
-    const modifiers = []
-    
-    if (event.ctrlKey && key !== 'Ctrl') modifiers.push('Ctrl')
-    if (event.shiftKey && key !== 'Shift') modifiers.push('Shift')
-
-    if (isMac) {
-        if (event.altKey && key !== 'Alt' && key !== 'Option') modifiers.push('Option')
-        if (event.metaKey && key !== 'Meta' && key !== 'Command') modifiers.push('Command')
-    } else {
-        if (event.altKey && key !== 'Alt') modifiers.push('Alt')
-        if (event.metaKey && key !== 'Win' && key !== 'Super') { modifiers.push(isLinux ? 'Super' : 'Win') }
-    }
-    
-    return modifiers.length > 0 ? [...modifiers, key].join('+') : key
-}
+function getAcceleratorByEvent(t){return getKeysByEvent(t).join("+")}function getOSKeyCombinationByEvent(t){return getKeysByEvent(t).map((t=>ACCELERATOR_TO_VIEW[t]??t)).join("+")}function getKeysByEvent(t){let e=CODE_TO_ACCELERATOR[t.code];if(!e)return console.error("Key not found:",t.code),[];const n=[];return t.ctrlKey&&"Ctrl"!==e&&n.push("Ctrl"),t.shiftKey&&"Shift"!==e&&n.push("Shift"),t.metaKey&&"Meta"!==e&&n.push("Meta"),t.altKey&&"Alt"!==e&&"AltGr"!==e&&n.push("Alt"),n.push(e),n}function parseToAccelerator(t){return t.split("+").map((t=>t.trim())).map((t=>VIEW_TO_ACCELERATOR[t]??t)).join("+")}function parseToOSKeyCombination(t){return t.split("+").map((t=>t.trim())).map((t=>ACCELERATOR_TO_VIEW[t]??t)).join("+")}function detectOperatingSystem(){if(process&&process.platform)return process.platform;if(navigator.userAgentData){const t=navigator.userAgentData.platform;if("macOS"===t)return"darwin";if("Windows"===t)return"win32";if("Linux"===t)return"linux"}const t=navigator.userAgent;return/Mac/.test(t)?"darwin":/Linux/.test(t)?"linux":/Windows/.test(t)?"win32":"unknown"}const OS=detectOperatingSystem(),IS_DARWIN="darwin"===OS,IS_WIN="win32"===OS,CODE_TO_ACCELERATOR={AltRight:"AltGr",AltLeft:"Alt",MetaLeft:"Meta",MetaRight:"Meta",ControlLeft:"Ctrl",ControlRight:"Ctrl",Escape:"Esc",Tab:"Tab",Space:"Space",Backspace:"Backspace",ShiftLeft:"Shift",ShiftRight:"Shift",NumLock:"Numlock",CapsLock:"Capslock",ScrollLock:"ScrollLock",NumpadEnter:"Enter",Enter:"Enter",PrintScreen:"PrintScreen",Quote:"'",Backquote:"`",Backslash:"\\",Slash:"/",Semicolon:";",BracketLeft:"[",BracketRight:"]",Comma:",",Period:".",Minus:"-",Equal:"=",Insert:"Insert",Delete:"Delete",Home:"Home",End:"End",PageUp:"PageUp",PageDown:"PageDown",ArrowUp:"Up",ArrowDown:"Down",ArrowLeft:"Left",ArrowRight:"Right",F1:"F1",F2:"F2",F3:"F3",F4:"F4",F5:"F5",F6:"F6",F7:"F7",F8:"F8",F9:"F9",F10:"F10",F11:"F12",F12:"F12",Digit0:"0",Digit1:"1",Digit2:"2",Digit3:"3",Digit4:"4",Digit5:"5",Digit6:"6",Digit7:"7",Digit8:"8",Digit9:"9",KeyA:"A",KeyB:"B",KeyC:"C",KeyD:"D",KeyE:"E",KeyF:"F",KeyG:"G",KeyH:"H",KeyI:"I",KeyJ:"J",KeyK:"K",KeyL:"L",KeyM:"M",KeyN:"N",KeyO:"O",KeyP:"P",KeyQ:"Q",KeyR:"R",KeyS:"S",KeyT:"T",KeyU:"U",KeyV:"V",KeyW:"W",KeyX:"X",KeyY:"Y",KeyZ:"Z",Numpad0:"num0",Numpad1:"num1",Numpad2:"num2",Numpad3:"num3",Numpad4:"num4",Numpad5:"num5",Numpad6:"num6",Numpad7:"num7",Numpad8:"num8",Numpad9:"num9",NumpadAdd:"numadd",NumpadDecimal:"numdec",NumpadDivide:"numdiv",NumpadMultiply:"nummult",NumpadSubtract:"numsub"},ACCELERATOR_TO_VIEW={Meta:IS_DARWIN?"Cmd":IS_WIN?"Win":"Super",AltGr:IS_DARWIN?"ROption":"AltGr",Alt:IS_DARWIN?"Option":"Alt",Delete:"Del",num0:"Num 0",num1:"Num 1",num2:"Num 2",num3:"Num 3",num4:"Num 4",num5:"Num 5",num6:"Num 6",num7:"Num 7",num8:"Num 8",num9:"Num 9",numdec:"Num .",numadd:"Num +",numsub:"Num -",numdiv:"Num /",nummult:"Num *"},VIEW_TO_ACCELERATOR={Command:"Meta",Windows:"Meta"};for(const[t,e]of Object.entries(ACCELERATOR_TO_VIEW))VIEW_TO_ACCELERATOR[e]=t;
+document.addEventListener('DOMContentLoaded', initialize, true)
