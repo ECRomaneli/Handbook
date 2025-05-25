@@ -10,8 +10,8 @@ app.component('Permissions', {
                 <div v-for="(sessionData, session) in filteredPermissions" :key="session" class="accordion-item">
                     <h2 class="accordion-header d-flex align-items-center" :id="'session-heading-' + sanitizeId(session)">
                         
-                        <button class="accordion-button py-2 px-3" :class="[isFiltered() ? '' : 'collapsed']" type="button" data-bs-toggle="collapse" :data-bs-target="'#session-collapse-' + sanitizeId(session)" :aria-controls="'session-collapse-' + sanitizeId(session)">
-                            <img @click.stop="revokeSessionPermissions(session)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke Session Permissions">
+                        <button class="accordion-button py-2 px-3" :class="[isFiltered() ? '' : 'collapsed']" type="button" data-bs-toggle="collapse" :data-bs-target="'#session-collapse-' + sanitizeId(session)" :aria-controls="'session-collapse-' + sanitizeId(session)" :ref="'btn-' + sanitizeId(session)">
+                            <img @mousedown="revokeSessionPermissions($event, session)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke Session Permissions">
                             <span class="badge permission-badge me-2">Session</span>
                             <small>{{ session }}</small>
                         </button>
@@ -26,8 +26,7 @@ app.component('Permissions', {
                                 <div v-for="(urlData, url) in sessionData" :key="url" class="accordion-item">
                                     <h2 class="accordion-header d-flex align-items-center" :id="'url-heading-' + sanitizeId(session) + '-' + sanitizeId(url)">
                                         <button class="accordion-button py-2 px-3" :class="[isSingle() ? '' : 'collapsed']" type="button" data-bs-toggle="collapse" :data-bs-target="'#url-collapse-' + sanitizeId(session) + '-' + sanitizeId(url)" aria-expanded="false" :aria-controls="'url-collapse-' + sanitizeId(session) + '-' + sanitizeId(url)">
-                                            <img @click.stop="revokeUrlPermissions(session, url)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke URL Permissions">
-                                            <!-- <span class="badge permission-badge me-2">URL</span> -->
+                                            <img @mousedown="revokeUrlPermissions($event, session, url)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke URL Permissions">
                                             <small>{{ url }}</small>
                                         </button>
                                     </h2>
@@ -40,13 +39,12 @@ app.component('Permissions', {
                                                 <hr v-if="index !== 0" class="input-divider my-2">
                                                 <div class="d-flex justify-content-between">
                                                     <div class="d-flex me-2">
-                                                    <img @click.stop="revokePermission(session, url, permission)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke">
-                                                        <label class="small">{{ permission }}</label>
+                                                    <img @mousedown="revokePermission(session, url, permission)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" title="Revoke">
+                                                        <label class="small">{{ $const.Permission.Text[permission] ?? permission }}</label>
                                                     </div>
                                                     <div>
                                                         <div class="input-group-sm">
                                                             <select class="value-selector input-group-text" v-model="urlData[permission]" @change="updatePermission(session, url, permission, urlData[permission])" style="width: 90px">
-                                                                <!--<option value="" disabled>Select</option>-->
                                                                 <option value="ask">Ask</option>
                                                                 <option value="allow">Allow</option>
                                                                 <option value="deny">Deny</option>
@@ -74,7 +72,7 @@ app.component('Permissions', {
         </div>
         <span v-else>Loading...</span>
     `,
-    inject: ['$remote', '$image'],
+    inject: ['$remote', '$image', '$const'],
     data() {
         return {
             permissions: null,
@@ -131,21 +129,27 @@ app.component('Permissions', {
             return String(str).replace(/[^a-zA-Z0-9]/g, '_')
         },
         
-        revokeSessionPermissions(session) {
-            if (confirm(`Revoke all permissions for session "${session}"?`)) {
+        async revokeSessionPermissions(e, session) {
+            const parent = e.target.parentElement
+            parent.dataset.bsToggle = '';
+
                 delete this.permissions[session]
                 this.revokePermissions(session)
             }
+            parent.dataset.bsToggle = 'collapse';
         },
         
-        revokeUrlPermissions(session, url) {
-            if (confirm(`Revoke all permissions for ${url}?`)) {
+        async revokeUrlPermissions(e, session, url) {
+            const parent = e.target.parentElement
+            parent.dataset.bsToggle = '';
+
                 delete this.permissions[session][url]
                 if (Object.keys(this.permissions[session]).length === 0) {
                     delete this.permissions[session]
                 }
                 this.revokePermissions(session, url)
             }
+            parent.dataset.bsToggle = 'collapse';
         },
         
         revokePermission(session, url, permission) {
