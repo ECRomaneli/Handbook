@@ -133,6 +133,7 @@ app.component('Permissions', {
             const parent = e.target.parentElement
             parent.dataset.bsToggle = '';
 
+            if (await this.confirmModal(`Revoke all permissions for session "${session}"?`)) {
                 delete this.permissions[session]
                 this.revokePermissions(session)
             }
@@ -143,6 +144,7 @@ app.component('Permissions', {
             const parent = e.target.parentElement
             parent.dataset.bsToggle = '';
 
+            if (await this.confirmModal(`Revoke all permissions for ${url}?`)) {
                 delete this.permissions[session][url]
                 if (Object.keys(this.permissions[session]).length === 0) {
                     delete this.permissions[session]
@@ -181,6 +183,10 @@ app.component('Permissions', {
 
         isSingle() {
             return Object.keys(this.filteredPermissions).length === 1
+        },
+
+        confirmModal(message) {
+            return this.$remote.preferences.confirm(message)
         }
     }
 })

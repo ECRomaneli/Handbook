@@ -5,11 +5,11 @@
      */
     const $bridge = ((ipc, EventEmitter) => {
         const $bus = new EventEmitter()
-        ipc.on('notification.open', (_e, data) => { $bus.emit('notification.open', data) })
+        ipc.on('dialog.open', (_e, data) => { $bus.emit('dialog.open', data) })
         return {
-            setHeight: (height) => ipc.send('notification.setHeight', height),
-            onOpen: (fn) => $bus.on('notification.open', fn),
-            close: (...args) => ipc.send('notification.close', ...args)
+            setHeight: (height) => ipc.send('dialog.setHeight', height),
+            onOpen: (fn) => $bus.on('dialog.open', fn),
+            close: (...args) => ipc.send('dialog.close', ...args)
         }
     }) (require('electron').ipcRenderer, require('node:events'))
 

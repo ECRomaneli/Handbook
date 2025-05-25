@@ -22,14 +22,14 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-color: #202124;
-    --modal-bg: #303134;
+    --modal-bg: #1e1e1e;
     --text-color: #e8eaed;
-    --border-color: #5f6368;
+    --border-color: #3b3e41;
     --accent-color: #8ab4f8;
     --accent-bg: #114977;
-    --btn-bg: #3c4043;
-    --btn-hover-bg: #43484c;
-    --btn-active-bg: #864324;
+    --btn-bg: #242526;
+    --btn-hover-bg: #2b2d30;
+    --btn-active-bg: #532611;
     --btn-text: #e8eaed;
     --scrollbar-thumb: #676767;
     --scrollbar-track: #333;
@@ -83,6 +83,9 @@ body {
 .modal-content .message {
   font-size: 0.9rem;
   text-align: center;
+  text-wrap: inherit;
+  font-family: inherit;
+  margin: 0;
 }
 
 .btn {
