@@ -8,8 +8,10 @@
   --item-border: #ccc;
   --btn-bg: #1a73e8;
   --btn-text: #fff;
+  --btn-hover-bg: #0d5bba;
   --btn-cancel-bg: #fff;
   --btn-cancel-text: #333;
+  --btn-cancel-hover-bg: #f1f1f1;
   --scrollbar-thumb: #969696;
   --scrollbar-track: #e8e8e8;
   --switch-width: 36px;
@@ -22,16 +24,18 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-color: #202124;
-    --modal-bg: #303134;
+    --modal-bg: #1e1e1e;
     --text-color: #e8eaed;
-    --border-color: #5f6368;
+    --border-color: #2d2e2f;
     --tab-active-color: #8ab4f8;
     --item-active-bg: #114977;
-    --item-border: #5f6368;
-    --btn-bg: #8ab4f8;
+    --item-border: #37393b;
+    --btn-bg: #6a95dc;
     --btn-text: #202124;
-    --btn-cancel-bg: #3c4043;
+    --btn-hover-bg: #6b9df5;
+    --btn-cancel-bg: #2d2f31;
     --btn-cancel-text: #e8eaed;
+    --btn-cancel-hover-bg: #363838;
     --scrollbar-thumb: #676767;
     --scrollbar-track: #333;
     --switch-bg-off: #5f6368;
@@ -158,6 +162,7 @@ body {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  transition: .2s linear background-color;
 }
 .btn.cancel {
   background: var(--btn-cancel-bg);
@@ -276,4 +281,16 @@ body {
 /* Focus style for accessibility */
 .switch input:focus + label::before {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn.cancel:hover {
+  background: var(--btn-cancel-hover-bg);
+}
+
+.btn.share:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
 }
