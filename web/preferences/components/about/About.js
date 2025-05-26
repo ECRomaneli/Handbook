@@ -4,14 +4,16 @@ app.component('AboutTab', {
             <div class="mt-1 mb-3 d-flex justify-content-center">
                 <img class="me-2" :src="$image.src('book-open')" style="width: 28px">
                 <span class="h3">Handbook</span>
+                
             </div>
             <pre ref="license" class="smallest"></pre>
             <div class="text-center mt-3">
                 <span class="smallest">Visit the project on </span><a href="https://github.com/ecromaneli/Handbook" target="_blank" class="smallest">GitHub</a>
+                <small style="position: fixed; bottom: 6px; right: 10px; color: var(--border-color);"> v{{ $remote.version }}</small>
             </div>
         </div>
     `,
-    inject: [ '$image' ],
+    inject: [ '$image', '$remote' ],
     mounted() { this.fetchLicense() },
     methods: {
         async fetchLicense() {
