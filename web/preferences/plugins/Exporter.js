@@ -59,20 +59,20 @@ app.use({
                     
                     // Support both callback and promise patterns
                     importHelper.callback = (success, data) => {
+                        // Clean up after click
+                        importHelper.removeEventListener('change', onChangeFile)
+                        importHelper.remove()
+
                         if (typeof callback === 'function') {
                             callback(success, data)
                         }
                         
                         success ? resolve(data) : reject(new Error(data))
-                    };
+                    }
                     
                     importHelper.addEventListener('change', onChangeFile)
                     document.body.appendChild(importHelper) // Avoid memory leaks in some browsers
                     importHelper.click()
-
-                    // Clean up after click
-                    importHelper.removeEventListener('change', onChangeFile)
-                    importHelper.remove()
                 })
             },
     
