@@ -2,6 +2,7 @@ app.use({
     install: (app) => {
         if (!require) { console.warn('Require is not defined'); return }
         const { ipcRenderer } = require('electron')
+        const { version } = require('../../package.json')
 
         const $remote = {
             storage: {
@@ -27,7 +28,9 @@ app.use({
                 dragstart: () => { ipcRenderer.send('preferences.dragStart') },
                 dragging: () => { ipcRenderer.send('preferences.dragging') },
                 close: () => { ipcRenderer.send('preferences.close') }
-            }
+            },
+
+            version: version
         }
 
         app.provide('$remote', $remote)
