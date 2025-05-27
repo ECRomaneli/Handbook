@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Geolocalização</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border-left: 4px solid #4CAF50;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        #error {
+            margin-top: 20px;
+            padding: 10px;
+            border-left: 4px solid #f44336;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .steps {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste de Geolocalização com API do Google</h1>
+    
+    <div class="steps">
+        <h3>Como usar:</h3>
+        <ol>
+            <li>Insira sua chave de API do Google</li>
+            <li>Clique em "Testar sem API" para usar apenas a geolocalização do navegador</li>
+            <li>Ou clique em "Testar com API" para usar a geolocalização do Google</li>
+            <li>Permita o acesso à sua localização quando solicitado</li>
+        </ol>
+    </div>
+    
+    <div class="container">
+        <h2>Configuração</h2>
+        <label for="apiKey">Chave da API do Google:</label>
+        <input type="text" id="apiKey" placeholder="Insira sua chave de API aqui">
+        
+        <div style="margin-top: 15px;">
+            <button onclick="testGeolocationWithoutAPI()">Testar sem API</button>
+            <button onclick="testGeolocationWithAPI()">Testar com API</button>
+        </div>
+    </div>
+    
+    <div id="result"></div>
+    <div id="error"></div>
+    
+    <script>
+        // Função para testar geolocalização sem API do Google (apenas navegador)
+        function testGeolocationWithoutAPI() {
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            
+            errorDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+            
+            if (navigator.geolocation) {
+                resultDiv.innerHTML = "<p>Obtendo localização...</p>";
+                resultDiv.style.display = 'block';
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+                        
+                        resultDiv.innerHTML = `
+                            <h3>Geolocalização pelo Navegador:</h3>
+                            <p><strong>Latitude:</strong> ${latitude}</p>
+                            <p><strong>Longitude:</strong> ${longitude}</p>
+                            <p><strong>Precisão:</strong> ${accuracy} metros</p>
+                            <p><a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank">Ver no Google Maps</a></p>
+                        `;
+                    },
+                    function(error) {
+                        handleGeolocationError(error);
+                    },
+                    { timeout: 10000, enableHighAccuracy: true }
+                );
+            } else {
+                errorDiv.innerHTML = "<p>Geolocalização não é suportada pelo seu navegador.</p>";
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        // Função para testar geolocalização com API do Google
+        function testGeolocationWithAPI() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            
+            errorDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+            
+            if (!apiKey) {
+                errorDiv.innerHTML = "<p>Por favor, insira uma chave de API válida.</p>";
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Configurar variável global para o Google
+            window.GOOGLE_API_KEY = apiKey;
+            
+            // Carregar script do Google Maps com a chave
+            const script = document.createElement('script');
+            script.src = `https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`;
+            script.async = true;
+            script.defer = true;
+            
+            resultDiv.innerHTML = "<p>Carregando API do Google e obtendo localização...</p>";
+            resultDiv.style.display = 'block';
+            
+            // Fazer solicitação à API do Google
+            fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro de API: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const latitude = data.location.lat;
+                const longitude = data.location.lng;
+                const accuracy = data.accuracy;
+                
+                resultDiv.innerHTML = `
+                    <h3>Geolocalização pela API do Google:</h3>
+                    <p><strong>Latitude:</strong> ${latitude}</p>
+                    <p><strong>Longitude:</strong> ${longitude}</p>
+                    <p><strong>Precisão:</strong> ${accuracy} metros</p>
+                    <p><a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank">Ver no Google Maps</a></p>
+                `;
+            })
+            .catch(error => {
+                errorDiv.innerHTML = `<p>Erro ao usar a API do Google: ${error.message}</p>`;
+                errorDiv.style.display = 'block';
+                
+                // Tentar usar geolocalização do navegador como fallback
+                // testGeolocationWithoutAPI();
+            });
+        }
+        
+        // Função para lidar com erros de geolocalização
+        function handleGeolocationError(error) {
+            const errorDiv = document.getElementById('error');
+            let message = '';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Usuário recusou permissão para geolocalização.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Informação de localização indisponível.";
+                    break;
+                case error.TIMEOUT:
+                    message = "Tempo esgotado ao obter localização.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    message = "Erro desconhecido ao obter localização.";
+                    break;
+            }
+            
+            errorDiv.innerHTML = `<p>Erro: ${message}</p>`;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

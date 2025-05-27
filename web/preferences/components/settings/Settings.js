@@ -168,6 +168,14 @@ app.component('Settings', {
                         description: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
                         data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
                     }
+                ],
+                Advanced: [
+                    {
+                        id: this.$const.Settings.GOOGLE_API_KEY,
+                        label: 'Google API key',
+                        description: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
+                        data: { type: 'bigtext', value: await storage.getSettings(this.$const.Settings.GOOGLE_API_KEY) }
+                    }
                 ]
             }
         },
