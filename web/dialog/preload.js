@@ -26,6 +26,11 @@
             button.addEventListener('click', () => {
                 $bridge.close({ response: i, checkboxChecked: els.optionCheckbox?.checked })
             })
+            button.addEventListener('focus', () => {
+                const els = document.getElementsByClassName('btn')
+                for (const el of els) { el.classList.remove('focused') }
+                button.classList.add('focused')
+            })
             els.buttons.appendChild(button)
             if (data.cancelId === i) { button.id = 'cancel-btn' }
             if (data.defaultId === i) { defaultBtn = button }
