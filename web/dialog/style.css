@@ -133,11 +133,11 @@ body {
   background-color: var(--btn-hover-bg);
 }
 
-.footer-buttons button:focus {
+.footer-buttons button.focused {
   background-color: var(--btn-focus-bg);
 }
 
-.footer-buttons button:focus:hover {
+.footer-buttons button.focused:hover {
   background-color: var(--btn-focus-hover-bg);
 }
 
