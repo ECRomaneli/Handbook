@@ -79,7 +79,7 @@ app.component('Settings', {
                     {
                         id: this.$const.Settings.USE_EXTERNAL_BROWSER,
                         label: 'Use external browser',
-                        description: 'Open page links in the system default browser instead of the app.',
+                        description: 'Open links in the system default browser instead of a new window in the app.',
                         data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
                     }
                 ],
