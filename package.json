@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "@ecromaneli/search-engine": "^1.2.1",
+    "auto-launch": "^5.0.6",
     "electron-context-menu": "^4.0.5",
     "electron-findbar": "^0.6.4",
     "electron-squirrel-startup": "^1.0.1",

@@ -51,6 +51,12 @@ app.component('Settings', {
             this.inputs = { 
                 General: [
                     {
+                        id: this.$const.Settings.AUTO_LAUNCH,
+                        label: 'Launch at startup',
+                        description: 'Automatically launch the app when the system starts. Requires permission to run at startup.',
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.AUTO_LAUNCH) }
+                    },
+                    {
                         id: this.$const.Settings.TRAY_LONGPRESS,
                         label: 'Tray icon long-press timeout',
                         description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
