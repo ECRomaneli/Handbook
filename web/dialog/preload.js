@@ -15,8 +15,8 @@
 
     function render(els, data) {
         let defaultBtn = null
-        els.title.innerText = data.title
-        els.message.innerHTML = data.message
+        els.title.innerText = data.title ?? ''
+        els.message.innerHTML = data.message ?? ''
         els.buttons.innerHTML = ''
         data.buttons.forEach((btn, i) => {
             const button = document.createElement('button')
