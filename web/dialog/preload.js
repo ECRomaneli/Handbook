@@ -50,8 +50,10 @@
             els.optionCheckbox = void 0
         }
 
-        $bridge.setHeight(document.body.offsetHeight)
-        defaultBtn?.focus()
+        setTimeout(() => {
+            $bridge.setHeight(document.body.offsetHeight)
+            defaultBtn?.focus()
+        }, 100)
     }
 
     // Add keyboard event listener for ESC key
@@ -72,7 +74,7 @@
             document.body.style.background = 'transparent'
             document.body.classList.add('linux-border')
         }
-        
+
         $bridge.onOpen((data) => { render(elements, data) })
     }, true)
 }) ()
