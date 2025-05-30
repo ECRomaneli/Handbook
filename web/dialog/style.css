@@ -43,7 +43,7 @@
 
 body {
   font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-  background: transparent;
+  background: var(--bg-color);
   color: var(--text-color);
   display: flex;
   margin: 0;
@@ -52,11 +52,11 @@ body {
   overflow: hidden;
 }
 
-.linux-border .modal {
+.linux-border #modal {
   border: 1px solid var(--border-color);
 }
 
-.modal {
+#modal {
   background: var(--modal-bg);
   border-radius: 8px;
   overflow: hidden;
@@ -77,12 +77,12 @@ body {
   align-items: center;
 }
 
-.modal-content .title {
+.modal-content #title {
   font-size: 1.2rem;
   font-weight: 500;
 }
 
-.modal-content .message {
+.modal-content #message {
   font-size: 0.9rem;
   text-align: center;
   text-wrap: inherit;
@@ -117,27 +117,27 @@ body {
 }
 
 /* Group the buttons together on the right */
-.footer-buttons {
+#buttons {
   display: flex;
   width: 100%;
   gap: 1px;
 }
 
-.footer-buttons button {
+#buttons button {
   width: 100%;
   user-select: none;
   transition: .2s linear background-color;
 }
 
-.footer-buttons button:hover {
+#buttons button:hover {
   background-color: var(--btn-hover-bg);
 }
 
-.footer-buttons button.focused {
+#buttons button.focused {
   background-color: var(--btn-focus-bg);
 }
 
-.footer-buttons button.focused:hover {
+#buttons button.focused:hover {
   background-color: var(--btn-focus-hover-bg);
 }
 

@@ -15,26 +15,33 @@
 
     function render(els, data) {
         let defaultBtn = null
-        els.title.innerText = data.title
-        els.message.innerHTML = data.message
+
+        els.title.innerText = data.title ?? ''
+        els.message.innerHTML = data.message ?? ''
         els.buttons.innerHTML = ''
+
         data.buttons.forEach((btn, i) => {
             const button = document.createElement('button')
             button.classList.add('btn')
             button.tabIndex = i + 1
             button.innerText = btn
+
             button.addEventListener('click', () => {
                 $bridge.close({ response: i, checkboxChecked: els.optionCheckbox?.checked })
             })
+
             button.addEventListener('focus', () => {
                 const els = document.getElementsByClassName('btn')
                 for (const el of els) { el.classList.remove('focused') }
                 button.classList.add('focused')
             })
+
             els.buttons.appendChild(button)
-            if (data.cancelId === i) { button.id = 'cancel-btn' }
+
+            if (data.cancelId === i) { button.id = 'cancel-btn'}
             if (data.defaultId === i) { defaultBtn = button }
         })
+
         if (data.checkboxLabel) {
             els.optionCheckbox.checked = data.checkboxChecked ?? false
             els.optionLabel.innerText = data.checkboxLabel
@@ -42,15 +49,16 @@
             els.optionCheckbox.parentElement.innerHTML = ''
             els.optionCheckbox = void 0
         }
-        $bridge.setHeight(document.body.offsetHeight)
-        defaultBtn?.focus()
+
+        setTimeout(() => {
+            $bridge.setHeight(document.body.offsetHeight)
+            defaultBtn?.focus()
+        }, 100)
     }
 
     // Add keyboard event listener for ESC key
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            document.getElementById('cancel-btn')?.click()
-        }
+    document.addEventListener('keydown', e => {
+        e.code === 'Escape' && document.getElementById('cancel-btn')?.click()
     })
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -62,7 +70,11 @@
             buttons: document.getElementById('buttons')
         }
 
-        if (process.platform === 'linux') { document.body.classList.add('linux-border') }
+        if (process.platform === 'linux') {
+            document.body.style.background = 'transparent'
+            document.body.classList.add('linux-border')
+        }
+
         $bridge.onOpen((data) => { render(elements, data) })
     }, true)
 }) ()

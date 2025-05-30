@@ -15,8 +15,22 @@ app.component('Settings', {
     inject: [ '$remote', '$const', '$clone' ],
     props: { settings: Object },
     data() { return { inputs: null } },
-    created() { this.loadSettings() },
+    created() {
+        this.loadSettings()
+        this.setupEventListeners()
+    },
     methods: {
+        setupEventListeners() {
+            this.$remote.preferences.onUpdateRenderer((id, value) => {
+                for (const section of Object.keys(this.inputs)) {
+                    const inputs = this.inputs[section].filter(i => i.id === id)
+                    if (!inputs.length) { continue }
+                    const input = inputs[0]
+                    input.data.value = value
+                }
+            })
+        },
+
         emitUpdate(input) {
             this.$remote.storage.setSettings(input.id, input.data.value)
             this.$emit('update', this.$clone(input), input.data.value)
@@ -36,6 +50,12 @@ app.component('Settings', {
     
             this.inputs = { 
                 General: [
+                    {
+                        id: this.$const.Settings.AUTO_LAUNCH,
+                        label: 'Launch at startup',
+                        description: 'Automatically launch the app when the system starts. Requires permission to run at startup.',
+                        data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.AUTO_LAUNCH) }
+                    },
                     {
                         id: this.$const.Settings.TRAY_LONGPRESS,
                         label: 'Tray icon long-press timeout',
@@ -79,7 +99,7 @@ app.component('Settings', {
                     {
                         id: this.$const.Settings.USE_EXTERNAL_BROWSER,
                         label: 'Use external browser',
-                        description: 'Open page links in the system default browser instead of the app.',
+                        description: 'Open links in the system default browser instead of a new window in the app.',
                         data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
                     }
                 ],
