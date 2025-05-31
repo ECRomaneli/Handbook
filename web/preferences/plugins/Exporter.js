@@ -29,12 +29,17 @@ app.use({
             importHelper.remove()
         }
 
+        /**
+         * @returns {HTMLElement} A new HTML element
+         */
         function createElement(type) {
             const element = document.createElement(type)
             element.style.position = 'absolute'
             element.style.opacity = '0'
             element.style.pointerEvents = 'none'
             element.style.zIndex = '-1'
+            element.style.bottom = '0'
+            element.style.right = '0'
             return element
         }
 
