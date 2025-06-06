@@ -46,6 +46,26 @@ function setupMaximizeOnDoubleClick(actionArea) {
     }, true)
 }
 
+function setOverlay(status) {
+    const id = 'handbook-drag-overlay'
+    let overlay = document.getElementById(id)
+    if (status && !overlay) {
+        overlay = document.createElement('div')
+        overlay.id = id
+        overlay.style.position = 'fixed'
+        overlay.style.top = '0'
+        overlay.style.left = '0'
+        overlay.style.width = '100%'
+        overlay.style.height = '100%'
+        overlay.style.zIndex = '2147483647'
+        overlay.style.cursor = 'move'
+        overlay.style.userSelect = 'none'
+        document.body.appendChild(overlay)
+    } else if (!status && overlay) {
+        document.body.removeChild(overlay)
+    }
+}
+
 /**
  * Registers window drag handlers
  * @param {number} actionArea - Height of the action area
@@ -57,28 +77,30 @@ function setupWindowDrag(actionArea) {
         if (!isLeftClickInActionArea(e, actionArea) || isDragging) { return }
 
         const style = document.body.style
-        const originalCursor = style.cursor
         const originalUserSelect = style.userSelect
     
         const onMouseMove = (e) => {
-            if ((e.buttons & 1) === 0) { onMouseUp(); return }
+            if ((e.buttons & 1) === 0) { onMouseUp(e); return }
             e.preventDefault()
             e.stopImmediatePropagation()
             if (!isDragging) {
+                setOverlay(true)
+                style.setProperty('user-select', 'none', 'important')
                 isDragging = true
                 $bridge.notifyManager('dragStart')
-                style.setProperty('cursor', 'move', 'important')
-                style.setProperty('user-select', 'none', 'important')
             }
+            
             $bridge.notifyManager('dragging')
         }
     
-        const onMouseUp = () => {
-            style.setProperty('cursor', originalCursor)
+        const onMouseUp = (e) => {
+            e.preventDefault()
+            e.stopImmediatePropagation()
             style.setProperty('user-select', originalUserSelect)
             document.removeEventListener('mousemove', onMouseMove, true)
             document.removeEventListener('mouseup', onMouseUp, true)
             isDragging = false
+            setOverlay(false)
         }
     
         document.addEventListener('mousemove', onMouseMove, true)
