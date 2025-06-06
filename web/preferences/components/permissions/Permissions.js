@@ -77,6 +77,7 @@ app.component('Permissions', {
         return {
             permissions: null,
             filteredPermissions: null,
+            permissionsList: null,
             searchQuery: ''
         }
     },
@@ -84,32 +85,43 @@ app.component('Permissions', {
         this.setupEventListeners()
         this.loadPermissions()
     },
-    methods: {
-        setupEventListeners() {
-            this.$remote.preferences.onPermissionsUpdated((permissions) => {
-                this.permissions = permissions
-                this.filterPermissions()
-            })
-
-            this.$remote.preferences.onPermissionsQuery((query) => {
-                this.searchQuery = query
-                this.filterPermissions()
-            })
+    watch: {
+        permissions() {
+            this.updatePermissionsList()
+            this.filterPermissions()
         },
 
-        filterPermissions() {
-            const filterableList = []
+        searchQuery() {
+            this.filterPermissions()
+        }
+    },
+    methods: {
+        setupEventListeners() {
+            this.$remote.preferences.onPermissionsUpdated(p => { this.permissions = p })
+            this.$remote.preferences.onPermissionsQuery(q => { this.searchQuery = q })
+        },
+
+        updatePermissionsList() {
+            this.permissionsList = []
             for (const session in this.permissions) {
+                const obj = {}
+                obj[session] = {}
                 const sessionData = this.permissions[session]
                 for (const url in sessionData) {
                     const permissions = sessionData[url]
-                    filterableList.push({ session, url, permissions, permission: Object.keys(permissions) })
+                    obj.data = { session, url, permissions }
+                    obj[session][url] = permissions
+                    this.permissionsList.push(obj)
                 }
             }
+        },
+
+        filterPermissions() {
             const filteredPermissions = {}
-            SearchEngine.search(filterableList, this.searchQuery).forEach(item => {
-                filteredPermissions[item.session] = filteredPermissions[item.session] || {}
-                filteredPermissions[item.session][item.url] = item.permissions
+            SearchEngine.search(this.permissionsList, this.searchQuery, { matchChildKeysAsValues: true }).forEach(({ data }) => {
+                if (!data.permissions || Object.keys(data.permissions).length === 0) { return }
+                filteredPermissions[data.session] = filteredPermissions[data.session] || {}
+                filteredPermissions[data.session][data.url] = data.permissions
             })
             this.filteredPermissions = filteredPermissions
         },
@@ -117,7 +129,6 @@ app.component('Permissions', {
         async loadPermissions() {
             try {
                 this.permissions = await this.$remote.storage.getPermissions()
-                this.filterPermissions()
             } catch (error) {
                 console.error("Error loading permissions:", error)
                 this.permissions = {}
