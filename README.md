@@ -235,8 +235,6 @@ The **"Window"** tab allows for window customizations, including:
 
 <p align='center'>
     <img width="600" src="https://i.postimg.cc/PrYXCYFK/settings-window.png" alt='Pages'>
-    <br/>
-    "I've been using Alt+Esc (Option+Esc) as the global shortcut and Esc to hide when focused."
 </p>
 
 ## Build
