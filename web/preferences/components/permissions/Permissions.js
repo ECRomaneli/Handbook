@@ -54,8 +54,8 @@ app.component('Permissions', {
                                                 </div>
                                             </div>
                                             
-                                            <div v-if="Object.keys(urlData).length === 0" class="text-muted fst-italic">
-                                                No permissions
+                                            <div v-if="Object.keys(urlData).length === 0" class="text-muted">
+                                                <span class="fst-italic small">No permissions</span>
                                             </div>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@ app.component('Permissions', {
                 </div>
                 
                 <div v-if="Object.keys(filteredPermissions).length === 0" class="text-center p-3 text-muted">
-                    No permissions have been granted
+                    <span class="fst-italic small">No permissions have been granted</span>
                 </div>
             </div>
         </div>
@@ -86,9 +86,12 @@ app.component('Permissions', {
         this.loadPermissions()
     },
     watch: {
-        permissions() {
-            this.updatePermissionsList()
-            this.filterPermissions()
+        permissions: {
+            handler() {
+                this.updatePermissionsList()
+                this.filterPermissions()
+            },
+            deep: true
         },
 
         searchQuery() {
