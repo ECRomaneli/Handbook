@@ -120,8 +120,17 @@ app.component('Permissions', {
         },
 
         filterPermissions() {
+            const filterableList = []
+            for (const session in this.permissions) {
+                const sessionData = this.permissions[session]
+                for (const url in sessionData) {
+                    const permissions = sessionData[url]
+                    filterableList.push({ session, url, permissions, permission: Object.keys(permissions) })
+                }
+            }
+
             const filteredPermissions = {}
-            SearchEngine.search(this.permissionsList, this.searchQuery, { matchChildKeysAsValues: true }).forEach(({ data }) => {
+            SearchEngine.search(filterableList, this.searchQuery, { matchChildKeysAsValues: true }).forEach(data => {
                 if (!data.permissions || Object.keys(data.permissions).length === 0) { return }
                 filteredPermissions[data.session] = filteredPermissions[data.session] || {}
                 filteredPermissions[data.session][data.url] = data.permissions
