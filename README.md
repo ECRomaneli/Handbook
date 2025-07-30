@@ -289,11 +289,6 @@ After setting up the project following the steps in the "[Build](#build)" sectio
 | Linux x64 RPM                                 | `npm run make:linux-x64-rpm`        |
 | Windows x64 EXE                               | `npm run make:win32-x64-exe`        |
 
-## Next Steps
-
-- Implement Speech-to-Text and Text-to-Speech functionalities, at least in English (probably in v2.0).
-- Explore other potential features.
-
 ## Out of Scope
 
 To maintain the primary goal of enhancing user efficiency and focus while minimizing RAM memory usage, it was decided to abandon the idea of having multiple visible windows or tabs. The objective is not to serve as a widget or a web browser application, as there are many superior apps designed for these purposes. Such functionality would detract from the focus and potentially increase RAM consumption.
