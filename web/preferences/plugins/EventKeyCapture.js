@@ -1,7 +1,7 @@
 app.use({
     install: (app) => {
         if (!require) { console.warn('Require is not defined'); return }
-        const KeyCapture = require('../../lib/util/event-key-capture')
+        const KeyCapture = require('../../lib/util/eventKeyCapture')
         app.provide('$keyCapture', KeyCapture)
     }
 })
