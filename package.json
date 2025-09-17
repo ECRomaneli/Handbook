@@ -50,30 +50,30 @@
     "make:win32-x64-exe": "electron-forge make -p win32 -a x64 --targets=@electron-forge/maker-squirrel"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.2",
-    "@electron-forge/maker-deb": "^7.8.2",
-    "@electron-forge/maker-dmg": "^7.8.2",
-    "@electron-forge/maker-rpm": "^7.8.2",
-    "@electron-forge/maker-squirrel": "^7.8.2",
-    "@electron-forge/maker-zip": "^7.8.2",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.8.2",
-    "@eslint/css": "^0.10.0",
-    "@eslint/js": "^9.32.0",
-    "@eslint/json": "^0.13.1",
-    "@eslint/markdown": "^7.1.0",
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
+    "@electron-forge/maker-dmg": "^7.9.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@eslint/css": "^0.11.0",
+    "@eslint/js": "^9.35.0",
+    "@eslint/json": "^0.13.2",
+    "@eslint/markdown": "^7.2.0",
     "@types/electron-squirrel-startup": "^1.0.2",
-    "electron": "^37.2.5",
-    "eslint": "^9.32.0",
+    "electron": "^38.1.1",
+    "eslint": "^9.35.0",
     "eslint-plugin-vue": "^10.4.0",
-    "globals": "^16.3.0"
+    "globals": "^16.4.0"
   },
   "dependencies": {
     "@ecromaneli/search-engine": "^2.1.2",
     "auto-launch": "^5.0.6",
-    "electron-context-menu": "^4.1.0",
+    "electron-context-menu": "^4.1.1",
     "electron-findbar": "^2.0.1",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",
-    "vue": "^3.5.18"
+    "vue": "^3.5.21"
   }
 }
