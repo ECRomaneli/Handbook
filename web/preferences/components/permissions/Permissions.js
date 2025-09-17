@@ -125,7 +125,7 @@ app.component('Permissions', {
                 const sessionData = this.permissions[session]
                 for (const url in sessionData) {
                     const permissions = sessionData[url]
-                    filterableList.push({ session, url, permissions, permission: Object.keys(permissions) })
+                    filterableList.push({ session, url, permissions, permission: Object.keys(permissions).map(p => this.$const.Permission.Text[p] || p)})
                 }
             }
 
