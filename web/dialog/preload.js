@@ -26,6 +26,10 @@
             button.tabIndex = i + 1
             button.innerText = btn
 
+            button.addEventListener('mousedown', (e) => {
+                e.preventDefault() // Prevent focus change on mousedown
+            })
+
             button.addEventListener('click', () => {
                 $bridge.close({ response: i, checkboxChecked: els.optionCheckbox?.checked })
             })
