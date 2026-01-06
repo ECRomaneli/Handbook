@@ -11,12 +11,12 @@ jobs:
       matrix:
         include:
           # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
-          - os: macos-15 # ARM64
+          - os: macos-latest # ARM64
             package: darwin-universal
             extension: app
             source: out/make/zip/darwin/universal/Handbook*.zip
             target: out/make/Handbook-{version}-darwin-arm64.zip
-          - os: macos-13 # x64
+          - os: macos-15-intel # x64
             package: darwin-x64
             extension: app
             source: out/make/zip/darwin/x64/Handbook*.zip

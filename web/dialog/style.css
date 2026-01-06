@@ -7,8 +7,10 @@
   --accent-bg: #e0effd;
   --btn-bg: #e5e5e5;
   --btn-hover-bg: #cecece;
+  --btn-active-bg: #b4b4b4;
   --btn-focus-bg: #e9cec1;
   --btn-focus-hover-bg: #f1b293;
+  --btn-focus-active-bg: #cf8d6c;
   --btn-text: #333;
   --scrollbar-thumb: #969696;
   --scrollbar-track: #e8e8e8;
@@ -30,8 +32,10 @@
     --accent-bg: #114977;
     --btn-bg: #242526;
     --btn-hover-bg: #2b2d30;
+    --btn-active-bg: #3f4144;
     --btn-focus-bg: #532611;
     --btn-focus-hover-bg: #6b3116;
+    --btn-focus-active-bg: #883d1a;
     --btn-text: #e8eaed;
     --scrollbar-thumb: #676767;
     --scrollbar-track: #333;
@@ -139,6 +143,14 @@ body {
 
 #buttons button.focused:hover {
   background-color: var(--btn-focus-hover-bg);
+}
+
+#buttons button:active {
+  background-color: var(--btn-active-bg);
+}
+
+#buttons button.focused:active {
+  background-color: var(--btn-focus-active-bg);
 }
 
 /* Scrollbar styling for WebKit browsers */
