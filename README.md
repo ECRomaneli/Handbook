@@ -89,7 +89,7 @@ Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh4
 ### Linux distributions
 
 #### Download the right Package
-- Visit the [Handbook releases page](https://github.com/ECRomaneli/Handbook/releases) and download the package suitable for your system (e.g. `.dev` for Debian-based distributions and `.rpm` for Red Hat-based).
+- Visit the [Handbook releases page](https://github.com/ECRomaneli/Handbook/releases) and download the package suitable for your system (e.g. `.deb` for Debian-based distributions and `.rpm` for Red Hat-based).
 
 #### Open a Terminal Window
 - Press `Ctrl + Alt + T` to open a terminal window.
