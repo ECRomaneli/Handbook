@@ -28,18 +28,19 @@ async function initialize() {
 async function registerActions() {
     let actionArea = await $bridge.getSettings('action_area')
     $bridge.onSettingsUpdated('action_area', (value) => actionArea = value)
+    const actionAreaProvider = () => actionArea
 
-    setupMaximizeOnDoubleClick(actionArea)
-    setupWindowDrag(actionArea)
+    setupMaximizeOnDoubleClick(actionAreaProvider)
+    setupWindowDrag(actionAreaProvider)
 }
 
 /**
  * Registers maximize on double click
  * @param {number} actionArea - Height of the action area
  */
-function setupMaximizeOnDoubleClick(actionArea) {
+function setupMaximizeOnDoubleClick(actionAreaProvider) {
     document.addEventListener('dblclick', (e) => {
-        if (!isLeftClickInActionArea(e, actionArea)) { return }
+        if (!isLeftClickInActionArea(e, actionAreaProvider())) { return }
         e.preventDefault()
         e.stopImmediatePropagation()
         $bridge.notifyManager('toggleMaximize')
@@ -68,13 +69,13 @@ function setOverlay(status) {
 
 /**
  * Registers window drag handlers
- * @param {number} actionArea - Height of the action area
+ * @param {() => number} actionAreaProvider - Function that provides the height of the action area
  */
-function setupWindowDrag(actionArea) {
+function setupWindowDrag(actionAreaProvider) {
     let isDragging = false
     
     document.addEventListener('mousedown', (e) => {
-        if (!isLeftClickInActionArea(e, actionArea) || isDragging) { return }
+        if (!isLeftClickInActionArea(e, actionAreaProvider()) || isDragging) { return }
 
         const style = document.body.style
         const originalUserSelect = style.userSelect
