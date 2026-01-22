@@ -45,16 +45,31 @@ nav {
     opacity: .8;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: calc(100% - 16px);
+    max-width: calc(100% - 36px);
+}
+
+#permissions {
+    width: 14px;
+    height: 15px;
+    margin-right: -4px;
 }
 
 #copy-link {
     width: 12px;
     height: 12px;
-    padding: 0;
     margin-left: -4px;
+}
+
+#permissions > svg {
+    opacity: .8;
+}
+
+#subtitle-box > button {
+    padding: 0;
     vertical-align: middle;
     border-radius: 0;
+    transition: .5 linear opacity;
+    background-color: transparent !important;
 }
 
 button > svg {
@@ -124,6 +139,8 @@ button {
     padding: 3px;
     text-align: center;
     transition: .2s linear all;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
 }
 
 button:hover {
@@ -143,12 +160,7 @@ button.disabled {
     background-color: transparent !important;
 }
 
-.movable {
+.movable, button.disabled {
     -webkit-app-region: drag;
     app-region: drag;
-}
-
-.unmovable {
-    -webkit-app-region: no-drag;
-    app-region: no-drag;
 }
