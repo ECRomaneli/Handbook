@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src 'self'; default-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; font-src 'self'; img-src 'self'">
+    <title>Navigation</title>
+    <link rel="stylesheet" href="app.css">
+<body>
+    <nav class="movable">
+        <div class="btn-group unmovable">
+            <button id="previous" title="Previous">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 7L10 12L15 17"/>
+                </svg>
+            </button>
+            <button id="next" title="Next">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 7L14 12L9 17"/>
+                </svg>
+            </button>
+            <button id="home" title="Home">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 6L6 11M12 6L18 11M6 11V18H10V14H14V18H18V11"/>
+                </svg>
+            </button>
+            <button id="refresh" title="Refresh"></button>
+        </div>
+        <div id="details">
+            <div>
+                <span id="title">Title</span>
+            </div>
+            <div>
+                <span id="subtitle">Subtitle</span>
+                <button id="copy-link" class="unmovable" title="Copy Link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="btn-group unmovable">
+            <button id="permissions" title="Permissions">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4L5 7V15C5 18 12 21 12 21C12 21 19 18 19 15V7L12 4"/>
+                    <path d="M10 13L12 15L15 11"/>
+                </svg>
+            </button>
+            <button id="list" title="List Pages">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="1" rx="1"/>
+                    <rect x="6" y="11" width="12" height="1" rx="1"/>
+                    <rect x="6" y="16" width="12" height="1" rx="1"/>
+                </svg>
+            </button>
+            <button id="hide" title="Hide">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="11" width="12" height="1" rx="1"/>
+                </svg>
+            </button>
+            <button id="close" title="Close">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 17.5L12 12.5L17 17.5"/>
+                    <path d="M7 7.5L12 12.5L17 7.5"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+</body>
+
+</html>
