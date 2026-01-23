@@ -19,7 +19,7 @@ nav {
     --btn-active-color: #bbb;
     --font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
     --font-size: .75rem;
-    --spacing: .5rem;
+    --spacing: .25rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,7 +45,7 @@ nav {
     opacity: .8;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: calc(100% - 36px);
+    max-width: calc(100% - 42px);
 }
 
 #permissions {
@@ -66,9 +66,9 @@ nav {
 
 #subtitle-box > button {
     padding: 0;
+    margin: 0 .1rem;
     vertical-align: middle;
     border-radius: 0;
-    transition: .5 linear opacity;
     background-color: transparent !important;
 }
 
