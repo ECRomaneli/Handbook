@@ -21,8 +21,8 @@ const icons = {
     check: '<svg width="12" height="12" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z" fill="currentColor"/></svg>',
     stop: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 17.5L12 12.5L17 17.5"/><path d="M7 7.5L12 12.5L17 7.5"/></svg>',
     refresh: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 10C16 7.5 14 6 12 6C9 6 6.5 8.5 6.5 11.5C6.5 14.5 9 17 12 17C14 17 16 16 17 14M17 7V10H14"/></svg>',
-    mute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 9V15H9L14 20V4L9 9H5Z"/></svg>',
-    unmute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><mask id="slashMask"><rect width="24" height="24" fill="white"/><path d="M4 20L20 4" stroke="black" stroke-width="4"/></mask><path d="M5 9V15H9L14 20V4L9 9H5Z" mask="url(#slashMask)"/><path d="M4 20L20 4"/></svg>'
+    mute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 9.5V14.5H9.5L16 18.5V5.5L9.5 9.5H6Z"/></svg>',
+    unmute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><mask id="slashMask"><rect width="24" height="24" fill="white"/><path d="M4.5 19.5L19.5 4.5" stroke="black" stroke-width="4"/></mask><path d="M6 9.5V14.5H9.5L16 18.5V5.5L9.5 9.5H6Z" mask="url(#slashMask)"/><path d="M4.5 19.5L19.5 4.5"/></svg>'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
