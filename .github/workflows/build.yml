@@ -5,39 +5,40 @@ on:
     branches: [release/*, hotfix/*]
     tags: ['*']
   workflow_dispatch:
+
 jobs:
   build:
     strategy:
       matrix:
         include:
-          # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
           - os: macos-latest # ARM64
-            package: darwin-universal
-            extension: app
-            source: out/make/zip/darwin/universal/Handbook*.zip
-            target: out/make/Handbook-{version}-darwin-arm64.zip
+            label: macOS ARM64
+            dist-cmd: npx electron-builder --mac zip --arm64 --publish never
+            artifact-pattern: "Handbook-*-arm64.zip"
+            artifact-name: Handbook-{version}-darwin-arm64.zip
           - os: macos-15-intel # x64
-            package: darwin-x64
-            extension: app
-            source: out/make/zip/darwin/x64/Handbook*.zip
-            target: out/make/Handbook-{version}-darwin-x64.zip
-          - os: ubuntu-24.04
-            package: linux-x64
-            extension: deb
-            source: out/make/deb/x64/handbook*.deb
-            target: out/make/Handbook-{version}-x64-Setup.deb
-          - os: ubuntu-24.04
-            package: linux-x64
-            extension: rpm
-            source: out/make/rpm/x64/Handbook*.rpm
-            target: out/make/Handbook-{version}-x64-Setup.rpm
-          - os: windows-2025
-            package: win32-x64
-            extension: exe
-            source: out/make/squirrel.windows/x64/Handbook*.exe
-            target: out/make/Handbook-{version}-x64-Setup.exe
+            label: macOS x64
+            dist-cmd: npx electron-builder --mac zip --x64 --publish never
+            artifact-pattern: "Handbook-*-x64.zip"
+            artifact-name: Handbook-{version}-darwin-x64.zip
+          - os: ubuntu-latest
+            label: Linux deb
+            dist-cmd: npx electron-builder --linux deb --publish never
+            artifact-pattern: "handbook_*.deb"
+            artifact-name: Handbook-{version}-x64-Setup.deb
+          - os: ubuntu-latest
+            label: Linux rpm
+            dist-cmd: npx electron-builder --linux rpm --publish never
+            artifact-pattern: "handbook-*.rpm"
+            artifact-name: Handbook-{version}-x64-Setup.rpm
+          - os: windows-latest
+            label: Windows x64
+            dist-cmd: npx electron-builder --win nsis --publish never
+            artifact-pattern: "Handbook Setup *.exe"
+            artifact-name: Handbook-{version}-x64-Setup.exe
 
     runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.label }}
 
     permissions:
       contents: write
@@ -45,11 +46,11 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-      
-    - name: Use Node.js 21.x
+
+    - name: Use Node.js 22.x
       uses: actions/setup-node@v4
       with:
-        node-version: 21.x
+        node-version: 22.x
         cache: 'npm'
 
     - name: Install Dependencies
@@ -59,7 +60,6 @@ jobs:
       id: extract_version
       run: |
         if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-          # Extract tag name without the refs/tags/ prefix
           VERSION=${GITHUB_REF#refs/tags/}
         else
           VERSION="1.0.0-debug"
@@ -70,29 +70,26 @@ jobs:
     - name: Update package.json with Version
       run: |
         node -e "let pkg=require('./package.json'); pkg.version='${{ env.VERSION }}'; require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
-    
-    # - name: Pre-make
-    #   if: ${{ matrix.preMake }}
-    #   run: ${{ matrix.preMake }}
 
-    - name: Package ${{ matrix.package }}
-      run: npm run package:${{ matrix.package }}
+    - name: Build
+      run: npm run build:prod
 
-    - name: Make ${{ matrix.package }}
-      run: npm run make:${{ matrix.package }}-${{ matrix.extension }} -- --skip-package
+    - name: Package ${{ matrix.label }}
+      run: ${{ matrix.dist-cmd }}
 
-    - name: Rename Binaries
+    - name: Rename Artifact
       run: |
         version=${{ env.VERSION }}
-        target=${{ matrix.target }}
+        target="${{ matrix.artifact-name }}"
         target=${target/\{version\}/$version}
-        mv ${{ matrix.source }} $target
-        echo "RENAMED_TARGET=$target" >> $GITHUB_ENV
+        source=$(find release -maxdepth 1 -name "${{ matrix.artifact-pattern }}" | head -1)
+        mv "$source" "release/$target"
+        echo "RENAMED_TARGET=release/$target" >> $GITHUB_ENV
       shell: bash
 
     - name: Upload files to a GitHub release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ env.RENAMED_TARGET }}
         fail_on_unmatched_files: true

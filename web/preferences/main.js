@@ -2,14 +2,14 @@ const Vue = require("vue")
 const { loadScripts } = require('./dynamicLoad.js')
 
 window.addEventListener('load', async () => {
-    await loadScripts('providers')
-    await loadScripts('plugins')
-    await loadScripts('components')
-    app.mount('#app')
+  await loadScripts('providers')
+  await loadScripts('plugins')
+  await loadScripts('components')
+  app.mount('#app')
 })
 
 const app = Vue.createApp({
-    template: /*html*/ `
+  template: /*html*/ `
         <div class="exit-btn" @click="$remote.window.close()">
             <svg class="square-16" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
                 <path d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/>
@@ -17,7 +17,7 @@ const app = Vue.createApp({
         </div>
         <div class="w-100 d-flex flex-column pt-4">
             <div>
-                <span class="h5 ps-4">Preferences</span>
+                <span class="h5 ps-4 pe-none">Preferences</span>
             </div>
             <ul class="inline-tabs mt-3 px-4">
                 <li @click="tab = 'pages'">
@@ -51,70 +51,71 @@ const app = Vue.createApp({
         </div>
     `,
 
-    inject: [ '$remote', '$const' ],
-    data() { return { tab: 'pages', appEl: document.getElementById('app'), themeChangeListener: null } },
-    beforeMount() {
-        this.setupBootstrapTheme()
-        this.setupLinuxSpecificStyles()
-        this.setupWindowDrag()
+  inject: ['$remote', '$const'],
+  data() { return { tab: 'pages', appEl: document.getElementById('app'), themeChangeListener: null } },
+  beforeMount() {
+    this.setupBootstrapTheme()
+    this.setupLinuxSpecificStyles()
+    this.setupWindowDrag()
+  },
+  mounted() {
+    this.setupPermissionsListener()
+    this.$nextTick(this.emitReady)
+  },
+  methods: {
+    emitReady() {
+      this.$remote.preferences.emitReady()
     },
-    mounted() {
-        this.setupPermissionsListener()
-        this.$nextTick(this.emitReady)
+
+    setupPermissionsListener() {
+      this.$remote.preferences.onPermissionsQuery(() => { this.tab = 'permissions' })
     },
-    methods: {
-        emitReady() {
-            this.$remote.preferences.emitReady()
-        },
 
-        setupPermissionsListener() {
-            this.$remote.preferences.onPermissionsQuery(() => { this.tab = 'permissions' })
-        },
+    setupLinuxSpecificStyles() {
+      if (!this.$const.OS.IS_LINUX) { return }
+      this.appEl.style.setProperty('border', '1px solid var(--border-color)')
+    },
 
-        setupLinuxSpecificStyles() {
-            if (!this.$const.OS.IS_LINUX) { return }
-            this.appEl.style.setProperty('border', '1px solid var(--border-color)')
-        },
+    setupBootstrapTheme() {
+      const matchMedia = window.matchMedia('(prefers-color-scheme: dark)')
+      this.themeChangeListener = (ev) => this.appEl.setAttribute('data-bs-theme', ev.matches ? 'dark' : 'light')
+      matchMedia.addEventListener('change', this.themeChangeListener)
+      this.themeChangeListener(matchMedia)
+    },
 
-        setupBootstrapTheme() {
-            const matchMedia = window.matchMedia('(prefers-color-scheme: dark)')
-            this.themeChangeListener = (ev) => this.appEl.setAttribute('data-bs-theme', ev.matches ? 'dark' : 'light')
-            matchMedia.addEventListener('change', this.themeChangeListener)
-            this.themeChangeListener(matchMedia)
-        },
+    setupWindowDrag() {
+      let isDragging = false
 
-        setupWindowDrag() {
-            let isDragging = false
+      document.addEventListener('mousedown', (e) => {
+        if (e.target.matches('.exit-btn, .exit-btn *, ul, ul *')) { return }
+        if (e.button !== 0 || e.pageY > 100 || isDragging) { return }
 
-            document.addEventListener('mousedown', (e) => {
-                if (e.button !== 0 || e.pageY > 100 || isDragging) { return }
-        
-                const style = document.body.style
-            
-                const onMouseMove = (e) => {
-                    if ((e.buttons & 1) === 0) { onMouseUp(); return }
-                    e.preventDefault()
-                    e.stopImmediatePropagation()
-                    if (!isDragging) {
-                        isDragging = true
-                        this.$remote.window.dragstart()
-                        style.setProperty('cursor', 'move', 'important')
-                        style.setProperty('user-select', 'none', 'important')
-                    }
-                    this.$remote.window.dragging()
-                }
-            
-                const onMouseUp = () => {
-                    style.removeProperty('cursor')
-                    style.removeProperty('user-select')
-                    document.removeEventListener('mousemove', onMouseMove, true)
-                    document.removeEventListener('mouseup', onMouseUp, true)
-                    isDragging = false
-                }
-            
-                document.addEventListener('mousemove', onMouseMove, true)
-                document.addEventListener('mouseup', onMouseUp, true)
-            }, true)
+        const style = document.body.style
+
+        const onMouseMove = (e) => {
+          if ((e.buttons & 1) === 0) { onMouseUp(); return }
+          e.preventDefault()
+          e.stopImmediatePropagation()
+          if (!isDragging) {
+            isDragging = true
+            this.$remote.window.dragstart()
+            style.setProperty('cursor', 'move', 'important')
+            style.setProperty('user-select', 'none', 'important')
+          }
+          this.$remote.window.dragging()
         }
+
+        const onMouseUp = () => {
+          style.removeProperty('cursor')
+          style.removeProperty('user-select')
+          document.removeEventListener('mousemove', onMouseMove, true)
+          document.removeEventListener('mouseup', onMouseUp, true)
+          isDragging = false
+        }
+
+        document.addEventListener('mousemove', onMouseMove, true)
+        document.addEventListener('mouseup', onMouseUp, true)
+      }, true)
     }
+  }
 })

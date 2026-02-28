@@ -5,17 +5,17 @@ const ROOT_DIR = __dirname;
 async function scanDirectory(directoryPath, componentFiles = []) {
     try {
         const absolutePath = path.resolve(ROOT_DIR, directoryPath);
-        
+
         const files = await fs.readdir(absolutePath);
-        
+
         for (const file of files) {
             if (file === '.' || file === '..' || file.startsWith('.')) continue;
-            
+
             const absoluteFilePath = path.join(absolutePath, file);
             const stats = await fs.stat(absoluteFilePath);
-            
+
             const relativePath = path.relative(ROOT_DIR, absoluteFilePath);
-            
+
             if (stats.isDirectory()) {
                 await scanDirectory(relativePath, componentFiles);
             } else if (file.endsWith('.js')) {
@@ -25,7 +25,7 @@ async function scanDirectory(directoryPath, componentFiles = []) {
                 });
             }
         }
-        
+
         return componentFiles;
     } catch (error) {
         throw new Error(`Failed to load directory: ${directoryPath}: ${error.message}`);
@@ -44,4 +44,4 @@ async function loadScripts(directoryPath) {
     }))
 }
 
-export { loadScripts }
+exports.loadScripts = loadScripts;

@@ -1,40 +1,42 @@
 app.use({
-    install: (app) => {
-        if (!require) { console.warn('Require is not defined'); return }
-        const { ipcRenderer } = require('electron')
-        const { version } = require('../../package.json')
+  install: async (app) => {
+    if (!require) { console.warn('Require is not defined'); return }
+    const { ipcRenderer } = require('electron')
+    const { version } = require('../../../package.json')
 
-        const $remote = {
-            storage: {
-                getPages: async () => ipcRenderer.invoke('storage.pages'),
-                setPages: (pages) => { ipcRenderer.send('storage.pages.updated', pages) },
+    const $remote = {
+      storage: {
+        getPages: async () => ipcRenderer.invoke('preferences:get-pages'),
+        setPages: (pages) => { ipcRenderer.send('preferences:pages-updated', pages) },
 
-                getSettings: async (id) => ipcRenderer.invoke('storage.settings', id),
-                setSettings: (id, newValue) => { ipcRenderer.send('storage.settings.updated', id, newValue) },
+        getSettings: async (id) => ipcRenderer.invoke('preferences:get-settings', id),
+        setSettings: (id, newValue) => { ipcRenderer.send('preferences:settings-updated', id, newValue) },
 
-                getPermissions: async (session, url, permission) => ipcRenderer.invoke('storage.permissions', session, url, permission),
-                setPermission: (session, url, permission, value) => ipcRenderer.send('storage.permissions.updated', session, url, permission, value),
-                revokePermissions: (session, url, permission) => ipcRenderer.send('storage.permissions.revoke', session, url, permission)
-            },
+        getPermissions: async (session, url, permission) => ipcRenderer.invoke('preferences:get-permissions', session, url, permission),
+        setPermission: (session, url, permission, value) => ipcRenderer.send('preferences:permissions-updated', session, url, permission, value),
+        revokePermissions: (session, url, permission) => ipcRenderer.send('preferences:permissions-revoke', session, url, permission)
+      },
 
-            preferences: {
-                emitReady: () => { ipcRenderer.send('preferences.ready') },
-                onPermissionsUpdated: (callback) => { ipcRenderer.on('preferences.permissions.updated', (_, permissions) => { callback(permissions) }) },
-                onPermissionsQuery: (callback) => { ipcRenderer.on('preferences.permissions.query', (_, query) => { callback(query) }) },
-                onUpdateRenderer: (callback) => { ipcRenderer.on('preferences.settings.update-renderer', (_, id, value) => { callback(id, value) }) },
-                confirm: (data) => ipcRenderer.invoke('preferences.confirm', data)
-            },
+      preferences: {
+        emitReady: () => { ipcRenderer.send('preferences:ready') },
+        onPermissionsUpdated: (callback) => { ipcRenderer.on('preferences:permissions-updated', (_, permissions) => { callback(permissions) }) },
+        onPermissionsQuery: (callback) => { ipcRenderer.on('preferences:permissions-query', (_, query) => { callback(query) }) },
+        onUpdateRenderer: (callback) => { ipcRenderer.on('preferences:settings-updated', (_, id, value) => { callback(id, value) }) },
+        confirm: (data) => ipcRenderer.invoke('preferences:confirm', data),
+        getConstants: () => ipcRenderer.invoke('preferences:constants')
+      },
 
-            window: {
-                dragstart: () => { ipcRenderer.send('preferences.dragStart') },
-                dragging: () => { ipcRenderer.send('preferences.dragging') },
-                close: () => { ipcRenderer.send('preferences.close') }
-            },
+      window: {
+        dragstart: () => { ipcRenderer.send('preferences:dragStart') },
+        dragging: () => { ipcRenderer.send('preferences:dragging') },
+        close: () => { ipcRenderer.send('preferences:close') }
+      },
 
-            version: version
-        }
-
-        app.provide('$remote', $remote)
-        window.$remote = $remote
+      version: version
     }
+
+    app.provide('$remote', $remote)
+    app.provide('$const', await $remote.preferences.getConstants())
+    window.$remote = $remote
+  }
 })
