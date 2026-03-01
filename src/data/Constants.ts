@@ -1,6 +1,5 @@
 import { app } from 'electron';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 const Settings = {
   SHOW_FRAME: 'show_frame',
@@ -66,10 +65,7 @@ const OS = {
   IS_WIN32: process.platform === 'win32',
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const ROOT = path.join(__dirname, '..', '..');
+const ROOT = app.getAppPath();
 const Path = {
   ROOT,
   WEB: path.join(ROOT, 'dist', 'web'),
