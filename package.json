@@ -129,7 +129,7 @@
       ],
       "icon": "docs/icons/icon.icns",
       "category": "public.app-category.utilities",
-      "artifactName": "${productName}-${version}-${arch}.${ext}"
+      "artifactName": "${productName}-${version}-darwin-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,

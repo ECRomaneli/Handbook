@@ -12,36 +12,20 @@ jobs:
       matrix:
         include:
           - os: macos-latest # ARM64
-            label: macOS ARM64
+            label: macOS-ARM64
             dist-cmd: npx electron-builder --mac zip --arm64 --publish never
-            artifact-pattern: "Handbook-*-arm64.zip"
-            artifact-name: Handbook-{version}-darwin-arm64.zip
           - os: macos-15-intel # x64
-            label: macOS x64
+            label: macOS-x64
             dist-cmd: npx electron-builder --mac zip --x64 --publish never
-            artifact-pattern: "Handbook-*-x64.zip"
-            artifact-name: Handbook-{version}-darwin-x64.zip
           - os: ubuntu-latest
-            label: Linux deb
-            dist-cmd: npx electron-builder --linux deb --publish never
-            artifact-pattern: "handbook_*.deb"
-            artifact-name: Handbook-{version}-x64-Setup.deb
-          - os: ubuntu-latest
-            label: Linux rpm
-            dist-cmd: npx electron-builder --linux rpm --publish never
-            artifact-pattern: "handbook-*.rpm"
-            artifact-name: Handbook-{version}-x64-Setup.rpm
+            label: Linux
+            dist-cmd: npx electron-builder --linux deb rpm --publish never
           - os: windows-latest
-            label: Windows x64
+            label: Windows
             dist-cmd: npx electron-builder --win nsis --publish never
-            artifact-pattern: "Handbook Setup *.exe"
-            artifact-name: Handbook-{version}-x64-Setup.exe
 
     runs-on: ${{ matrix.os }}
     name: Build ${{ matrix.label }}
-
-    permissions:
-      contents: write
 
     steps:
     - name: Checkout Repository
@@ -77,21 +61,19 @@ jobs:
     - name: Package ${{ matrix.label }}
       run: ${{ matrix.dist-cmd }}
 
-    - name: Rename Artifact
-      run: |
-        version=${{ env.VERSION }}
-        target="${{ matrix.artifact-name }}"
-        target=${target/\{version\}/$version}
-        source=$(find release -maxdepth 1 -name "${{ matrix.artifact-pattern }}" | head -1)
-        mv "$source" "release/$target"
-        echo "RENAMED_TARGET=release/$target" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Upload build artifact
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.label }}
-        path: ${{ env.RENAMED_TARGET }}
+        path: |
+          release/*.deb
+          release/*.rpm
+          release/*.exe
+          release/*.zip
+          release/*.dmg
+          release/*.blockmap
+          release/latest*.yml
+        if-no-files-found: error
         retention-days: 1
 
   release:
