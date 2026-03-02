@@ -1,6 +1,7 @@
 import AppState from '@/AppState';
 import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
+import AutoUpdaterService from '@/service/AutoUpdaterService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import PermissionService from '@/service/PermissionService';
@@ -20,6 +21,7 @@ class ApplicationService {
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
     AppState.googleApiKey = Storage.getSettings(Settings.GOOGLE_API_KEY);
     TrayService.initialize();
+    AutoUpdaterService.initialize();
   }
 
   public registerGlobalShortcut() {
