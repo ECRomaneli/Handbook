@@ -1,7 +1,7 @@
 {
   "name": "handbook",
-  "version": "1.0.0",
-  "description": "Handbook Electron Application",
+  "version": "1.0.0-debug",
+  "description": "Create small, movable, and easily concealable windows for quick use.",
   "homepage": "https://github.com/ecromaneli/handbook",
   "author": {
     "name": "Emerson Capuchi Romaneli",
@@ -47,101 +47,6 @@
     "typescript-eslint": "^8.56.1",
     "webpack": "^5.105.3",
     "webpack-cli": "^6.0.1"
-  },
-  "build": {
-    "appId": "com.github.ecromaneli.handbook",
-    "productName": "Handbook",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "package.json",
-      "!**/node_modules/**/*.map",
-      "!**/node_modules/**/*.md",
-      "!**/node_modules/**/*.ts",
-      "!**/node_modules/**/LICENSE*",
-      "!**/node_modules/**/CHANGELOG*",
-      "!**/node_modules/**/README*"
-    ],
-    "asarUnpack": [],
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        },
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "docs/icons/icon.ico"
-    },
-    "linux": {
-      "target": [
-        {
-          "target": "deb",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "rpm",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
-      "icon": "docs/icons/icon.png",
-      "category": "Utility"
-    },
-    "mac": {
-      "target": [
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
-      "icon": "docs/icons/icon.icns",
-      "category": "public.app-category.utilities",
-      "artifactName": "${productName}-${version}-darwin-${arch}.${ext}"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "docs/icons/icon.ico",
-      "uninstallerIcon": "docs/icons/icon.ico"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "ecromaneli",
-      "repo": "handbook"
-    }
   },
   "dependencies": {
     "@ecromaneli/search-engine": "^2.1.2",

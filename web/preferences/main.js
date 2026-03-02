@@ -29,9 +29,6 @@ const app = Vue.createApp({
                 <li @click="tab = 'settings'">
                     <button class="tab" :class="{ active: tab === 'settings' }">Settings</button>
                 </li>
-                <li @click="tab = 'updates'">
-                    <button class="tab" :class="{ active: tab === 'updates' }">Updates</button>
-                </li>
                 <li @click="tab = 'about'">
                     <button class="tab" :class="{ active: tab === 'about' }">About</button>
                 </li>
@@ -46,9 +43,6 @@ const app = Vue.createApp({
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'settings' }">
                     <settings></settings>
-                </div>
-                <div class="tab-pane container" :class="{ active: tab === 'updates' }">
-                    <updates v-if="tab === 'updates'"></updates>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>
