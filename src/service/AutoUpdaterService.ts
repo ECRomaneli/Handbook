@@ -21,13 +21,9 @@ class AutoUpdaterService {
   };
 
   public initialize(): void {
-    if (!IsPackaged) {
-      console.debug('Auto-updater disabled in development mode');
-      return;
-    }
-
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.forceDevUpdateConfig = !IsPackaged;
 
     this.registerUpdaterEvents();
     this.registerIpcEvents();
