@@ -1,4 +1,4 @@
-import { IsDebug, Permission } from '@/data/Constants';
+import { IsDebug, Permission, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page } from '@/model/Page';
 import FrameService from '@/service/FrameService';
@@ -28,11 +28,15 @@ type PermissionDetails =
   (OpenExternalPermissionRequest);
 
 class PermissionService {
+  private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
   private readonly isDebug = IsDebug.permissions;
   private screenShareModal: ScreenShareModal = new ScreenShareModal();
   private queue: PromiseQueue = new PromiseQueue();
 
   public setupPermissionsHandler(): void {
+    const preferredLanguage = Storage.getSettings(Settings.PREFERRED_LANGUAGE) as string | undefined;
+    const hasPreferredLanguage = preferredLanguage && preferredLanguage.trim() !== '';
+
     app.prependListener('session-created', (s: Session) => {
       this.isDebug && console.debug('Session created:', s.storagePath);
       s.setPermissionRequestHandler(this.requestPermissions.bind(this));
@@ -40,6 +44,18 @@ class PermissionService {
       s.setDisplayMediaRequestHandler(this.shareMedia.bind(this));
       s.setBluetoothPairingHandler((_, c) => c({ confirmed: false }));
       // s.setDevicePermissionHandler(/* DEFAULT */)
+
+      hasPreferredLanguage && this.overrideAcceptLanguage(s, preferredLanguage);
+    });
+  }
+
+  private overrideAcceptLanguage(s: Session, preferredLanguage: string): void {
+    // Build Accept-Language header with the preferred language + English fallback
+    const acceptLanguage = `${preferredLanguage},en;q=0.5`;
+
+    s.webRequest.onBeforeSendHeaders((details, callback) => {
+      details.requestHeaders[PermissionService.ACCEPT_LANGUAGE_HEADER] = acceptLanguage;
+      callback({ requestHeaders: details.requestHeaders });
     });
   }
 

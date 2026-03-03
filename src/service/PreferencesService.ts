@@ -219,6 +219,9 @@ class PreferencesService {
    */
   private updateSettings(id: string, value: unknown): void {
     switch (id) {
+      case Settings.AUTO_LAUNCH:
+        ApplicationService.setupAutoLaunch();
+        break;
       case Settings.SHOW_FRAME:
         if (!PageService.hasAnyActivePage()) { return; }
         this.beforeCloseConfirm(
@@ -261,8 +264,13 @@ class PreferencesService {
           () => { app.relaunch(); app.exit(0); },
         );
         break;
-      case Settings.AUTO_LAUNCH:
-        ApplicationService.setupAutoLaunch();
+      case Settings.PREFERRED_LANGUAGE:
+        this.beforeCloseConfirm(
+          'restart-application',
+          'Restart app?',
+          'A restart is required for the language setting to take effect on all sessions. Restart now?',
+          () => { app.relaunch(); app.exit(0); },
+        );
         break;
     }
   }

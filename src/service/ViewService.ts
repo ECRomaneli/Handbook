@@ -100,7 +100,6 @@ class ViewService {
   recreateView(oldView: WebContentsView, options: WebContentsViewConstructorOptions) {
     const newView = new WebContentsView(options);
     newView.setBounds(oldView.getBounds());
-    //newView.webContents.loadURL(oldView.webContents.getURL());
     this.isMuted(oldView) && newView.webContents.setAudioMuted(true);
 
     newView.webContents.navigationHistory.restore({

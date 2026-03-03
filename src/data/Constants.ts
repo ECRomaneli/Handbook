@@ -22,6 +22,7 @@ const Settings = {
   GOOGLE_API_KEY: 'google_api_key',
   USE_EXTERNAL_BROWSER: 'use_external_browser',
   AUTO_LAUNCH: 'auto_launch',
+  PREFERRED_LANGUAGE: 'preferred_language',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,6 +47,7 @@ DefaultSettings[Settings.TRAY_ICON_THEME] = 'system';
 DefaultSettings[Settings.GOOGLE_API_KEY] = '';
 DefaultSettings[Settings.USE_EXTERNAL_BROWSER] = false;
 DefaultSettings[Settings.AUTO_LAUNCH] = void 0;
+DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 
 const Positions = {
   TOP_LEFT: 'top-left',
