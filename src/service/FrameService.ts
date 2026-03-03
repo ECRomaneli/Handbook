@@ -29,6 +29,12 @@ class FrameService {
   constructor() {
     this.registerStateListeners();
     this.registerInstanceEvents();
+    this.registerCustomViewEvents();
+  }
+
+  private registerCustomViewEvents(): void {
+    FramePropagator.on('show', () => { ViewService.getCurrentView()!.emit('show'); });
+    FramePropagator.on('hide', () => { ViewService.getCurrentView()!.emit('hide'); });
   }
 
   private getFrameOptions(): BaseWindowConstructorOptions {
