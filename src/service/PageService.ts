@@ -200,8 +200,9 @@ class PageService {
   }
 
   public closePageView(page = this.getCurrentPage()!): void {
-    if (!page.view || page.view.webContents.isDestroyed()) { return; }
-    page.view.webContents.close();
+    if (!page.view) { return; }
+    const wc = page.view.webContents;
+    !wc.isDestroyed() && wc.close();
     page.view = undefined;
   }
 
