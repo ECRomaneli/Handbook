@@ -18,6 +18,7 @@ export class UpdatePropagator extends RenderablePropagator<BrowserWindow> {
     this.propagateIpcEvent('download-update');
     this.propagateIpcEvent('install-update');
     this.propagateIpcEvent('get-status');
+    this.propagateIpcEvent('open-download-url');
   }
 }
 

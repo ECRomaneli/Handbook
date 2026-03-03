@@ -1,6 +1,6 @@
 import { IsPackaged } from '@/data/Constants';
 import UpdatePropagator from '@/propagator/UpdatePropagator';
-import { app } from 'electron';
+import { app, shell } from 'electron';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 
 export interface UpdateStatus {
@@ -9,6 +9,8 @@ export interface UpdateStatus {
   currentVersion: string;
   progress: number;
   error: string;
+  platform: string;
+  downloadUrl: string;
 }
 
 class AutoUpdaterService {
@@ -18,16 +20,14 @@ class AutoUpdaterService {
     currentVersion: app.getVersion(),
     progress: 0,
     error: '',
+    platform: process.platform,
+    downloadUrl: '',
   };
 
   public initialize(): void {
-    if (!IsPackaged) {
-      console.debug('Auto-updater disabled in development mode');
-      return;
-    }
-
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.forceDevUpdateConfig = !IsPackaged;
 
     this.registerUpdaterEvents();
     this.registerIpcEvents();
@@ -39,7 +39,8 @@ class AutoUpdaterService {
     });
 
     autoUpdater.on('update-available', (info: UpdateInfo) => {
-      this.updateStatus({ state: 'available', version: info.version });
+      const downloadUrl = `https://github.com/ecromaneli/handbook/releases/tag/v${info.version}`;
+      this.updateStatus({ state: 'available', version: info.version, downloadUrl });
     });
 
     autoUpdater.on('update-not-available', (info: UpdateInfo) => {
@@ -65,6 +66,11 @@ class AutoUpdaterService {
     UpdatePropagator.onRender('download-update', () => this.downloadUpdate());
     UpdatePropagator.onRender('install-update', () => this.installUpdate());
     UpdatePropagator.onRender('get-status', () => this.sendStatus());
+    UpdatePropagator.onRender('open-download-url', () => {
+      if (this.status.downloadUrl) {
+        shell.openExternal(this.status.downloadUrl);
+      }
+    });
   }
 
   public checkForUpdates(): void {

@@ -116,8 +116,8 @@ class ViewService {
      * Handle child windows.
      * @param parent
      */
-  public handleChildWindows(parent: EventEmitter & { webContents: WebContents }): void {
-    parent.webContents.on('did-create-window', (childWindow) => {
+  public handleChildWindows(parent: EventEmitter & { webContents: WebContents }, closestParent = parent): void {
+    closestParent.webContents.on('did-create-window', (childWindow) => {
       const showCascade = () => !childWindow.isDestroyed() && childWindow.show();
       const hideCascade = () => !childWindow.isDestroyed() && childWindow.hide();
 
@@ -165,7 +165,7 @@ class ViewService {
       });
       fixUserAgent(childWindow.webContents);
       childWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-      this.handleChildWindows(childWindow);
+      this.handleChildWindows(parent, childWindow);
     })
       .setWindowOpenHandler((details) => {
         if (Persist.getSettings(Settings.USE_EXTERNAL_BROWSER)) {

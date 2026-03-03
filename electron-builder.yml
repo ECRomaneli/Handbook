@@ -58,6 +58,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   installerIcon: docs/icons/icon.ico
   uninstallerIcon: docs/icons/icon.ico
+  artifactName: ${productName}-Setup-${version}.${ext}
 
 publish:
   provider: github

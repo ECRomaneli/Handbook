@@ -61,6 +61,7 @@ module.exports = (env, argv) => {
     },
     externals: {
       'electron-updater': 'commonjs electron-updater',
+      'electron-findbar': 'commonjs electron-findbar',
     },
   };
 

@@ -62,8 +62,7 @@ class TrayService {
       TrayPropagator.on('mouse-longpress', popUpMenu);
     }
 
-    this.getTray().on('right-click', popUpMenu);
-    this.getTray().on('click', () => PageService.setupOrTogglePage());
+    TrayPropagator.on('right-click', popUpMenu);
   }
 
   private getTray(): Tray {
@@ -71,7 +70,7 @@ class TrayService {
   }
 
   private registerTrayEvents() {
-    TrayPropagator.on('click', () => { PageService.selectPage(); });
+    TrayPropagator.on('click', () => PageService.setupOrTogglePage());
     StatePropagator.onChange(() => { this.updateTrayIcon(); });
   }
 
