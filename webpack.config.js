@@ -65,37 +65,6 @@ module.exports = (env, argv) => {
     },
   };
 
-  // Standalone EventKeyCapture bundle for web usage
-  const eventKeyCaptureConfig = {
-    ...commonConfig,
-    target: 'web',
-    entry: {
-      'EventKeyCapture': './src/util/EventKeyCapture.ts',
-    },
-    output: {
-      path: path.resolve(__dirname, 'dist/web/vendor'),
-      filename: '[name].js',
-      library: {
-        name: 'EventKeyCapture',
-        type: 'umd',
-      },
-      globalObject: 'this',
-      clean: false,
-    },
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          use: {
-            loader: 'ts-loader',
-            options: { transpileOnly: true },
-          },
-          exclude: /node_modules/,
-        },
-      ],
-    },
-  };
-
   // Assets folder copy config
   const assetsConfig = {
     mode: argv.mode || 'production',
@@ -185,5 +154,5 @@ module.exports = (env, argv) => {
     stats: 'minimal',
   };
 
-  return [mainConfig, assetsConfig, eventKeyCaptureConfig, webConfig];
+  return [mainConfig, assetsConfig, webConfig];
 };

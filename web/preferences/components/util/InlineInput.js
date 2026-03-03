@@ -1,5 +1,5 @@
 app.component('InlineInput', {
-    template: /*html*/ `
+  template: /*html*/ `
         <div class="d-flex justify-content-between my-2" :class="{ 'flex-column': data.type === 'bigtext' }">
             <div class="d-flex flex-column me-2">
                 <label class="small">{{ input.label }}</label>
@@ -33,55 +33,55 @@ app.component('InlineInput', {
                 <div v-else-if="data.type === 'key'" class="input-group input-group-sm float-end" style="width: 120px">
                     <input type="search" class="form-control"
                         @focus="updateInputWithTargetValue('')"
-                        @keydown="captureKey($event, data)" 
-                        @keypress="preventKeyPressing($event)" 
+                        @keydown="captureKey($event, data)"
+                        @keypress="preventKeyPressing($event)"
                         @keyup="preventKeyPressing($event)"
-                        @blur="updateInputWithTargetValue($event.target.value)" 
-                        :value="data.parsedValue" 
+                        @blur="updateInputWithTargetValue($event.target.value)"
+                        :value="data.parsedValue"
                         :aria-label="input.label"
                         spellcheck="false">
                 </div>
             </div>
         </div>
     `,
-    inject: [ '$const', '$keyCapture' ],
-    emits: [ 'update' ],
-    props: { input: Object },
-    data() { return { data: this.input.data } },
-    beforeMount() { this.updateBindValue() },
-    watch: { 'data.value': function () { this.updateBindValue() } },
-    methods: {
-        updateBindValue() {
-            this.data.bindValue = this.data.value
-            if (this.data.type === 'key') { this.updateKeyParsedValue() }
-        },
+  inject: ['$remote', '$const'],
+  emits: ['update'],
+  props: { input: Object },
+  data() { return { data: this.input.data } },
+  beforeMount() { this.updateBindValue() },
+  watch: { 'data.value': function () { this.updateBindValue() } },
+  methods: {
+    updateBindValue() {
+      this.data.bindValue = this.data.value
+      if (this.data.type === 'key') { this.updateKeyParsedValue() }
+    },
 
-        updateKeyParsedValue() {
-            this.data.parsedValue = this.$keyCapture.parseToOSKeyCombination(this.data.bindValue)
-        },
+    async updateKeyParsedValue() {
+      this.data.parsedValue = await this.$remote.keyCapture.parseToOSKeyCombination(this.data.bindValue)
+    },
 
-        captureKey(e, data) {
-            this.preventKeyPressing(e)
-            data.parsedValue = this.$keyCapture.getOSKeyCombinationByEvent(e)
-        },
+    async captureKey(e, data) {
+      this.preventKeyPressing(e)
+      data.parsedValue = await this.$remote.keyCapture.getOSKeyCombinationByEvent(e)
+    },
 
-        emitUpdate() {
-            if (this.data.value !== this.data.bindValue) {
-                this.data.value = this.data.bindValue
-                this.$emit('update', this.input)
-            }
-        },
+    emitUpdate() {
+      if (this.data.value !== this.data.bindValue) {
+        this.data.value = this.data.bindValue
+        this.$emit('update', this.input)
+      }
+    },
 
-        preventKeyPressing(e) {
-            e.preventDefault()
-            e.stopImmediatePropagation()
-        },
+    preventKeyPressing(e) {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+    },
 
-        updateInputWithTargetValue(parsedValue) {
-            let accelerator = this.$keyCapture.parseToAccelerator(parsedValue)
-            this.data.bindValue = parsedValue.includes('+') ? accelerator : ''
-            this.updateKeyParsedValue()
-            this.emitUpdate()
-        }
+    async updateInputWithTargetValue(parsedValue) {
+      let accelerator = await this.$remote.keyCapture.parseToAccelerator(parsedValue)
+      this.data.bindValue = parsedValue.includes('+') ? accelerator : ''
+      await this.updateKeyParsedValue()
+      this.emitUpdate()
     }
+  }
 })

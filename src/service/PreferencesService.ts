@@ -9,9 +9,10 @@ import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import DialogUtil from '@/util/DialogUtil';
+import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
 import { registerDraggableArea } from '@/util/PropagatorUtil';
-import { BrowserWindow, HandlerDetails, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
+import { BrowserWindow, HandlerDetails, Input, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
 import path from 'node:path';
 
@@ -106,33 +107,6 @@ class PreferencesService {
     // Handle UI [x] button
     PreferencesPropagator.onRender('close', (): void => this.close());
 
-    PreferencesPropagator.handleRender('confirm',
-      async (event: IpcMainInvokeEvent, message: string): Promise<boolean> => {
-        if (!this.isPreferences(event.sender)) { return false; }
-        return await this.dialog.confirm(AppState.preferences!, { message });
-      });
-
-    PreferencesPropagator.handleRender('constants', (event: IpcMainInvokeEvent): unknown => {
-      if (!this.isPreferences(event.sender)) { return null; }
-      return { OS, Settings, Positions, Permission };
-    });
-
-    // IPC handlers
-    PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
-
-    PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
-      Storage.getSettings(id),
-    );
-
-    PreferencesPropagator.handleRender('get-permissions',
-      (
-        _e: IpcMainInvokeEvent,
-        sessionName?: string,
-        url?: string,
-        permission?: string,
-      ): Record<string, unknown> => Storage.getPermissions(sessionName, url, permission) as Record<string, unknown>,
-    );
-
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
     });
@@ -150,6 +124,38 @@ class PreferencesService {
       (_, sessionName: string, url: string, permission: string): void => {
         Storage.revokePermissions(sessionName, url, permission);
       });
+
+    PreferencesPropagator.handleRender('confirm',
+      async (event: IpcMainInvokeEvent, message: string): Promise<boolean> => {
+        if (!this.isPreferences(event.sender)) { return false; }
+        return await this.dialog.confirm(AppState.preferences!, { message });
+      });
+
+    PreferencesPropagator.handleRender('constants', (event: IpcMainInvokeEvent): unknown => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return { OS, Settings, Positions, Permission };
+    });
+
+    PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
+
+    PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
+      Storage.getSettings(id),
+    );
+
+    PreferencesPropagator.handleRender('get-permissions',
+      (
+        _e: IpcMainInvokeEvent,
+        sessionName?: string,
+        url?: string,
+        permission?: string,
+      ): Record<string, unknown> => Storage.getPermissions(sessionName, url, permission) as Record<string, unknown>,
+    );
+
+    /* eslint-disable @stylistic/max-len */
+    PreferencesPropagator.handleRender('parse-to-os-key-combination', (_e, acc: string): string => parseToOSKeyCombination(acc));
+    PreferencesPropagator.handleRender('parse-to-accelerator', (_e, parsedValue: string): string => parseToAccelerator(parsedValue));
+    PreferencesPropagator.handleRender('get-os-key-combination-by-event', (_e, input: Input): string => getOSKeyCombinationByEvent(input));
+    /* eslint-enable @stylistic/max-len */
   }
 
   private buildContextMenu(): void {

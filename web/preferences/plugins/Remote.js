@@ -2,17 +2,16 @@ app.use({
   install: async (app) => {
     if (!require) { console.warn('Require is not defined'); return }
     const { ipcRenderer } = require('electron')
-    const { version } = require('../../../package.json')
 
     const $remote = {
       storage: {
-        getPages: async () => ipcRenderer.invoke('preferences:get-pages'),
+        getPages: () => ipcRenderer.invoke('preferences:get-pages'),
         setPages: (pages) => { ipcRenderer.send('preferences:pages-updated', pages) },
 
-        getSettings: async (id) => ipcRenderer.invoke('preferences:get-settings', id),
+        getSettings: (id) => ipcRenderer.invoke('preferences:get-settings', id),
         setSettings: (id, newValue) => { ipcRenderer.send('preferences:settings-updated', id, newValue) },
 
-        getPermissions: async (session, url, permission) => ipcRenderer.invoke('preferences:get-permissions', session, url, permission),
+        getPermissions: (session, url, permission) => ipcRenderer.invoke('preferences:get-permissions', session, url, permission),
         setPermission: (session, url, permission, value) => ipcRenderer.send('preferences:permissions-updated', session, url, permission, value),
         revokePermissions: (session, url, permission) => ipcRenderer.send('preferences:permissions-revoke', session, url, permission)
       },
@@ -41,7 +40,13 @@ app.use({
         close: () => { ipcRenderer.send('preferences:close') }
       },
 
-      version: version
+      keyCapture: {
+        parseToOSKeyCombination: (accelerator) => ipcRenderer.invoke('preferences:parse-to-os-key-combination', accelerator),
+        parseToAccelerator: (parsedValue) => ipcRenderer.invoke('preferences:parse-to-accelerator', parsedValue),
+        getOSKeyCombinationByEvent: (e) => ipcRenderer.invoke('preferences:get-os-key-combination-by-event', {
+          key: e.key, code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey
+        })
+      }
     }
 
     app.provide('$remote', $remote)
