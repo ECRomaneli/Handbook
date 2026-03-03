@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+    content="script-src 'self'; style-src 'self'; default-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; font-src 'self'; img-src 'self'">
+  <title>Navigation</title>
+  <link rel="stylesheet" href="app.css">
+
+<body>
+  <nav class="movable">
+    <div class="btn-group">
+      <button tabindex="-1" id="back" title="Back">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 7L9 12L14 17" />
+        </svg>
+      </button>
+      <button tabindex="-1" id="forward" title="Forward">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 7L15 12L10 17" />
+        </svg>
+      </button>
+      <button tabindex="-1" id="home" title="Home">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 6L6 11M12 6L18 11M6 11V18H10V14H14V18H18V11" />
+        </svg>
+      </button>
+      <button tabindex="-1" id="refresh" title="Refresh"></button>
+    </div>
+    <div id="details">
+      <div>
+        <span id="title"></span>
+      </div>
+      <div id="subtitle-box">
+        <button tabindex="-1" id="permissions" title="Permissions">
+          <svg viewBox="2 4 20 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8H10.5M16.5 8H21" stroke-linecap="round" />
+            <path d="M3 16H7.5M13.5 16H21" stroke-linecap="round" />
+            <circle cx="13.5" cy="8" r="2.5" />
+            <circle cx="10.5" cy="16" r="2.5" />
+          </svg>
+        </button>
+        <span id="subtitle"></span>
+        <button tabindex="-1" id="copy-link" title="Copy Link"></button>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button tabindex="-1" id="mute" title="Mute / Unmute"></button>
+      <button tabindex="-1" id="list" title="List Pages">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 7H18" stroke-linecap="round" />
+          <path d="M6 12H18" stroke-linecap="round" />
+          <path d="M6 17H18" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button tabindex="-1" id="hide" title="Hide">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 12H18" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button tabindex="-1" id="close" title="Close">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 17L12 12L17 17" />
+          <path d="M7 7L12 12L17 7" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+</body>
+
+</html>
