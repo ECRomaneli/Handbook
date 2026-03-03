@@ -30,6 +30,7 @@ app.use({
         checkForUpdates: () => { ipcRenderer.send('updater:check-for-updates') },
         downloadUpdate: () => { ipcRenderer.send('updater:download-update') },
         installUpdate: () => { ipcRenderer.send('updater:install-update') },
+        openDownloadUrl: () => { ipcRenderer.send('updater:open-download-url') },
         getStatus: () => { ipcRenderer.send('updater:get-status') },
         onStatusChanged: (callback) => { ipcRenderer.on('updater:status-changed', (_, status) => { callback(status) }) }
       },

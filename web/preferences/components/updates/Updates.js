@@ -25,7 +25,13 @@ app.component('Updates', {
                         <span class="update-dot update-dot-available me-2"></span>
                         <span class="small fw-bold">Version {{ status.version }} is available!</span>
                     </div>
-                    <button class="btn btn-sm btn-primary" @click="downloadUpdate">Download Update</button>
+                    <template v-if="status.platform === 'darwin'">
+                        <p class="smallest mb-2 text-muted">Automatic updates are not supported on macOS for unsigned apps.</p>
+                        <button class="btn btn-sm btn-primary" @click="openDownloadUrl">Open Download Page</button>
+                    </template>
+                    <template v-else>
+                        <button class="btn btn-sm btn-primary" @click="downloadUpdate">Download Update</button>
+                    </template>
                     <button class="btn btn-sm btn-secondary ms-2" @click="checkForUpdates">Recheck</button>
                 </template>
 
@@ -99,6 +105,7 @@ app.component('Updates', {
   methods: {
     checkForUpdates() { this.$remote.updater.checkForUpdates() },
     downloadUpdate() { this.$remote.updater.downloadUpdate() },
-    installUpdate() { this.$remote.updater.installUpdate() }
+    installUpdate() { this.$remote.updater.installUpdate() },
+    openDownloadUrl() { this.$remote.updater.openDownloadUrl() }
   }
 })
