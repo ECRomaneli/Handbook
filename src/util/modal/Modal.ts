@@ -95,21 +95,9 @@ class Modal {
    * Close the modal.
    */
   close(): void {
-    if (!this.isOpen()) {
-      return;
+    if (this.isOpen()) {
+      this.window!.close();
     }
-
-    this.window!.once('closed', () => {
-      try {
-        this.ipcListeners.forEach((l) => ipcMain.off(l.eventName, l));
-      } catch (err) {
-        console.error('Error cleaning up IPC listeners:', err);
-      } finally {
-        this.ipcListeners = [];
-      }
-    });
-
-    this.window!.close();
   }
 
   /**
@@ -240,12 +228,25 @@ class Modal {
    * @param lockModalToWindow Lock the modal to the parent window. Default is false
    * @param disableParentEvents Disable parent events when modal is open. Default is false
    */
-  private registerListeners(parent: BaseWindow, lockModalToWindow = false, disableParentEvents = false): void {
+  private registerListeners(parent: BaseWindow, lockModalToWindow?: boolean, disableParentEvents?: boolean): void {
     this.propagateModalEventsToParent(parent, disableParentEvents);
     this.registerParentListeners(parent, lockModalToWindow);
+    this.onClosedRemoveIpcListeners();
   }
 
-  private propagateModalEventsToParent(parent: BaseWindow, disableParentEvents: boolean): void {
+  private onClosedRemoveIpcListeners(): void {
+    this.window!.once('closed', () => {
+      try {
+        this.ipcListeners.forEach((l) => ipcMain.off(l.eventName, l));
+      } catch (err) {
+        console.error('Error cleaning up IPC listeners:', err);
+      } finally {
+        this.ipcListeners = [];
+      }
+    });
+  }
+
+  private propagateModalEventsToParent(parent: BaseWindow, disableParentEvents?: boolean): void {
     if (disableParentEvents) {
       const id = this.window!.id;
       this.window!.on('closed', () =>
