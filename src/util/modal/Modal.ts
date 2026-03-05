@@ -101,6 +101,16 @@ class Modal {
   }
 
   /**
+   * Hide the modal and after 100 ms close it.
+   */
+  hideAndClose(): void {
+    if (this.isOpen()) {
+      this.window!.isVisible() && this.window!.hide();
+      setTimeout(() => this.window!.close(), 100);
+    }
+  }
+
+  /**
    * Whether the modal is opened.
    * @returns True, if the modal is open. Otherwise, false.
    */
