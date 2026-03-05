@@ -296,19 +296,9 @@ class Modal {
     const boundsHandler = exclusiveMove('modal', this.updateBounds);
     const parentBoundsHandler = exclusiveMove('parent', this.updateParentBounds);
 
-    const showCascade = (): void => {
-      if (!this.window!.isVisible()) {
-        this.window!.show();
-      }
-    };
-    const hideCascade = (): void => {
-      if (this.window!.isVisible()) {
-        this.window!.hide();
-      }
-    };
-
-    // Experimental: Testing "moveTop" instead of "focus"
-    const focusCascade = (): void => { this.window?.moveTop(); };
+    const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
+    const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
+    const focusCascade = () => { this.window?.focus(); };
 
     if (this.customOptions?.resizable) {
       this.window!.prependListener('resize', parentBoundsHandler);
