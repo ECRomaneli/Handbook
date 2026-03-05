@@ -285,48 +285,43 @@ class Modal {
   }
 
   private registerParentListeners(parent: BaseWindow, lockModalToWindow?: boolean): void {
-    // Track BOTH the origin AND last update time for each origin separately
-    const moveState = { origin: null as string | null, lastUpdate: 0 };
-
-    const exclusiveMove =
-      (origin: string, fn: (parent: BaseWindow | BrowserWindow) => void) => (): void => {
-        const now = Date.now();
-
-        if (moveState.origin === origin || now - moveState.lastUpdate > Modal.MOVEMENT_TIMEOUT) {
-          moveState.origin = origin;
-          moveState.lastUpdate = now;
-          if (!this.window!.isDestroyed()) {
-            fn.call(this, parent);
-          } else {
-            // TODO: Remove this check when the bug is fixed
-            console.debug('Modal window destroyed, ignoring event');
-          }
-        }
-      };
-
-    const boundsHandler = exclusiveMove('modal', this.updateBounds);
-    const parentBoundsHandler = exclusiveMove('parent', this.updateParentBounds);
-
     const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
     const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
     const focusCascade = () => { this.window?.focus(); };
+    const RESIZE_EVENT = 'resize';
+    const MOVE_EVENT = 'move';
+
+    const boundsCascade = () => {
+      this.customOptions?.resizable && this.window!.off(RESIZE_EVENT, parentBoundsHandler);
+      this.customOptions?.movable && lockModalToWindow && this.window!.off(MOVE_EVENT, parentBoundsHandler);
+      this.updateBounds(parent);
+      this.customOptions?.resizable && this.window!.on(RESIZE_EVENT, parentBoundsHandler);
+      this.customOptions?.movable && lockModalToWindow && this.window!.on(MOVE_EVENT, parentBoundsHandler);
+    };
+    const parentBoundsHandler = () => {
+      parent.off(RESIZE_EVENT, boundsCascade);
+      parent.off(MOVE_EVENT, boundsCascade);
+      this.updateParentBounds(parent);
+      parent.on(RESIZE_EVENT, boundsCascade);
+      parent.on(MOVE_EVENT, boundsCascade);
+    };
 
     if (this.customOptions?.resizable) {
-      this.window!.prependListener('resize', parentBoundsHandler);
+      this.window!.on(RESIZE_EVENT, parentBoundsHandler);
     }
     if (this.customOptions?.movable && lockModalToWindow) {
-      this.window!.prependListener('move', parentBoundsHandler);
+      this.window!.on(MOVE_EVENT, parentBoundsHandler);
     }
 
-    parent.prependListener('resize', boundsHandler);
-    parent.prependListener('move', boundsHandler);
-    parent.prependListener('show', showCascade);
-    parent.prependListener('hide', hideCascade);
-    parent.prependListener('focus', focusCascade);
+    parent.on(RESIZE_EVENT, boundsCascade);
+    parent.on(MOVE_EVENT, boundsCascade);
+    parent.on('show', showCascade);
+    parent.on('hide', hideCascade);
+    parent.on('focus', focusCascade);
 
     this.window!.on('closed', () => {
-      parent.off('resize', boundsHandler);
-      parent.off('move', boundsHandler);
+      parent.off(RESIZE_EVENT, boundsCascade);
+      parent.off(MOVE_EVENT, boundsCascade);
       parent.off('show', showCascade);
       parent.off('hide', hideCascade);
       parent.off('focus', focusCascade);
