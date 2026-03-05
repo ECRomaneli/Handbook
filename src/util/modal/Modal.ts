@@ -284,7 +284,7 @@ class Modal {
     });
   }
 
-  private registerParentListeners(parent: BaseWindow | BrowserWindow, lockModalToWindow: boolean): void {
+  private registerParentListeners(parent: BaseWindow, lockModalToWindow?: boolean): void {
     // Track BOTH the origin AND last update time for each origin separately
     const moveState = { origin: null as string | null, lastUpdate: 0 };
 
