@@ -37,7 +37,7 @@ interface IpcListener {
 }
 
 class Modal {
-  static readonly #MOVEMENT_TIMEOUT = 200;
+  private static readonly MOVEMENT_TIMEOUT = 200;
 
   private window?: BrowserWindow;
   private boundsHandler: BoundsHandler = Modal.setDefaultBounds;
@@ -200,7 +200,7 @@ class Modal {
    */
   onceRenderer<T extends unknown[]>(eventName: string, listener: (...args: T) => void): this {
     const wrappedListener = ((e: IpcMainEvent, ...args: unknown[]) => {
-      if (this.#isThisWindow(e.sender)) {
+      if (this.isThisWindow(e.sender)) {
         ipcMain.removeListener(eventName, wrappedListener);
         this.ipcListeners = this.ipcListeners.slice(this.ipcListeners.indexOf(wrappedListener), 1);
         listener(...(args as T));
@@ -220,7 +220,7 @@ class Modal {
    */
   onRenderer<T extends unknown[]>(eventName: string, listener: (...args: T) => void): this {
     const wrappedListener = ((e: IpcMainEvent, ...args: unknown[]) => {
-      if (this.#isThisWindow(e.sender)) {
+      if (this.isThisWindow(e.sender)) {
         listener(...(args as T));
       }
     }) as IpcListener;
@@ -230,7 +230,7 @@ class Modal {
     return this;
   }
 
-  #isThisWindow(webContents: WebContents): boolean {
+  private isThisWindow(webContents: WebContents): boolean {
     return this.window?.webContents === webContents;
   }
 
@@ -281,7 +281,7 @@ class Modal {
       (origin: string, fn: (parent: BaseWindow | BrowserWindow) => void) => (): void => {
         const now = Date.now();
 
-        if (moveState.origin === origin || now - moveState.lastUpdate > Modal.#MOVEMENT_TIMEOUT) {
+        if (moveState.origin === origin || now - moveState.lastUpdate > Modal.MOVEMENT_TIMEOUT) {
           moveState.origin = origin;
           moveState.lastUpdate = now;
           if (!this.window!.isDestroyed()) {
@@ -342,12 +342,8 @@ class Modal {
   private updateBounds(parent: BaseWindow | BrowserWindow): void {
     const oldBounds = this.window!.getBounds();
     const newBounds = this.boundsHandler(parent.getBounds(), oldBounds);
-    if (newBounds.width === undefined) {
-      newBounds.width = oldBounds.width;
-    }
-    if (newBounds.height === undefined) {
-      newBounds.height = oldBounds.height;
-    }
+    if (newBounds.width === undefined) { newBounds.width = oldBounds.width; }
+    if (newBounds.height === undefined) { newBounds.height = oldBounds.height; }
     if (Modal.boundsChanged(oldBounds, newBounds as Rectangle)) {
       this.window!.setBounds(newBounds as Rectangle);
     }
