@@ -35,8 +35,6 @@ app.use({
       },
 
       window: {
-        dragstart: () => { ipcRenderer.send('preferences:dragStart') },
-        dragging: () => { ipcRenderer.send('preferences:dragging') },
         close: () => { ipcRenderer.send('preferences:close') }
       },
 

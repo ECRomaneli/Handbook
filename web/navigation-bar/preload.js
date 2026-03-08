@@ -9,9 +9,6 @@ const $remote = (ipc => ({
   listPages: () => { ipc.send('navbar:list-pages') },
   hide: () => { ipc.send('navbar:hide') },
   close: () => { ipc.send('navbar:close') },
-  dragStart: () => { ipc.send('navbar:dragStart') },
-  dragging: () => { ipc.send('navbar:dragging') },
-  maximize: () => { ipc.send('navbar:maximize') },
   onLabelUpdated: (listener) => { ipc.on('navbar:label-updated', listener) },
   onDidNavigate: (listener) => { ipc.on('navbar:did-navigate', listener) },
   onDidStartLoading: (listener) => { ipc.on('navbar:did-start-loading', listener) },
@@ -27,42 +24,6 @@ const icons = {
   mute: '<svg viewBox="2 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 9.5V14.5H9.5L16 18.5V5.5L9.5 9.5H6Z"/><path d="M18.5 9.5C19.5 11 19.5 13 18.5 14.5"/><path d="M20.5 7.5C22 10 22 14 20.5 16.5"/></svg>',
   unmute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><mask id="slashMask"><rect width="24" height="24" fill="white"/><path d="M4.5 19.5L19.5 4.5" stroke="black" stroke-width="4"/></mask><path d="M6 9.5V14.5H9.5L16 18.5V5.5L9.5 9.5H6Z" mask="url(#slashMask)"/><path d="M4.5 19.5L19.5 4.5"/></svg>'
 }
-
-function setupActionArea() {
-  let isDragging = void 0
-
-  document.addEventListener('mousedown', (e) => {
-    if (e.button === 0 && !e.target.matches('button, button *')) {
-      isDragging = false
-    }
-  })
-  document.addEventListener('mousemove', (e) => {
-    if (isDragging === void 0) { return }
-    if ((e.buttons & 1) === 0) {
-      isDragging = void 0
-      return
-    }
-    e.preventDefault()
-    if (isDragging === false) {
-      isDragging = true
-      $remote.dragStart()
-    }
-    $remote.dragging()
-  }, true);
-  document.addEventListener('mouseup', (e) => {
-    if (isDragging !== void 0 && e.button === 0) {
-      isDragging = void 0
-      e.preventDefault()
-    }
-  }, true)
-  document.addEventListener('dblclick', (e) => {
-    if (e.target.matches('button, button *')) { return }
-    e.preventDefault()
-    $remote.maximize()
-  }, true)
-}
-
-setupActionArea()
 
 document.addEventListener('DOMContentLoaded', async () => {
   const titleInput = document.getElementById('title')

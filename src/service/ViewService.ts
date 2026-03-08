@@ -101,7 +101,6 @@ class ViewService {
       index: oldView.webContents.navigationHistory.getActiveIndex(),
     });
     this.configureView(newView);
-
     return newView;
   }
 

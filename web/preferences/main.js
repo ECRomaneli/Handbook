@@ -56,7 +56,6 @@ const app = Vue.createApp({
   beforeMount() {
     this.setupBootstrapTheme()
     this.setupLinuxSpecificStyles()
-    this.setupWindowDrag()
   },
   mounted() {
     this.setupPermissionsListener()
@@ -82,40 +81,5 @@ const app = Vue.createApp({
       matchMedia.addEventListener('change', this.themeChangeListener)
       this.themeChangeListener(matchMedia)
     },
-
-    setupWindowDrag() {
-      let isDragging = false
-
-      document.addEventListener('mousedown', (e) => {
-        if (e.target.matches('.exit-btn, .exit-btn *, ul, ul *')) { return }
-        if (e.button !== 0 || e.pageY > 100 || isDragging) { return }
-
-        const style = document.body.style
-
-        const onMouseMove = (e) => {
-          if ((e.buttons & 1) === 0) { onMouseUp(); return }
-          e.preventDefault()
-          e.stopImmediatePropagation()
-          if (!isDragging) {
-            isDragging = true
-            this.$remote.window.dragstart()
-            style.setProperty('cursor', 'move', 'important')
-            style.setProperty('user-select', 'none', 'important')
-          }
-          this.$remote.window.dragging()
-        }
-
-        const onMouseUp = () => {
-          style.removeProperty('cursor')
-          style.removeProperty('user-select')
-          document.removeEventListener('mousemove', onMouseMove, true)
-          document.removeEventListener('mouseup', onMouseUp, true)
-          isDragging = false
-        }
-
-        document.addEventListener('mousemove', onMouseMove, true)
-        document.addEventListener('mouseup', onMouseUp, true)
-      }, true)
-    }
   }
 })
