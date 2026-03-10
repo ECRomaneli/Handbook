@@ -18,8 +18,8 @@ export interface ModalOptions {
   /** Parent window. Used to track position and visibility.
    * If not available, the modal will be shown on the center of the screen */
   parent?: BaseWindow | BrowserWindow;
-  /** Disable parent events when modal is open. Default is false */
-  disableParentEvents?: boolean;
+  /** Inject overlay on parent window when modal is open. Default is false */
+  injectOverlay?: boolean;
 }
 
 /**
@@ -33,17 +33,16 @@ export type BoundsHandler = (parentBounds: Rectangle, modalBounds: Rectangle) =>
 interface IpcListener {
   (event: IpcMainEvent, ...args: unknown[]): void;
   eventName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  originalListener: (...args: any[]) => void;
 }
 
 class Modal {
-  private static readonly MOVEMENT_TIMEOUT = 200;
-
   private window?: BrowserWindow;
   private boundsHandler: BoundsHandler = Modal.setDefaultBounds;
   private customOptions?: BrowserWindowConstructorOptions;
   private windowHandler?: ((modalWindow: BrowserWindow) => void);
   private modalOptions: ModalOptions;
-  private readonly IS_DARWIN: boolean = process.platform === 'darwin';
   private ipcListeners: IpcListener[] = [];
 
   /**
@@ -79,7 +78,7 @@ class Modal {
 
       if (modalOptions.parent !== undefined && modalOptions.parent !== null) {
         this.updateBounds(modalOptions.parent);
-        this.registerListeners(modalOptions.parent, modalOptions.disableParentEvents);
+        this.registerListeners(modalOptions.parent, modalOptions.injectOverlay);
       }
 
       this.window.loadFile(modalOptions.filePath);
@@ -105,7 +104,7 @@ class Modal {
   hideAndClose(): void {
     if (this.isOpen()) {
       this.window!.isVisible() && this.window!.hide();
-      setTimeout(() => this.window!.close(), 100);
+      setTimeout(() => this.window?.close(), 100);
     }
   }
 
@@ -146,8 +145,8 @@ class Modal {
    * - options.skipTaskbar (value: true)
    * - options.autoHideMenuBar (value: true)
    * - options.fullscreenable (value: false)
-   * - options.webPreferences.nodeIntegration (value: true)
-   * - options.webPreferences.contextIsolation (value: false)
+   * - options.webPreferences.nodeIntegration (value: false)
+   * - options.webPreferences.contextIsolation (value: true)
    * @param customOptions Custom window options.
    * @returns self reference
    */
@@ -199,11 +198,12 @@ class Modal {
     const wrappedListener = ((e: IpcMainEvent, ...args: unknown[]) => {
       if (this.isThisWindow(e.sender)) {
         ipcMain.removeListener(eventName, wrappedListener);
-        this.ipcListeners = this.ipcListeners.slice(this.ipcListeners.indexOf(wrappedListener), 1);
+        this.ipcListeners.splice(this.ipcListeners.indexOf(wrappedListener), 1);
         listener(...(args as T));
       }
     }) as IpcListener;
     wrappedListener.eventName = eventName;
+    wrappedListener.originalListener = listener;
     ipcMain.on(eventName, wrappedListener);
     this.ipcListeners.push(wrappedListener);
     return this;
@@ -221,9 +221,9 @@ class Modal {
         listener(...(args as T));
       }
     }) as IpcListener;
-    ipcMain.on(eventName, wrappedListener);
     wrappedListener.eventName = eventName;
     this.ipcListeners.push(wrappedListener);
+    ipcMain.on(eventName, wrappedListener);
     return this;
   }
 
@@ -231,13 +231,24 @@ class Modal {
     return this.window?.webContents === webContents;
   }
 
+  removeListener<T extends unknown[]>(eventName: string, listener: (...args: T) => void): this {
+    const ipcListener = this.ipcListeners.find(
+      (l) => l.eventName === eventName && l.originalListener === listener,
+    );
+    if (ipcListener) {
+      ipcMain.removeListener(eventName, ipcListener);
+      this.ipcListeners.splice(this.ipcListeners.indexOf(ipcListener), 1);
+    }
+    return this;
+  }
+
   /**
    * Register all event listeners.
    * @param parent Parent window
-   * @param disableParentEvents Disable parent events when modal is open. Default is false
+   * @param injectOverlay Inject overlay on parent window when modal is open. Default is false
    */
-  private registerListeners(parent: BaseWindow, disableParentEvents?: boolean): void {
-    this.propagateModalEventsToParent(parent, disableParentEvents);
+  private registerListeners(parent: BaseWindow, injectOverlay?: boolean): void {
+    this.propagateModalEventsToParent(parent, injectOverlay);
     this.registerParentListeners(parent);
     this.onClosedRemoveIpcListeners();
   }
@@ -254,8 +265,8 @@ class Modal {
     });
   }
 
-  private propagateModalEventsToParent(parent: BaseWindow, disableParentEvents?: boolean): void {
-    if (disableParentEvents) {
+  private propagateModalEventsToParent(parent: BaseWindow, injectOverlay?: boolean): void {
+    if (injectOverlay) {
       const id = this.window!.id;
       this.window!.on('closed', () =>
         getWebContentsFromWindow(parent).forEach((w) => Modal.setContentOverlay(id, w, false)),
@@ -285,7 +296,6 @@ class Modal {
   private registerParentListeners(parent: BaseWindow): void {
     const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
     const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
-    const focusCascade = () => { this.window?.focus(); };
 
     const boundsCascade = () => { this.updateBounds(parent); };
     Draggable.create(parent).attach(this.window!.webContents);
@@ -294,14 +304,12 @@ class Modal {
     parent.on('move', boundsCascade);
     parent.on('show', showCascade);
     parent.on('hide', hideCascade);
-    parent.on('focus', focusCascade);
 
     this.window!.on('closed', () => {
       parent.off('resize', boundsCascade);
       parent.off('move', boundsCascade);
       parent.off('show', showCascade);
       parent.off('hide', hideCascade);
-      parent.off('focus', focusCascade);
       this.window = undefined;
     });
 
@@ -322,10 +330,10 @@ class Modal {
     }
   }
 
-  static boundsChanged(oldBounds: Rectangle, newBounds: Rectangle): boolean {
+  private static boundsChanged(oldBounds: Rectangle, newBounds: Rectangle): boolean {
     return (
-      ((oldBounds.x - newBounds.x) | 0) !== 0 ||
-      ((oldBounds.y - newBounds.y) | 0) !== 0 ||
+      Math.trunc(oldBounds.x - newBounds.x) !== 0 ||
+      Math.trunc(oldBounds.y - newBounds.y) !== 0 ||
       oldBounds.width !== newBounds.width ||
       oldBounds.height !== newBounds.height
     );
@@ -392,32 +400,23 @@ class Modal {
     if (blocked) {
       webContents.executeJavaScript(/*js*/ `
         (function() {
-        const existingOverlay = document.getElementById('${overlayId}');
-        if (existingOverlay) existingOverlay.remove();
+          const existingOverlay = document.getElementById('${overlayId}');
+          if (existingOverlay) existingOverlay.remove();
 
-        const overlay = document.createElement('div');
-        overlay.id = '${overlayId}';
-        overlay.style.cssText =
-        'position: fixed !important; top: 0 !important; left: 0 !important; ' +
-        'width: 100vw !important; height: 100vh !important; ' +
-        'background-color: rgba(0, 0, 0, 0.7) !important; ' +
-        'z-index: 2147483647 !important; cursor: not-allowed !important; ' +
-        'user-select: none !important; -webkit-user-select: none !important; ' +
-        '-moz-user-select: none !important; -ms-user-select: none !important; ' +
-        'display: block !important; opacity: 1 !important; ' +
-        'transition: opacity 0.2s ease-in-out !important;';
+          const overlay = document.createElement('div');
+          overlay.id = '${overlayId}';
+          overlay.style.cssText =
+          'position: fixed !important; top: 0 !important; left: 0 !important; ' +
+          'width: 100vw !important; height: 100vh !important; ' +
+          'background-color: rgba(0, 0, 0, 0.7) !important; ' +
+          'z-index: 2147483647 !important; cursor: not-allowed !important; ' +
+          'user-select: none !important; -webkit-user-select: none !important; ' +
+          '-moz-user-select: none !important; -ms-user-select: none !important; ' +
+          'display: block !important; opacity: 1 !important; ' +
+          'transition: opacity 0.2s ease-in-out !important;';
 
-        overlay.addEventListener('mousedown', e => e.stopPropagation(), true);
-        overlay.addEventListener('mouseup', e => e.stopPropagation(), true);
-        overlay.addEventListener('click', e => e.stopPropagation(), true);
-        overlay.addEventListener('keydown', e => e.stopPropagation(), true);
-        overlay.addEventListener('keyup', e => e.stopPropagation(), true);
-        overlay.addEventListener('keypress', e => e.stopPropagation(), true);
-
-        document.body.appendChild(overlay);
-        overlay.focus();
-
-        return true;
+          document.body.appendChild(overlay);
+          overlay.focus();
         })();
       `);
     } else {
