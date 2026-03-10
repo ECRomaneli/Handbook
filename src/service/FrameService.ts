@@ -65,7 +65,7 @@ class FrameService {
     const frame = this.getFrame();
     if (!frame) { return; }
     const actionArea = Storage.getSettings(Settings.ACTION_AREA) as number;
-    Draggable.from(frame).updateOptions({ actionArea });
+    Draggable.from(frame).updateOptions({ region: { height: actionArea } });
   }
 
   private getOrCreateFrame(): BaseWindow {
@@ -256,13 +256,12 @@ class FrameService {
     if (navbar) {
       frame.contentView.addChildView(navbar);
       dragHandle.attach(navbar.webContents, {
-        actionArea: void 0,
         exclude: 'button',
         maximize: true,
       });
     } else {
       dragHandle.attach(newView.webContents, {
-        actionArea: Storage.getSettings(Settings.ACTION_AREA) as number,
+        region: { height: Storage.getSettings(Settings.ACTION_AREA) as number },
         exclude: 'button, a',
         maximize: true,
       });

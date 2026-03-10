@@ -56,7 +56,7 @@ class PreferencesService {
 
     AppState.preferences = win;
 
-    Draggable.from(win, { actionArea: 100, exclude: '.exit-btn, ul' });
+    Draggable.from(win, { region: { height: 100 }, exclude: '.exit-btn, ul' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
