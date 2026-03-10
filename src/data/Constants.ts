@@ -142,13 +142,13 @@ const Permission = {
   },
 };
 
-const IsPackaged = app.isPackaged;
+const IsProduction = process.env.NODE_ENV === 'production';
 const IsDebug = {
-  'propagator': !IsPackaged && !true,
-  'permissions': !IsPackaged && !true,
-  'storage': !IsPackaged && !true,
-  'state': !IsPackaged && true,
+  'propagator': !IsProduction && !true,
+  'permissions': !IsProduction && !true,
+  'storage': !IsProduction && !true,
+  'state': !IsProduction && true,
 };
 
-export { DefaultSettings, IsDebug, IsPackaged, OS, Path, Permission, Positions, Settings };
+export { DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings };
 

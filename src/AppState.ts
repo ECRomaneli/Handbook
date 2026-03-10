@@ -8,7 +8,6 @@ import NavbarPropagator from '@/propagator/NavbarPropagator';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import TrayPropagator from '@/propagator/TrayPropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
-import { StateDebugger, TrackerEntry } from '@/util/debug/StateDebugger';
 import AutoLaunch from 'auto-launch';
 import { BaseWindow, BrowserWindow, MenuItemConstructorOptions, nativeTheme, Tray, WebContentsView } from 'electron';
 
@@ -77,11 +76,16 @@ class AppState {
     return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
   }
 
-  private debugLifecycleStatus() {
-    IsDebug.state && StateDebugger.start(this.collectTrackers(), 1000, false);
+  private async debugLifecycleStatus() {
+    if (process.env.NODE_ENV === 'development' && IsDebug.state) {
+      const { StateDebugger } = await import('@/util/debug/StateDebugger');
+      StateDebugger.start(this.collectTrackers(), 1000, false);
+    }
   }
 
-  private collectTrackers(): TrackerEntry[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private collectTrackers(): any[] {
+    if (process.env.NODE_ENV !== 'development') { return []; }
     const allPages = () => [this._fromClipboardPage, ...this._pages];
     const pageType = (current?: Page) => {
       return !current ? '' :

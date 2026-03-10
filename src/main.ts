@@ -1,5 +1,5 @@
 import Bootstrap from '@/Bootstrap';
-import { IsPackaged, OS } from '@/data/Constants';
+import { IsProduction, OS } from '@/data/Constants';
 import { app, globalShortcut } from 'electron';
 
 function guaranteeSingleInstance(): boolean {
@@ -13,7 +13,7 @@ function guaranteeSingleInstance(): boolean {
 
 function configElectronApp(): void {
   OS.IS_DARWIN && app.dock!.hide();
-  if (IsPackaged) { console.trace = console.debug = () => { }; }
+  if (IsProduction) { console.trace = console.debug = () => { }; }
   app.on('window-all-closed', () => { });
   app.on('quit', () => { globalShortcut.unregisterAll(); });
 }
