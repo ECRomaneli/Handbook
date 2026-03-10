@@ -9,6 +9,7 @@ import PageService from '@/service/PageService';
 import ViewService from '@/service/ViewService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
 import { BaseWindow, BaseWindowConstructorOptions, Event, Input, Rectangle, WebContents, WebContentsView, screen } from 'electron';
+import { Draggable } from 'electron-draggable';
 import Findbar from 'electron-findbar';
 import { EventEmitter } from 'node:stream';
 
@@ -59,6 +60,14 @@ class FrameService {
     return AppState.frame;
   }
 
+  public updateActionArea(): void {
+    if (NavbarService.hasView()) { return; }
+    const frame = this.getFrame();
+    if (!frame) { return; }
+    const actionArea = Storage.getSettings(Settings.ACTION_AREA) as number;
+    Draggable.from(frame).updateOptions({ actionArea });
+  }
+
   private getOrCreateFrame(): BaseWindow {
     if (!this.getFrame()) { this.createFrame(); }
     return this.getFrame()!;
@@ -67,6 +76,7 @@ class FrameService {
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    Draggable.from(frame, { maximize: true });
     AppState.frame = frame;
   }
 
@@ -241,7 +251,22 @@ class FrameService {
     const bounds = PageService.getPageBounds(page);
     this.setBounds(bounds, newView);
 
-    AppState.navbar && frame.contentView.addChildView(AppState.navbar);
+    const dragHandle = Draggable.from(frame);
+    const navbar = NavbarService.getView();
+    if (navbar) {
+      frame.contentView.addChildView(navbar);
+      dragHandle.attach(navbar.webContents, {
+        actionArea: void 0,
+        exclude: 'button',
+        maximize: true,
+      });
+    } else {
+      dragHandle.attach(newView.webContents, {
+        actionArea: Storage.getSettings(Settings.ACTION_AREA) as number,
+        exclude: 'button, a',
+        maximize: true,
+      });
+    }
     if (newView.webContents.isLoading()) {
       ViewPropagator.onceCurrentView('dom-ready', () => {
         const frame = this.getFrame();
@@ -325,10 +350,7 @@ class FrameService {
       return;
     }
 
-    if (!NavbarService.hasView()) {
-      NavbarService.createView();
-    }
-
+    NavbarService.hasView() || NavbarService.createView();
     NavbarService.changeView();
   }
 

@@ -7,13 +7,12 @@ import ApplicationService from '@/service/ApplicationService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
-import ViewService from '@/service/ViewService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
-import { registerDraggableArea } from '@/util/PropagatorUtil';
 import { BrowserWindow, HandlerDetails, Input, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
+import { Draggable } from 'electron-draggable';
 import path from 'node:path';
 
 /** Listener type for pages updated event */
@@ -56,6 +55,8 @@ class PreferencesService {
     });
 
     AppState.preferences = win;
+
+    Draggable.from(win, { actionArea: 100, exclude: '.exit-btn, ul' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
@@ -102,8 +103,6 @@ class PreferencesService {
    * Bugfix: Use setBounds instead of setPosition to avoid resizing when moving from one screen to another on Windows.
    */
   private registerRenderListeners(): void {
-    registerDraggableArea(PreferencesPropagator, () => this.getWindow()!);
-
     // Handle UI [x] button
     PreferencesPropagator.onRender('close', (): void => this.close());
 
@@ -229,16 +228,8 @@ class PreferencesService {
         ApplicationService.setupAutoLaunch();
         break;
       case Settings.SHOW_FRAME:
-        if (!PageService.hasAnyActivePage()) { return; }
-        this.beforeCloseConfirm(
-          'recreate-all-windows',
-          'Recreate all windows?',
-          'Only new windows will receive the new configuration. Do you want to recreate all windows now?',
-          () => FrameService.recreateAllWindows(),
-        );
-        break;
       case Settings.ALLOW_FULLSCREEN:
-        FrameService.recreateFrame();
+        FrameService.getFrame() && FrameService.recreateFrame();
         break;
       case Settings.FOCUS_OPACITY:
       case Settings.BLUR_OPACITY:
@@ -248,8 +239,9 @@ class PreferencesService {
         break;
       }
       case Settings.ACTION_AREA:
+        FrameService.updateActionArea();
+        break;
       case Settings.HIDE_SHORTCUT:
-        ViewService.updateActiveViewSettings(id, value);
         break;
       case Settings.GLOBAL_SHORTCUT:
         ApplicationService.registerGlobalShortcut();

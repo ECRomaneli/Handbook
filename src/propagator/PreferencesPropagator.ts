@@ -17,8 +17,6 @@ export class PreferencesPropagator extends RenderablePropagator<BrowserWindow> {
 
   protected registerIpcEvents(): void {
     this.propagateIpcEvent('ready');
-    this.propagateIpcEvent('dragStart');
-    this.propagateIpcEvent('dragging');
     this.propagateIpcEvent('close');
     this.propagateIpcEvent('pages-updated');
     this.propagateIpcEvent('settings-updated');

@@ -16,9 +16,6 @@ export class NavbarPropagator extends RenderablePropagator<WebContentsView> {
   }
 
   protected registerIpcEvents(): void {
-    this.propagateIpcEvent('dragStart', false);
-    this.propagateIpcEvent('dragging', false);
-    this.propagateIpcEvent('maximize', false);
     this.propagateIpcEvent('back');
     this.propagateIpcEvent('forward');
     this.propagateIpcEvent('home');

@@ -7,6 +7,7 @@ import {
   WebContents,
   WebContentsView,
 } from 'electron';
+import { Draggable } from 'electron-draggable';
 
 /**
  * Modal options interface
@@ -19,8 +20,6 @@ export interface ModalOptions {
   parent?: BaseWindow | BrowserWindow;
   /** Disable parent events when modal is open. Default is false */
   disableParentEvents?: boolean;
-  /** Lock the modal to the parent window. Default is false */
-  lockModalToWindow?: boolean;
 }
 
 /**
@@ -37,7 +36,7 @@ interface IpcListener {
 }
 
 class Modal {
-  static readonly #MOVEMENT_TIMEOUT = 200;
+  private static readonly MOVEMENT_TIMEOUT = 200;
 
   private window?: BrowserWindow;
   private boundsHandler: BoundsHandler = Modal.setDefaultBounds;
@@ -74,13 +73,13 @@ class Modal {
       }
 
       this.window = new BrowserWindow(
-        Modal.mergeStandardOptions(this.customOptions, this.IS_DARWIN ? undefined : modalOptions.parent),
+        Modal.mergeStandardOptions(this.customOptions, modalOptions.parent),
       );
       this.windowHandler?.(this.window);
 
       if (modalOptions.parent !== undefined && modalOptions.parent !== null) {
         this.updateBounds(modalOptions.parent);
-        this.registerListeners(modalOptions.parent, modalOptions.lockModalToWindow, modalOptions.disableParentEvents);
+        this.registerListeners(modalOptions.parent, modalOptions.disableParentEvents);
       }
 
       this.window.loadFile(modalOptions.filePath);
@@ -95,21 +94,19 @@ class Modal {
    * Close the modal.
    */
   close(): void {
-    if (!this.isOpen()) {
-      return;
+    if (this.isOpen()) {
+      this.window!.close();
     }
+  }
 
-    this.window!.once('closed', () => {
-      try {
-        this.ipcListeners.forEach((l) => ipcMain.off(l.eventName, l));
-      } catch (err) {
-        console.error('Error cleaning up IPC listeners:', err);
-      } finally {
-        this.ipcListeners = [];
-      }
-    });
-
-    this.window!.close();
+  /**
+   * Hide the modal and after 100 ms close it.
+   */
+  hideAndClose(): void {
+    if (this.isOpen()) {
+      this.window!.isVisible() && this.window!.hide();
+      setTimeout(() => this.window!.close(), 100);
+    }
   }
 
   /**
@@ -200,7 +197,7 @@ class Modal {
    */
   onceRenderer<T extends unknown[]>(eventName: string, listener: (...args: T) => void): this {
     const wrappedListener = ((e: IpcMainEvent, ...args: unknown[]) => {
-      if (this.#isThisWindow(e.sender)) {
+      if (this.isThisWindow(e.sender)) {
         ipcMain.removeListener(eventName, wrappedListener);
         this.ipcListeners = this.ipcListeners.slice(this.ipcListeners.indexOf(wrappedListener), 1);
         listener(...(args as T));
@@ -220,7 +217,7 @@ class Modal {
    */
   onRenderer<T extends unknown[]>(eventName: string, listener: (...args: T) => void): this {
     const wrappedListener = ((e: IpcMainEvent, ...args: unknown[]) => {
-      if (this.#isThisWindow(e.sender)) {
+      if (this.isThisWindow(e.sender)) {
         listener(...(args as T));
       }
     }) as IpcListener;
@@ -230,22 +227,34 @@ class Modal {
     return this;
   }
 
-  #isThisWindow(webContents: WebContents): boolean {
+  private isThisWindow(webContents: WebContents): boolean {
     return this.window?.webContents === webContents;
   }
 
   /**
    * Register all event listeners.
    * @param parent Parent window
-   * @param lockModalToWindow Lock the modal to the parent window. Default is false
    * @param disableParentEvents Disable parent events when modal is open. Default is false
    */
-  private registerListeners(parent: BaseWindow, lockModalToWindow = false, disableParentEvents = false): void {
+  private registerListeners(parent: BaseWindow, disableParentEvents?: boolean): void {
     this.propagateModalEventsToParent(parent, disableParentEvents);
-    this.registerParentListeners(parent, lockModalToWindow);
+    this.registerParentListeners(parent);
+    this.onClosedRemoveIpcListeners();
   }
 
-  private propagateModalEventsToParent(parent: BaseWindow, disableParentEvents: boolean): void {
+  private onClosedRemoveIpcListeners(): void {
+    this.window!.once('closed', () => {
+      try {
+        this.ipcListeners.forEach((l) => ipcMain.off(l.eventName, l));
+      } catch (err) {
+        console.error('Error cleaning up IPC listeners:', err);
+      } finally {
+        this.ipcListeners = [];
+      }
+    });
+  }
+
+  private propagateModalEventsToParent(parent: BaseWindow, disableParentEvents?: boolean): void {
     if (disableParentEvents) {
       const id = this.window!.id;
       this.window!.on('closed', () =>
@@ -273,59 +282,23 @@ class Modal {
     });
   }
 
-  private registerParentListeners(parent: BaseWindow | BrowserWindow, lockModalToWindow: boolean): void {
-    // Track BOTH the origin AND last update time for each origin separately
-    const moveState = { origin: null as string | null, lastUpdate: 0 };
+  private registerParentListeners(parent: BaseWindow): void {
+    const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
+    const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
+    const focusCascade = () => { this.window?.focus(); };
 
-    const exclusiveMove =
-      (origin: string, fn: (parent: BaseWindow | BrowserWindow) => void) => (): void => {
-        const now = Date.now();
+    const boundsCascade = () => { this.updateBounds(parent); };
+    Draggable.create(parent).attach(this.window!.webContents);
 
-        if (moveState.origin === origin || now - moveState.lastUpdate > Modal.#MOVEMENT_TIMEOUT) {
-          moveState.origin = origin;
-          moveState.lastUpdate = now;
-          if (!this.window!.isDestroyed()) {
-            fn.call(this, parent);
-          } else {
-            // TODO: Remove this check when the bug is fixed
-            console.debug('Modal window destroyed, ignoring event');
-          }
-        }
-      };
-
-    const boundsHandler = exclusiveMove('modal', this.updateBounds);
-    const parentBoundsHandler = exclusiveMove('parent', this.updateParentBounds);
-
-    const showCascade = (): void => {
-      if (!this.window!.isVisible()) {
-        this.window!.show();
-      }
-    };
-    const hideCascade = (): void => {
-      if (this.window!.isVisible()) {
-        this.window!.hide();
-      }
-    };
-
-    // Experimental: Testing "moveTop" instead of "focus"
-    const focusCascade = (): void => { this.window?.moveTop(); };
-
-    if (this.customOptions?.resizable) {
-      this.window!.prependListener('resize', parentBoundsHandler);
-    }
-    if (this.customOptions?.movable && lockModalToWindow) {
-      this.window!.prependListener('move', parentBoundsHandler);
-    }
-
-    parent.prependListener('resize', boundsHandler);
-    parent.prependListener('move', boundsHandler);
-    parent.prependListener('show', showCascade);
-    parent.prependListener('hide', hideCascade);
-    parent.prependListener('focus', focusCascade);
+    parent.on('resize', boundsCascade);
+    parent.on('move', boundsCascade);
+    parent.on('show', showCascade);
+    parent.on('hide', hideCascade);
+    parent.on('focus', focusCascade);
 
     this.window!.on('closed', () => {
-      parent.off('resize', boundsHandler);
-      parent.off('move', boundsHandler);
+      parent.off('resize', boundsCascade);
+      parent.off('move', boundsCascade);
       parent.off('show', showCascade);
       parent.off('hide', hideCascade);
       parent.off('focus', focusCascade);
@@ -342,29 +315,10 @@ class Modal {
   private updateBounds(parent: BaseWindow | BrowserWindow): void {
     const oldBounds = this.window!.getBounds();
     const newBounds = this.boundsHandler(parent.getBounds(), oldBounds);
-    if (newBounds.width === undefined) {
-      newBounds.width = oldBounds.width;
-    }
-    if (newBounds.height === undefined) {
-      newBounds.height = oldBounds.height;
-    }
+    if (newBounds.width === undefined) { newBounds.width = oldBounds.width; }
+    if (newBounds.height === undefined) { newBounds.height = oldBounds.height; }
     if (Modal.boundsChanged(oldBounds, newBounds as Rectangle)) {
       this.window!.setBounds(newBounds as Rectangle);
-    }
-  }
-
-  private updateParentBounds(parent: BaseWindow | BrowserWindow): void {
-    const parentBounds = parent.getBounds();
-    const newModalBounds = this.window!.getBounds();
-    const oldModalBounds = this.boundsHandler(parentBounds, newModalBounds);
-
-    if (Modal.boundsChanged(oldModalBounds as Rectangle, newModalBounds)) {
-      parent.setBounds({
-        x: (parentBounds.x + (newModalBounds.x - (oldModalBounds.x || 0))) | 0,
-        y: (parentBounds.y + (newModalBounds.y - (oldModalBounds.y || 0))) | 0,
-        width: parentBounds.width,
-        height: parentBounds.height,
-      });
     }
   }
 
