@@ -12,6 +12,7 @@ export class StatePropagator extends Propagator {
     this.registerStateChangeEvent(FramePropagator, 'show');
     this.registerStateChangeEvent(FramePropagator, 'hide');
     this.registerStateChangeEvent(FramePropagator, 'closed');
+    this.registerStateChangeEvent(ViewPropagator, 'attached');
     this.registerStateChangeEvent(ViewPropagator, 'mute-status-changed');
     this.registerStateChangeEvent(ViewPropagator, 'destroyed');
   }
