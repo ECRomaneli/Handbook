@@ -200,9 +200,10 @@ class PageService {
 
   public closePageView(page = this.getCurrentPage()!): void {
     if (!page.view) { return; }
-    const wc = page.view.webContents;
-    !wc.isDestroyed() && wc.close();
+    const view = page.view;
     page.view = undefined;
+    const wc = view.webContents;
+    !wc.isDestroyed() && wc.close();
   }
 
   public recreateView(page = this.getCurrentPage()!): void {
