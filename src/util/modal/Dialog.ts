@@ -60,43 +60,42 @@ export interface ConfirmOptions {
 }
 
 class Dialog {
-  static readonly #DEFAULT_ALERT_BUTTONS = ['OK'];
-  static readonly #DEFAULT_CONFIRM_BUTTONS = ['Yes', 'No'];
-  static readonly #DEFAULT_WIDTH = 400;
-  static readonly #ROOT_PATH = path.join(Path.WEB, 'dialog');
+  private static readonly DEFAULT_ALERT_BUTTONS = ['OK'];
+  private static readonly DEFAULT_CONFIRM_BUTTONS = ['Yes', 'No'];
+  private static readonly DEFAULT_WIDTH = 400;
+  private static readonly ROOT_PATH = path.join(Path.WEB, 'dialog');
 
-  #options: DialogOptions | undefined;
-  #modal: Modal;
+  private options: DialogOptions | undefined;
+  private modal: Modal;
 
   constructor() {
-    this.#modal = new Modal({
-      filePath: path.join(Dialog.#ROOT_PATH, 'index.html'),
-      disableParentEvents: true,
-      lockModalToWindow: true,
+    this.modal = new Modal({
+      filePath: path.join(Dialog.ROOT_PATH, 'index.html'),
+      injectOverlay: true,
     })
       .setWindowOptions({
-        width: Dialog.#DEFAULT_WIDTH,
+        width: Dialog.DEFAULT_WIDTH,
         height: 1,
         alwaysOnTop: true,
         movable: true,
         resizable: false,
         show: false,
         transparent: process.platform === 'linux',
-        webPreferences: { preload: path.join(Dialog.#ROOT_PATH, 'preload.js') },
+        webPreferences: { preload: path.join(Dialog.ROOT_PATH, 'preload.js') },
       })
       .setWindowHandler((window: BrowserWindow) => {
         // window.webContents.openDevTools()
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-        if (this.#options?.textWidth) {
-          Dialog.#setWidth(window, this.#options.textWidth);
+        if (this.options?.textWidth) {
+          Dialog.setWidth(window, this.options.textWidth);
         }
         this.onceClose(() => {
-          this.#modal.close();
-        }).#onceSetHeight((h: number) => {
-          Dialog.#setHeight(window, h);
+          this.modal.close();
+        }).onceSetHeight((h: number) => {
+          Dialog.setHeight(window, h);
           window.show();
         });
-        this.#sendData(this.#options!);
+        this.sendData(this.options!);
       });
   }
 
@@ -105,18 +104,18 @@ class Dialog {
    * @param parent Parent window
    * @param opts Dialog options
    */
-  #open(parent: BaseWindow | null, opts: DialogOptions): void {
-    if (!this.#modal.isOpen()) {
-      this.#options = opts;
-      if (!this.#options.buttons || this.#options.buttons.length === 0) {
-        this.#options.buttons = Dialog.#DEFAULT_ALERT_BUTTONS;
-        this.#options.defaultId = 0;
-        this.#options.cancelId = 0;
-      } else if (!this.#options.cancelId) {
-        this.#options.cancelId = 0;
+  private open(parent: BaseWindow | null, opts: DialogOptions): void {
+    if (!this.modal.isOpen()) {
+      this.options = opts;
+      if (!this.options.buttons || this.options.buttons.length === 0) {
+        this.options.buttons = Dialog.DEFAULT_ALERT_BUTTONS;
+        this.options.defaultId = 0;
+        this.options.cancelId = 0;
+      } else if (!this.options.cancelId) {
+        this.options.cancelId = 0;
       }
     }
-    this.#modal.open({ parent: parent || undefined });
+    this.modal.open({ parent: parent || undefined });
   }
 
   /**
@@ -128,7 +127,7 @@ class Dialog {
   show(parent: BaseWindow | null, opts: DialogOptions): Promise<MessageBoxReturnValue> {
     return new Promise((resolve, reject) => {
       try {
-        this.onceClose(resolve).#open(parent, opts);
+        this.onceClose(resolve).open(parent, opts);
       } catch (err) {
         reject(err);
       }
@@ -142,8 +141,8 @@ class Dialog {
    */
   async alert(parent: BaseWindow | null, opts: AlertOptions): Promise<void> {
     const dialogOpts: DialogOptions = opts || {};
-    dialogOpts.textWidth = dialogOpts.textWidth || Dialog.#DEFAULT_WIDTH;
-    dialogOpts.buttons = opts.buttons || Dialog.#DEFAULT_ALERT_BUTTONS;
+    dialogOpts.textWidth = dialogOpts.textWidth || Dialog.DEFAULT_WIDTH;
+    dialogOpts.buttons = opts.buttons || Dialog.DEFAULT_ALERT_BUTTONS;
     dialogOpts.defaultId = undefined;
     if (!dialogOpts.message) {
       throw new Error('Dialog.alert() must have a message');
@@ -160,9 +159,9 @@ class Dialog {
   async confirm(parent: BaseWindow | null, opts?: ConfirmOptions): Promise<boolean> {
     const dialogOpts: DialogOptions = opts || {};
     dialogOpts.message = dialogOpts.message || 'Confirm?';
-    dialogOpts.textWidth = dialogOpts.textWidth || Dialog.#DEFAULT_WIDTH;
+    dialogOpts.textWidth = dialogOpts.textWidth || Dialog.DEFAULT_WIDTH;
     if (!dialogOpts.buttons) {
-      dialogOpts.buttons = Dialog.#DEFAULT_CONFIRM_BUTTONS;
+      dialogOpts.buttons = Dialog.DEFAULT_CONFIRM_BUTTONS;
       dialogOpts.defaultId = dialogOpts.defaultId ?? 1;
       dialogOpts.cancelId = dialogOpts.cancelId ?? 1;
     }
@@ -174,17 +173,17 @@ class Dialog {
     return result.response !== dialogOpts.cancelId;
   }
 
-  #sendData(opts: DialogOptions): void {
-    this.#modal.sendToRenderer('dialog.open', opts);
+  private sendData(opts: DialogOptions): void {
+    this.modal.sendToRenderer('dialog.open', opts);
   }
 
   onceClose(listener: (result: MessageBoxReturnValue) => void): this {
-    this.#modal.onceRenderer('dialog.close', listener);
+    this.modal.onceRenderer('dialog.close', listener);
     return this;
   }
 
-  #onceSetHeight(listener: (height: number) => void): this {
-    this.#modal.onceRenderer('dialog.setHeight', listener);
+  private onceSetHeight(listener: (height: number) => void): this {
+    this.modal.onceRenderer('dialog.setHeight', listener);
     return this;
   }
 
@@ -217,11 +216,11 @@ class Dialog {
     return new Dialog().alert(parent, opts);
   }
 
-  static #setWidth(window: BrowserWindow, width: number): void {
+  private static setWidth(window: BrowserWindow, width: number): void {
     window.setContentSize(width, window.getContentSize()[1]);
   }
 
-  static #setHeight(window: BrowserWindow, height: number): void {
+  private static setHeight(window: BrowserWindow, height: number): void {
     window.setContentSize(window.getContentSize()[0], height);
   }
 }

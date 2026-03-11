@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { Path, Positions, Settings } from '@/data/Constants';
+import { Positions, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page } from '@/model/Page';
 import ContextMenuService from '@/service/ContextMenuService';
@@ -9,7 +9,6 @@ import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import { Rectangle, screen, Size, WebContents, WebContentsView, WebContentsViewConstructorOptions } from 'electron';
-import path from 'path';
 
 class PageService {
   public setupOrTogglePage(): void {
@@ -200,8 +199,9 @@ class PageService {
   }
 
   public closePageView(page = this.getCurrentPage()!): void {
-    if (!page.view || page.view.webContents.isDestroyed()) { return; }
-    page.view.webContents.close();
+    if (!page.view) { return; }
+    const wc = page.view.webContents;
+    !wc.isDestroyed() && wc.close();
     page.view = undefined;
   }
 
@@ -306,7 +306,6 @@ class PageService {
     return {
       webPreferences: {
         partition: `persist:${Storage.getPartitionName(page.session)}`,
-        preload: path.join(Path.WEB, 'preload', 'viewPreload.js'),
       },
     };
   }

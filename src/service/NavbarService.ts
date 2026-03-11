@@ -8,7 +8,6 @@ import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import PreferencesService from '@/service/PreferencesService';
 import ViewService from '@/service/ViewService';
-import { registerDraggableArea } from '@/util/PropagatorUtil';
 import { clipboard, WebContentsView } from 'electron';
 import path from 'node:path';
 
@@ -88,8 +87,6 @@ class NavbarService {
   }
 
   private registerRenderListeners(): void {
-    registerDraggableArea(NavbarPropagator, () => FrameService.getFrame()!, true);
-
     NavbarPropagator.onRender('back', (): void => {
       PageService.getCurrentView()!.webContents.navigationHistory.goBack();
     });

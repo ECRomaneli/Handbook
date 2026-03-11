@@ -40,7 +40,7 @@ Read about the app signature in "[About App Signature](#about-app-signature)".
 
 #### Download the ZIP File
 
- [Download the ZIP file](https://github.com/ECRomaneli/Handbook/releases) corresponding to your processor architecture (e.g., `Handbook-darwin-x64.zip` for Intel processors or `Handbook-darwin-arm64.zip` for Apple Silicon).
+ [Download the ZIP file](https://github.com/ECRomaneli/Handbook/releases) corresponding to your processor architecture (e.g., `Handbook-{version}-darwin-x64.zip` for Intel processors or `Handbook-{version}-darwin-arm64.zip` for Apple Silicon).
 
 #### Unzip the File
 
@@ -50,7 +50,7 @@ Read about the app signature in "[About App Signature](#about-app-signature)".
 #### Copy to Applications Folder
 
 - Open Finder and navigate to the location of the Handbook.app file.
-- Drag and drop Handbook.app into the **"Applications" folder**. 
+- Drag and drop Handbook.app into the **"Applications" folder**.
     - Alternatively, you can right-click on `Handbook.app`, select "Copy", then navigate to the "Applications" folder and select "Paste".
 
 #### Troubleshooting
@@ -104,17 +104,17 @@ Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh4
 
 ##### Debian-based (DEB)
 
-- Run the following command to install the package, replacing `Handbook-x64-Setup.deb` with the actual filename if it is different:
+- Run the following command to install the package, replacing `handbook_{version}_amd64.deb` with the actual filename if it is different:
     ```bash
-    sudo dpkg -i Handbook-x64-Setup.deb
+    sudo dpkg -i handbook_{version}_amd64.deb
     ```
 - When prompted, enter your password to authorize the installation.
 
 ##### Red Hat-based (RPM)
 
-- Run the following command to install the package, replacing `Handbook-x64-Setup.rpm` with the actual filename if it is different:
+- Run the following command to install the package, replacing `handbook-{version}.x86_64.rpm` with the actual filename if it is different:
     ```bash
-    sudo rpm -i Handbook-x64-Setup.rpm
+    sudo rpm -i handbook-{version}.x86_64.rpm
     ```
 - When prompted, enter your password to authorize the installation.
 
@@ -125,11 +125,11 @@ Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh4
 
 #### Download the Installer
 
-Download the [Handbook-x64-Setup.exe](https://github.com/ECRomaneli/Handbook/releases) from release page.
+Download the [Handbook-Setup-{version}.exe](https://github.com/ECRomaneli/Handbook/releases) from release page.
 
 #### Run the Installer
 
-- Locate the downloaded Handbook-x64-Setup.exe file in your Downloads folder or the location you saved it.
+- Locate the downloaded `Handbook-Setup-{version}.exe` file in your Downloads folder or the location you saved it.
 - Double-click the file to open it and begin the installation process.
 - Follow the on-screen instructions to complete the installation.
 - Wait for the depackaging process to finish.
@@ -255,7 +255,7 @@ cd Handbook
 ```
 
 **Step 3: Install Node**
-- Ensure that Node is installed. This project has been tested with Node versions ranging from `16.x` to `21.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
+- Ensure that Node is installed. This project has been tested with Node versions ranging from `16.x` to `22.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
 - For guidance on installing Node, please visit the [official Node website](https://nodejs.org/) for detailed instructions.
 
 **Step 4: Install Dependencies**
@@ -280,14 +280,11 @@ After setting up the project following the steps in the "[Build](#build)" sectio
 
 | Target                                        | Command                             |
 |-----------------------------------------------|-------------------------------------|
-| MacOS x64 DMG (Available on MacOS ARM64)      | `npm run make:darwin-x64-dmg`       |
-| MacOS arm64 DMG (Available on MacOS)          | `npm run make:darwin-arm64-dmg`     |
-| MacOS Universal APP (Available on MacOS)      | `npm run make:darwin-universal-app` |
-| MacOS x64 APP (Zipped App)                    | `npm run make:darwin-x64-app`       |
-| MacOS arm64 APP (Zipped App)                  | `npm run make:darwin-arm64-app`     |
-| Linux x64 DEB                                 | `npm run make:linux-x64-deb`        |
-| Linux x64 RPM                                 | `npm run make:linux-x64-rpm`        |
-| Windows x64 EXE                               | `npm run make:win32-x64-exe`        |
+| MacOS x64 APP (Zipped App)                    | `npm run dist:mac-x64`              |
+| MacOS arm64 APP (Zipped App)                  | `npm run dist:mac-arm64`            |
+| Linux x64 DEB                                 | `npm run make:linux-deb`            |
+| Linux x64 RPM                                 | `npm run make:linux-rpm`            |
+| Windows x64 EXE                               | `npm run make:win`                  |
 
 ## Out of Scope
 

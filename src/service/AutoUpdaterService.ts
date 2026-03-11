@@ -1,4 +1,4 @@
-import { IsPackaged } from '@/data/Constants';
+import { IsProduction } from '@/data/Constants';
 import UpdatePropagator from '@/propagator/UpdatePropagator';
 import { app, shell } from 'electron';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
@@ -27,7 +27,7 @@ class AutoUpdaterService {
   public initialize(): void {
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.forceDevUpdateConfig = !IsPackaged;
+    autoUpdater.forceDevUpdateConfig = !IsProduction;
 
     this.registerUpdaterEvents();
     this.registerIpcEvents();

@@ -7,12 +7,12 @@ import ApplicationService from '@/service/ApplicationService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
-import ViewService from '@/service/ViewService';
 import DialogUtil from '@/util/DialogUtil';
+import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
-import { registerDraggableArea } from '@/util/PropagatorUtil';
-import { BrowserWindow, HandlerDetails, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
+import { BrowserWindow, HandlerDetails, Input, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
+import { Draggable } from 'electron-draggable';
 import path from 'node:path';
 
 /** Listener type for pages updated event */
@@ -55,6 +55,8 @@ class PreferencesService {
     });
 
     AppState.preferences = win;
+
+    Draggable.from(win, { region: { height: 100 }, exclude: '.exit-btn, ul' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
@@ -101,37 +103,8 @@ class PreferencesService {
    * Bugfix: Use setBounds instead of setPosition to avoid resizing when moving from one screen to another on Windows.
    */
   private registerRenderListeners(): void {
-    registerDraggableArea(PreferencesPropagator, () => this.getWindow()!);
-
     // Handle UI [x] button
     PreferencesPropagator.onRender('close', (): void => this.close());
-
-    PreferencesPropagator.handleRender('confirm',
-      async (event: IpcMainInvokeEvent, message: string): Promise<boolean> => {
-        if (!this.isPreferences(event.sender)) { return false; }
-        return await this.dialog.confirm(AppState.preferences!, { message });
-      });
-
-    PreferencesPropagator.handleRender('constants', (event: IpcMainInvokeEvent): unknown => {
-      if (!this.isPreferences(event.sender)) { return null; }
-      return { OS, Settings, Positions, Permission };
-    });
-
-    // IPC handlers
-    PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
-
-    PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
-      Storage.getSettings(id),
-    );
-
-    PreferencesPropagator.handleRender('get-permissions',
-      (
-        _e: IpcMainInvokeEvent,
-        sessionName?: string,
-        url?: string,
-        permission?: string,
-      ): Record<string, unknown> => Storage.getPermissions(sessionName, url, permission) as Record<string, unknown>,
-    );
 
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
@@ -150,6 +123,38 @@ class PreferencesService {
       (_, sessionName: string, url: string, permission: string): void => {
         Storage.revokePermissions(sessionName, url, permission);
       });
+
+    PreferencesPropagator.handleRender('confirm',
+      async (event: IpcMainInvokeEvent, message: string): Promise<boolean> => {
+        if (!this.isPreferences(event.sender)) { return false; }
+        return await this.dialog.confirm(AppState.preferences!, { message });
+      });
+
+    PreferencesPropagator.handleRender('constants', (event: IpcMainInvokeEvent): unknown => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return { OS, Settings, Positions, Permission };
+    });
+
+    PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
+
+    PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
+      Storage.getSettings(id),
+    );
+
+    PreferencesPropagator.handleRender('get-permissions',
+      (
+        _e: IpcMainInvokeEvent,
+        sessionName?: string,
+        url?: string,
+        permission?: string,
+      ): Record<string, unknown> => Storage.getPermissions(sessionName, url, permission) as Record<string, unknown>,
+    );
+
+    /* eslint-disable @stylistic/max-len */
+    PreferencesPropagator.handleRender('parse-to-os-key-combination', (_e, acc: string): string => parseToOSKeyCombination(acc));
+    PreferencesPropagator.handleRender('parse-to-accelerator', (_e, parsedValue: string): string => parseToAccelerator(parsedValue));
+    PreferencesPropagator.handleRender('get-os-key-combination-by-event', (_e, input: Input): string => getOSKeyCombinationByEvent(input));
+    /* eslint-enable @stylistic/max-len */
   }
 
   private buildContextMenu(): void {
@@ -219,17 +224,12 @@ class PreferencesService {
    */
   private updateSettings(id: string, value: unknown): void {
     switch (id) {
-      case Settings.SHOW_FRAME:
-        if (!PageService.hasAnyActivePage()) { return; }
-        this.beforeCloseConfirm(
-          'recreate-all-windows',
-          'Recreate all windows?',
-          'Only new windows will receive the new configuration. Do you want to recreate all windows now?',
-          () => FrameService.recreateAllWindows(),
-        );
+      case Settings.AUTO_LAUNCH:
+        ApplicationService.setupAutoLaunch();
         break;
+      case Settings.SHOW_FRAME:
       case Settings.ALLOW_FULLSCREEN:
-        FrameService.recreateFrame();
+        FrameService.getFrame() && FrameService.recreateFrame();
         break;
       case Settings.FOCUS_OPACITY:
       case Settings.BLUR_OPACITY:
@@ -239,8 +239,9 @@ class PreferencesService {
         break;
       }
       case Settings.ACTION_AREA:
+        FrameService.updateActionArea();
+        break;
       case Settings.HIDE_SHORTCUT:
-        ViewService.updateActiveViewSettings(id, value);
         break;
       case Settings.GLOBAL_SHORTCUT:
         ApplicationService.registerGlobalShortcut();
@@ -261,8 +262,13 @@ class PreferencesService {
           () => { app.relaunch(); app.exit(0); },
         );
         break;
-      case Settings.AUTO_LAUNCH:
-        ApplicationService.setupAutoLaunch();
+      case Settings.PREFERRED_LANGUAGE:
+        this.beforeCloseConfirm(
+          'restart-application',
+          'Restart app?',
+          'A restart is required for the language setting to take effect on all sessions. Restart now?',
+          () => { app.relaunch(); app.exit(0); },
+        );
         break;
     }
   }

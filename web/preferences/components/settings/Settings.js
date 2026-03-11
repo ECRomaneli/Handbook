@@ -201,6 +201,32 @@ app.component('Settings', {
         ],
         Advanced: [
           {
+            id: this.$const.Settings.PREFERRED_LANGUAGE,
+            label: 'Preferred language',
+            description: 'Force a preferred language for web pages via Accept-Language header. This header does not guarantee the language will be applied. Requires restart to take effect on existing sessions.',
+            data: {
+              type: 'select', value: await storage.getSettings(this.$const.Settings.PREFERRED_LANGUAGE),
+              options: [
+                { label: 'Default', value: '' },
+                { label: 'English (US)', value: 'en-US' },
+                { label: 'English (UK)', value: 'en-GB' },
+                { label: 'Português (Brasil)', value: 'pt-BR' },
+                { label: 'Português (Portugal)', value: 'pt-PT' },
+                { label: 'Español', value: 'es' },
+                { label: 'Français', value: 'fr' },
+                { label: 'Deutsch', value: 'de' },
+                { label: 'Italiano', value: 'it' },
+                { label: '日本語', value: 'ja' },
+                { label: '한국어', value: 'ko' },
+                { label: '中文 (简体)', value: 'zh-CN' },
+                { label: '中文 (繁體)', value: 'zh-TW' },
+                { label: 'Русский', value: 'ru' },
+                { label: 'العربية', value: 'ar' },
+                { label: 'हिन्दी', value: 'hi' }
+              ]
+            }
+          },
+          {
             id: this.$const.Settings.GOOGLE_API_KEY,
             label: 'Google API key',
             description: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',

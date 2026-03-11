@@ -40,8 +40,7 @@ class ScreenShareModal {
   constructor() {
     this.modal = new Modal({
       filePath: path.join(ScreenShareModal.ROOT_PATH, 'index.html'),
-      disableParentEvents: true,
-      lockModalToWindow: true,
+      injectOverlay: true,
     })
       .setWindowOptions({
         width: 600,
@@ -64,26 +63,28 @@ class ScreenShareModal {
       });
   }
 
+  request(opts: ScreenShareOptions): Promise<ScreenShareSource | void> {
+    return new Promise((resolve, reject) => {
+      const closeHandler = (source: ScreenShareSource | void) => {
+        if (!source || !source.id) { return resolve(void 0); }
+        source.shareAudio = opts.shareAudioBtn ? source.shareAudio : false;
+        resolve(source);
+      };
+      try {
+        this.onceClose(closeHandler).open(opts).catch((err: unknown) => {
+          this.modal.removeListener('screenShare.close', closeHandler);
+          throw err;
+        });
+      } catch (err) { reject(err); }
+    });
+  }
+
   private async open(opts: ScreenShareOptions): Promise<void> {
     if (!this.modal.isOpen()) {
       this.options = opts;
     }
-    this.sources = await this.getSources();
+    this.sources = await ScreenShareModal.getSources();
     this.modal.open({ parent: this.options?.parent });
-  }
-
-  request(
-    opts: ScreenShareOptions,
-  ): Promise<ScreenShareSource | void> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.onceClose((source: ScreenShareSource | void) => {
-          if (!source || !source.id) { return resolve(void 0); }
-          source.shareAudio = opts.shareAudioBtn ? source.shareAudio : false;
-          resolve(source);
-        }).open(opts).catch((err: unknown) => { throw err; });
-      } catch (err) { reject(err); }
-    });
   }
 
   private sendData(opts: ScreenShareOptions): void {
@@ -94,17 +95,12 @@ class ScreenShareModal {
     });
   }
 
-  onceReady(listener: (...args: unknown[]) => void): this {
-    this.modal.onceRenderer('screenShare.ready', listener);
-    return this;
-  }
-
-  onceClose(listener: (source: ScreenShareSource | void) => void): this {
+  private onceClose(listener: (source: ScreenShareSource | void) => void): this {
     this.modal.onceRenderer('screenShare.close', listener);
     return this;
   }
 
-  getSources(): Promise<GroupedSources> {
+  private static getSources(): Promise<GroupedSources> {
     return new Promise((resolve, reject) => {
       desktopCapturer
         .getSources(ScreenShareModal.capturerOptions)

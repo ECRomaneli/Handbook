@@ -1,7 +1,6 @@
 import AppState from '@/AppState';
 import { Settings } from '@/data/Constants';
 import Persist from '@/data/Storage';
-import FramePropagator from '@/propagator/FramePropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import { ContextMenuType } from '@/service/ApplicationService';
 import ContextMenuService from '@/service/ContextMenuService';
@@ -15,11 +14,6 @@ import { writeFileSync } from 'fs';
 import { EventEmitter } from 'stream';
 
 class ViewService {
-  constructor() {
-    FramePropagator.on('show', () => { this.getCurrentView()!.emit('show'); });
-    FramePropagator.on('hide', () => { this.getCurrentView()!.emit('hide'); });
-  }
-
   public getHomeUrl(WebContentsView: WebContentsView): string {
     return WebContentsView.webContents.getURL();
   }
@@ -100,7 +94,6 @@ class ViewService {
   recreateView(oldView: WebContentsView, options: WebContentsViewConstructorOptions) {
     const newView = new WebContentsView(options);
     newView.setBounds(oldView.getBounds());
-    //newView.webContents.loadURL(oldView.webContents.getURL());
     this.isMuted(oldView) && newView.webContents.setAudioMuted(true);
 
     newView.webContents.navigationHistory.restore({
@@ -108,7 +101,6 @@ class ViewService {
       index: oldView.webContents.navigationHistory.getActiveIndex(),
     });
     this.configureView(newView);
-
     return newView;
   }
 

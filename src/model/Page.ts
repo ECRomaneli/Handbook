@@ -79,9 +79,10 @@ export class Page {
 
   get labelWithStatus(): string {
     let label = this._label;
-    if (this.hasView) {
+    if (this._view) {
       label += ' ❏';
-      this._view!.webContents.isAudioMuted() && (label += ' ✕');
+      const wc = this._view.webContents;
+      !wc.isDestroyed() && wc.isAudioMuted() && (label += ' ✕');
     }
     return label;
   }

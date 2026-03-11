@@ -8,7 +8,7 @@ app.component('Updates', {
                 <!-- Idle -->
                 <template  v-if="status.state === 'idle'">
                     <p class="small mb-2">Check for new versions to keep Handbook up to date.</p>
-                    <button class="btn btn-sm btn-primary" @click="checkForUpdates">Check for Updates</button>
+                    <button class="btn btn-sm btn-secondary " @click="checkForUpdates">Check for Updates</button>
                 </template>
 
                 <!-- Checking -->
@@ -27,10 +27,10 @@ app.component('Updates', {
                     </div>
                     <template v-if="status.platform === 'darwin'">
                         <p class="smallest mb-2 text-muted">Automatic updates are not supported on macOS for unsigned apps.</p>
-                        <button class="btn btn-sm btn-primary" @click="openDownloadUrl">Open Download Page</button>
+                        <button class="btn btn-sm btn-secondary " @click="openDownloadUrl">Open Download Page</button>
                     </template>
                     <template v-else>
-                        <button class="btn btn-sm btn-primary" @click="downloadUpdate">Download Update</button>
+                        <button class="btn btn-sm btn-secondary " @click="downloadUpdate">Download Update</button>
                     </template>
                     <button class="btn btn-sm btn-secondary ms-2" @click="checkForUpdates">Recheck</button>
                 </template>
@@ -56,7 +56,7 @@ app.component('Updates', {
                         <span class="small fw-bold">Version {{ status.version }} is ready to install.</span>
                     </div>
                     <p class="smallest mb-2">The application will restart to apply the update.</p>
-                    <button class="btn btn-sm btn-primary" @click="installUpdate">Restart &amp; Install</button>
+                    <button class="btn btn-sm btn-secondary " @click="installUpdate">Restart &amp; Install</button>
                 </template>
 
                 <!-- Up to date -->
