@@ -70,7 +70,7 @@ class ContextMenuService {
       // If there is a current page, create its submenu.
       // Void Scenario: The old current page was removed
       if (AppState.currentPage?.hasView) {
-        currentPageSubmenu = this.#createPageSubmenu(AppState.currentPage);
+        currentPageSubmenu = this.createPageSubmenu(AppState.currentPage);
         activePagesMenu.submenu!.push({
           label: AppState.currentPage.labelWithStatus,
           submenu: currentPageSubmenu,
@@ -83,7 +83,7 @@ class ContextMenuService {
         const otherActivePages = activePages.filter((p) => !PageService.isCurrentPage(p));
 
         otherActivePages.forEach((p) => {
-          activePagesMenu.submenu.push({ label: p.labelWithStatus, submenu: this.#createPageSubmenu(p) });
+          activePagesMenu.submenu.push({ label: p.labelWithStatus, submenu: this.createPageSubmenu(p) });
         });
 
         windowMenuItems.push({
@@ -192,7 +192,7 @@ class ContextMenuService {
     });
   }
 
-  #createPageSubmenu(page: Page): MenuItemConstructorOptions[] {
+  private createPageSubmenu(page: Page): MenuItemConstructorOptions[] {
     const view = page.view!;
     const wc = view.webContents;
 
