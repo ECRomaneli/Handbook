@@ -1,4 +1,5 @@
 import { IsDebug } from '@/data/Constants';
+import { app } from 'electron';
 import { EventEmitter } from 'events';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,6 +16,7 @@ abstract class Propagator<T extends EventEmitter = EventEmitter> {
 
   constructor() {
     Propagator.IS_DEBUG && console.debug(`Initializing propagator: ${this.constructor.name}`);
+    app.on('quit', () => { this.getEmitter().removeAllListeners(); });
   }
 
   //private listeners: Map<string, EventListener[]> = new Map();
