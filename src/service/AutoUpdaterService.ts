@@ -39,7 +39,7 @@ class AutoUpdaterService {
     });
 
     autoUpdater.on('update-available', (info: UpdateInfo) => {
-      const downloadUrl = `https://github.com/ecromaneli/handbook/releases/tag/v${info.version}`;
+      const downloadUrl = `https://github.com/ecromaneli/handbook/releases/tag/${info.version}`;
       this.updateStatus({ state: 'available', version: info.version, downloadUrl });
     });
 
