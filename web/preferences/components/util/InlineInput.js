@@ -30,6 +30,9 @@ app.component('InlineInput', {
                         <option v-for="(option) in data.options" :value="option.value ?? option">{{ option.label ?? option }}</option>
                     </select>
                 </div>
+                <div v-else-if="data.type === 'button'" class="d-flex flex-column align-items-center" style="width: 120px; gap: 8px;">
+                    <input v-for="({id, label}) in data.labels" type="button" class="btn btn-sm btn-secondary w-100" v-model="label" @click="emitUpdate(id)" :aria-label="input.label" style="cursor: pointer; height: 23px; line-height: 0;">
+                </div>
                 <div v-else-if="data.type === 'key'" class="input-group input-group-sm float-end" style="width: 120px">
                     <input type="search" class="form-control"
                         @focus="updateInputWithTargetValue('')"
@@ -65,8 +68,9 @@ app.component('InlineInput', {
       data.parsedValue = await this.$remote.keyCapture.getOSKeyCombinationByEvent(e)
     },
 
-    emitUpdate() {
-      if (this.data.value !== this.data.bindValue) {
+    emitUpdate(value) {
+      if (value !== undefined) { this.data.bindValue = value }
+      if (this.data.type === 'button' || this.data.value !== this.data.bindValue) {
         this.data.value = this.data.bindValue
         this.$emit('update', this.input)
       }

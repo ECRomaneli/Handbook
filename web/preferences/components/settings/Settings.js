@@ -33,7 +33,11 @@ app.component('Settings', {
     },
 
     emitUpdate(input) {
-      this.$remote.storage.setSettings(input.id, input.data.value)
+      if (input.data.type === 'button') {
+        this.$remote.preferences.buttonClick(input.id, input.data.value)
+      } else {
+        this.$remote.storage.setSettings(input.id, input.data.value)
+      }
       this.$emit('update', this.$clone(input), input.data.value)
     },
 
@@ -203,6 +207,19 @@ app.component('Settings', {
             label: 'Toggle window',
             description: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
             data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
+          }
+        ],
+        "Import/Export": [
+          {
+            id: this.$const.Settings.IMPORT_EXPORT_MENU_ID,
+            label: 'Import or Export configurations',
+            description: 'Back up and restore your complete configuration. Export saves all pages, permissions, and settings to a file. Import loads a previously exported configuration from a JSON file.',
+            data: {
+              type: 'button', labels: [
+                { id: this.$const.Settings.IMPORT_FROM_FILE, label: 'Import from file' },
+                { id: this.$const.Settings.EXPORT_TO_FILE, label: 'Export to file' }
+              ]
+            }
           }
         ],
         Advanced: [

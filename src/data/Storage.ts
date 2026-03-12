@@ -50,6 +50,14 @@ class Vault {
     Vault.store.delete(key);
     Vault.isDebug && console.debug(`Store delete: ${key}`);
   }
+
+  static import(data: string): void {
+    Vault.store.store = JSON.parse(data);
+  }
+
+  static export(): string {
+    return JSON.stringify(Vault.store.store);
+  }
 }
 
 /**
@@ -187,6 +195,14 @@ class Storage {
 
   static getPartitionName(sessionName: string): string {
     return `persist:handbook_${sessionName}`;
+  }
+
+  static import(data: string): void {
+    Vault.import(data);
+  }
+
+  static export(): string {
+    return Vault.export();
   }
 }
 

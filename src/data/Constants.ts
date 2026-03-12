@@ -24,6 +24,9 @@ const Settings = {
   AUTO_LAUNCH: 'auto_launch',
   PREFERRED_LANGUAGE: 'preferred_language',
   GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
+  IMPORT_EXPORT_MENU_ID: 'import_export',
+  IMPORT_FROM_FILE: 'import_from_file',
+  EXPORT_TO_FILE: 'export_to_file',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -7,6 +7,7 @@ import ApplicationService from '@/service/ApplicationService';
 import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
+import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
@@ -75,7 +76,6 @@ class PreferencesService {
   }
 
   public applySettingsUpdate(id: string, value: unknown): void {
-    Storage.setSettings(id, value);
     PreferencesPropagator.sendToRender('settings-updated', id, value);
   }
 
@@ -113,6 +113,14 @@ class PreferencesService {
 
     PreferencesPropagator.onRender('settings-updated', (_, id: string, value: unknown): void => {
       Storage.setSettings(id, value);
+    });
+
+    PreferencesPropagator.onRender('button-click', (_, id: string, value: string): void => {
+      switch (id) {
+        case Settings.IMPORT_EXPORT_MENU_ID:
+          value === Settings.IMPORT_FROM_FILE ? SyncService.importFromFile() : SyncService.exportToFile();
+          break;
+      }
     });
 
     PreferencesPropagator.onRender('permissions-updated',
