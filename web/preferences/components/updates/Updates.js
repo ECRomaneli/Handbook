@@ -86,7 +86,7 @@ app.component('Updates', {
       status: {
         state: 'idle',
         version: '',
-        currentVersion: this.$remote.version,
+        currentVersion: '-',
         progress: 0,
         error: ''
       }
