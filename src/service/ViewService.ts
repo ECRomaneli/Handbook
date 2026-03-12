@@ -116,10 +116,12 @@ class ViewService {
       childWindow.once('closed', () => {
         parent.off('show', showCascade);
         parent.off('hide', hideCascade);
+        parent.off('attached', showCascade);
         parent.off('detached', hideCascade);
       });
       parent.on('show', showCascade);
       parent.on('hide', hideCascade);
+      parent.on('attached', showCascade);
       parent.on('detached', hideCascade);
 
       const findbar = Findbar.from(childWindow);
