@@ -224,14 +224,6 @@ class FrameService {
       .find((child) => child !== AppState.navbar) as WebContentsView | undefined;
   }
 
-  public onViewUpdated(listener: (newView: WebContentsView, oldView?: WebContentsView) => void): void {
-    FramePropagator.on('view-updated', listener);
-  }
-
-  public offViewUpdated(listener: (newView: WebContentsView, oldView?: WebContentsView) => void): void {
-    FramePropagator.off('view-updated', listener);
-  }
-
   /**
    * Update the current view with a new one.
    * @param show Whether to show the window after updating the view.
@@ -304,10 +296,12 @@ class FrameService {
       bar.once('closed', () => {
         view.off('show', showCascade);
         view.off('hide', hideCascade);
+        view.off('attached', showCascade);
         view.off('detached', hideCascade);
       });
       view.on('show', showCascade);
       view.on('hide', hideCascade);
+      view.on('attached', showCascade);
       view.on('detached', hideCascade);
     });
   }
