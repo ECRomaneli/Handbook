@@ -51,7 +51,7 @@ class ContextMenuService {
         const wasChanged = PageService.changeUrl(page, url);
 
         if (page.hasView && wasChanged) {
-          FrameService.toggleVisibility();
+          FrameService.isVisible(true) || FrameService.toggleVisibility();
         } else if (page.url) {
           PageService.selectPage(page);
         }
