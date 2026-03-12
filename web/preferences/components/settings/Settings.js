@@ -104,6 +104,12 @@ app.component('Settings', {
             label: 'Use external browser',
             description: 'Open links in the system default browser instead of a new window in the app.',
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
+          },
+          {
+            id: this.$const.Settings.GROUP_PAGES_BY_SESSION,
+            label: 'Group pages by session',
+            description: 'Organize pages in the tray and context menus grouped by their session.',
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
           }
         ],
         Appearance: [

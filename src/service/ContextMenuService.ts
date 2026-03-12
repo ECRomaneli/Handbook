@@ -1,5 +1,6 @@
 import AppState from '@/AppState';
-import { OS } from '@/data/Constants';
+import { OS, Settings } from '@/data/Constants';
+import Storage from '@/data/Storage';
 import { Page } from '@/model/Page';
 import StatePropagator from '@/propagator/StatePropagator';
 import FrameService from '@/service/FrameService';
@@ -30,14 +31,23 @@ class ContextMenuService {
       menuItems.push({ type: 'separator' });
     }
 
-    PageService.getValidPages().forEach((p) =>
-      windowMenuItems.push({
-        type: 'radio',
-        checked: PageService.isCurrentPage(p),
-        label: p.labelWithStatus,
-        click: async () => PageService.selectPage(p),
-      }),
-    );
+    const groupBySession = Storage.getSettings<boolean>(Settings.GROUP_PAGES_BY_SESSION);
+    const validPages = PageService.getValidPages();
+
+    if (groupBySession) {
+      const sessionMap = new Map<string, Page[]>();
+      validPages.forEach((p) => {
+        const session = p.session || Page.DEFAULT_SESSION;
+        if (!sessionMap.has(session)) { sessionMap.set(session, []); }
+        sessionMap.get(session)!.push(p);
+      });
+
+      sessionMap.forEach((pages, session) => {
+        windowMenuItems.push({ label: session, submenu: pages.map(this.createMenuPageItem) });
+      });
+    } else {
+      validPages.forEach((p) => windowMenuItems.push(this.createMenuPageItem(p)));
+    }
 
     windowMenuItems.push({
       id: 'clipboard-url',
@@ -226,6 +236,15 @@ class ContextMenuService {
         { type: 'separator' },
         { label: 'Permissions', click: () => PreferencesService.openPermissions(wc.getURL()) },
       ];
+  }
+
+  private createMenuPageItem(page: Page): MenuItemConstructorOptions {
+    return {
+      type: 'radio',
+      checked: PageService.isCurrentPage(page),
+      label: page.labelWithStatus,
+      click: () => PageService.selectPage(page),
+    };
   }
 }
 

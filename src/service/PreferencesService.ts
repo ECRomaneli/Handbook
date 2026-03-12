@@ -4,6 +4,7 @@ import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
+import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
@@ -269,6 +270,9 @@ class PreferencesService {
           'A restart is required for the language setting to take effect on all sessions. Restart now?',
           () => { app.relaunch(); app.exit(0); },
         );
+        break;
+      case Settings.GROUP_PAGES_BY_SESSION:
+        ContextMenuService.refreshContextMenu();
         break;
     }
   }
