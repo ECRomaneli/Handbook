@@ -45,6 +45,15 @@ app.use({
         getOSKeyCombinationByEvent: (e) => ipcRenderer.invoke('preferences:get-os-key-combination-by-event', {
           key: e.key, code: e.code, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey
         })
+      },
+
+      sync: {
+        importFromFile: () => ipcRenderer.invoke('preferences:sync-import-file'),
+        exportToFile: () => ipcRenderer.invoke('preferences:sync-export-file'),
+        getSettings: () => ipcRenderer.invoke('preferences:sync-get-settings'),
+        saveSyncSettings: (settings) => ipcRenderer.invoke('preferences:sync-save-settings', settings),
+        gistPush: () => ipcRenderer.invoke('preferences:sync-gist-push'),
+        gistPull: () => ipcRenderer.invoke('preferences:sync-gist-pull')
       }
     }
 

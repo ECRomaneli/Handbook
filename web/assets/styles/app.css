@@ -76,6 +76,18 @@ body {
   border-color: var(--input-border);
 }
 
+.form-control-sm {
+  min-height: 23px;
+  height: 23px;
+}
+
+.btn-sm {
+  display: flex;
+  height: 23px;
+  align-items: center;
+  font-size: small;
+}
+
 .input-group-sm>.form-control,
 .input-group-sm>.form-select,
 .input-group-sm>.input-group-text {
@@ -301,6 +313,63 @@ body {
 .updates .progress-bar {
   background-color: var(--tab-active-border);
   transition: width 0.3s ease;
+}
+
+/* SYNC =============================== */
+
+#sync-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sync-card {
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sync-card-header {
+  margin-bottom: 12px;
+}
+
+.sync-card-title {
+  font-weight: 600;
+  font-size: .9em;
+}
+
+.sync-card-description {
+  display: block;
+  font-size: .75em;
+  color: #888;
+  margin-top: 4px;
+}
+
+.sync-card-body {
+  margin-bottom: 12px;
+}
+
+.sync-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sync-field {
+  margin-bottom: 8px;
+}
+
+.sync-field label {
+  font-size: .75em;
+  font-weight: 600;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.sync-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* GENERICS =========================== */

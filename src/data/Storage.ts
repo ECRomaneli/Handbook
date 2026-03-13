@@ -197,8 +197,19 @@ class Storage {
     return `persist:handbook_${sessionName}`;
   }
 
+  static getSyncSettings(): Record<string, unknown> {
+    return Vault.get('SyncSettings', {}) as Record<string, unknown>;
+  }
+
+  static setSyncSettings(value: Record<string, unknown>): void {
+    Vault.set('SyncSettings', value);
+  }
+
   static import(data: string): void {
+    // Preserve sync settings across imports
+    const syncSettings = Storage.getSyncSettings();
     Vault.import(data);
+    Storage.setSyncSettings(syncSettings);
   }
 
   static export(): string {

@@ -115,14 +115,6 @@ class PreferencesService {
       Storage.setSettings(id, value);
     });
 
-    PreferencesPropagator.onRender('button-click', (_, id: string, value: string): void => {
-      switch (id) {
-        case Settings.IMPORT_EXPORT_MENU_ID:
-          value === Settings.IMPORT_FROM_FILE ? SyncService.importFromFile() : SyncService.exportToFile();
-          break;
-      }
-    });
-
     PreferencesPropagator.onRender('permissions-updated',
       (_, sessionName: string, url: string, permission: string, value: string): void => {
         Storage.setPermission(sessionName, url, permission, value);
@@ -164,6 +156,38 @@ class PreferencesService {
     PreferencesPropagator.handleRender('parse-to-accelerator', (_e, parsedValue: string): string => parseToAccelerator(parsedValue));
     PreferencesPropagator.handleRender('get-os-key-combination-by-event', (_e, input: Input): string => getOSKeyCombinationByEvent(input));
     /* eslint-enable @stylistic/max-len */
+
+    // ─── Sync Handlers ──────────────────────────────────
+
+    PreferencesPropagator.handleRender('sync-import-file', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.importFromFile();
+    });
+
+    PreferencesPropagator.handleRender('sync-export-file', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.exportToFile();
+    });
+
+    PreferencesPropagator.handleRender('sync-get-settings', (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.getSettings();
+    });
+
+    PreferencesPropagator.handleRender('sync-save-settings', (event: IpcMainInvokeEvent, settings: unknown) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.saveSettings(settings as Record<string, unknown>);
+    });
+
+    PreferencesPropagator.handleRender('sync-gist-push', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.gistPush();
+    });
+
+    PreferencesPropagator.handleRender('sync-gist-pull', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.gistPull();
+    });
   }
 
   private buildContextMenu(): void {
