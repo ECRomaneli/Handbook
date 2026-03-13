@@ -40,15 +40,15 @@ app.component('SyncTab', {
             </div>
           </div>
           <div class="sync-field">
-            <label>Gist ID <span class="text-muted smallest">(optional, auto-created if empty)</span></label>
+            <label>Gist ID <span class="text-muted smallest">(optional, auto-detected from your gists)</span></label>
             <input type="text" class="form-control form-control-sm" v-model="gist.id" placeholder="Leave empty to create a new gist" @change="saveGistSettings">
           </div>
         </div>
-        <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPull">
-            <span v-if="loading === 'gist-pull'" class="spinner-border spinner-border-sm me-1"></span>
-            Import
-        </button>
         <div class="sync-card-actions">
+          <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPull">
+              <span v-if="loading === 'gist-pull'" class="spinner-border spinner-border-sm me-1"></span>
+              Import
+          </button>
           <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPush">
             <span v-if="loading === 'gist-push'" class="spinner-border spinner-border-sm me-1"></span>
             Export
@@ -115,7 +115,8 @@ app.component('SyncTab', {
     async gistPull() {
       this.loading = 'gist-pull'
       try {
-        await this.$remote.sync.gistPull()
+        const result = await this.$remote.sync.gistPull()
+        if (result && result.gistId) { this.gist.id = result.gistId }
       } finally {
         this.loading = null
       }

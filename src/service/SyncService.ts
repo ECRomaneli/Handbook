@@ -1,5 +1,7 @@
 import AppState from '@/AppState';
 import Storage from '@/data/Storage';
+import ContextMenuService from '@/service/ContextMenuService';
+import PreferencesService from '@/service/PreferencesService';
 import Dialog from '@/util/modal/Dialog';
 import { dialog, net } from 'electron';
 import { promises as fs } from 'node:fs';
@@ -47,6 +49,8 @@ class SyncService {
         title: 'Import Successful',
         message: 'Configuration imported successfully.',
       });
+      PreferencesService.reloadPreferences();
+      ContextMenuService.refreshContextMenu();
     } catch (error) {
       console.error('Failed to import configuration:', error);
       await Dialog.alert(win, {
@@ -97,6 +101,11 @@ class SyncService {
       const configData = Storage.export();
       let gistId = settings.gistId;
 
+      if (!gistId) {
+        gistId = await this.gistFindByFilename(settings.gistToken) ?? undefined;
+        if (gistId) { this.saveSettings({ gistId }); }
+      }
+
       if (gistId) {
         await this.gistUpdate(settings.gistToken, gistId, configData);
       } else {
@@ -120,33 +129,46 @@ class SyncService {
     }
   }
 
-  public async gistPull(): Promise<void> {
+  public async gistPull(): Promise<{ gistId: string } | null> {
     const win = AppState.preferences;
-    if (!win) { return; }
+    if (!win) { return null; }
 
     const settings = this.getSettings();
-    if (!settings.gistToken || !settings.gistId) {
-      await Dialog.alert(win, {
-        title: 'Pull Failed',
-        message: 'No Gist ID configured. Push first to create a gist, or enter an existing Gist ID.',
-      });
-      return;
-    }
+    if (!settings.gistToken) { return null; }
 
     try {
-      const content = await this.gistFetch(settings.gistToken, settings.gistId);
+      let gistId = settings.gistId;
+
+      if (!gistId) {
+        gistId = await this.gistFindByFilename(settings.gistToken) ?? undefined;
+        if (gistId) { this.saveSettings({ gistId }); }
+      }
+
+      if (!gistId) {
+        await Dialog.alert(win, {
+          title: 'Pull Failed',
+          message: 'No gist found. Push first to create one, or enter an existing Gist ID.',
+        });
+        return null;
+      }
+
+      const content = await this.gistFetch(settings.gistToken, gistId);
       Storage.import(content);
 
       await Dialog.alert(win, {
         title: 'Pull Successful',
         message: 'Configuration pulled from GitHub Gist.',
       });
+      win.webContents.reload();
+
+      return { gistId };
     } catch (error) {
       console.error('Failed to pull from GitHub Gist:', error);
       await Dialog.alert(win, {
         title: 'Pull Failed',
         message: this.friendlyGistError(error),
       });
+      return null;
     }
   }
 
@@ -176,6 +198,28 @@ class SyncService {
       throw new Error(`File "${GIST_FILENAME}" not found in the gist.`);
     }
     return file.content;
+  }
+
+  /**
+   * Lists the authenticated user's gists and returns the ID of the
+   * first one that contains the Handbook config file, or null.
+   */
+  private async gistFindByFilename(token: string): Promise<string | null> {
+    const perPage = 100;
+    for (let page = 1; page <= 10; page++) {
+      const url = `https://api.github.com/gists?per_page=${perPage}&page=${page}`;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gists: any[] = await this.githubRequest('GET', url, token);
+
+      for (const gist of gists) {
+        if (gist.files?.[GIST_FILENAME]) {
+          return gist.id;
+        }
+      }
+
+      if (gists.length < perPage) { break; }
+    }
+    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
