@@ -1,4 +1,5 @@
 import AppState from '@/AppState';
+import { IsDebug } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import ContextMenuService from '@/service/ContextMenuService';
 import PreferencesService from '@/service/PreferencesService';
@@ -6,7 +7,7 @@ import Dialog from '@/util/modal/Dialog';
 import { dialog, net } from 'electron';
 import { promises as fs } from 'node:fs';
 
-const GIST_FILENAME = 'handbook-config.json';
+const FILENAME = IsDebug ? 'handbook-config.debug.json' : 'handbook-config.json';
 
 interface SyncSettings {
   gistToken?: string;
@@ -69,7 +70,7 @@ class SyncService {
 
     const result = await dialog.showSaveDialog(win, {
       title: s.exportConfig,
-      defaultPath: 'config.json',
+      defaultPath: FILENAME,
       filters: [{ name: 'JSON Files', extensions: ['json'] }],
     });
 
@@ -182,7 +183,7 @@ class SyncService {
     const body = JSON.stringify({
       description: AppState.strings.sync.gistDescription,
       public: false,
-      files: { [GIST_FILENAME]: { content } },
+      files: { [FILENAME]: { content } },
     });
 
     const response = await this.githubRequest('POST', 'https://api.github.com/gists', token, body);
@@ -191,7 +192,7 @@ class SyncService {
 
   private async gistUpdate(token: string, gistId: string, content: string): Promise<void> {
     const body = JSON.stringify({
-      files: { [GIST_FILENAME]: { content } },
+      files: { [FILENAME]: { content } },
     });
 
     await this.githubRequest('PATCH', `https://api.github.com/gists/${encodeURIComponent(gistId)}`, token, body);
@@ -199,9 +200,9 @@ class SyncService {
 
   private async gistFetch(token: string, gistId: string): Promise<string> {
     const response = await this.githubRequest('GET', `https://api.github.com/gists/${encodeURIComponent(gistId)}`, token);
-    const file = response.files?.[GIST_FILENAME];
+    const file = response.files?.[FILENAME];
     if (!file || !file.content) {
-      throw new Error(`File "${GIST_FILENAME}" not found in the gist.`);
+      throw new Error(`File "${FILENAME}" not found in the gist.`);
     }
     return file.content;
   }
@@ -218,7 +219,7 @@ class SyncService {
       const gists: any[] = await this.githubRequest('GET', url, token);
 
       for (const gist of gists) {
-        if (gist.files?.[GIST_FILENAME]) {
+        if (gist.files?.[FILENAME]) {
           return gist.id;
         }
       }
@@ -280,7 +281,7 @@ class SyncService {
 
     // ── File not found inside the gist ────────────────
     if (/not found in the gist/i.test(msg)) {
-      return s.notFoundGist.replace('{fileName}', GIST_FILENAME);
+      return s.notFoundGist.replace('{fileName}', FILENAME);
     }
 
     // ── Network / connectivity errors ─────────────────
