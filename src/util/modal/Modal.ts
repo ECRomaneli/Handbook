@@ -297,19 +297,14 @@ class Modal {
     const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
     const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
 
-    const boundsCascade = () => { this.updateBounds(parent); };
-    Draggable.create(parent).attach(this.window!.webContents);
-
-    parent.on('resize', boundsCascade);
-    parent.on('move', boundsCascade);
+    const draggable = Draggable.create(parent).attach(this.window!.webContents);
     parent.on('show', showCascade);
     parent.on('hide', hideCascade);
 
     this.window!.on('closed', () => {
-      parent.off('resize', boundsCascade);
-      parent.off('move', boundsCascade);
       parent.off('show', showCascade);
       parent.off('hide', hideCascade);
+      draggable.disable();
       this.window = undefined;
     });
 
