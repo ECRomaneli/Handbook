@@ -52,11 +52,19 @@ class Vault {
   }
 
   static import(data: string): void {
+    const syncSettings = Vault.store.get('SyncSettings');
     Vault.store.store = JSON.parse(data);
+    if (syncSettings !== undefined) {
+      Vault.store.set('SyncSettings', syncSettings);
+    } else {
+      Vault.store.delete('SyncSettings');
+    }
   }
 
   static export(): string {
-    return JSON.stringify(Vault.store.store);
+    const data = JSON.parse(JSON.stringify(Vault.store.store));
+    delete data.SyncSettings;
+    return JSON.stringify(data);
   }
 }
 
@@ -206,10 +214,7 @@ class Storage {
   }
 
   static import(data: string): void {
-    // Preserve sync settings across imports
-    const syncSettings = Storage.getSyncSettings();
     Vault.import(data);
-    Storage.setSyncSettings(syncSettings);
   }
 
   static export(): string {

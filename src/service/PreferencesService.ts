@@ -67,6 +67,10 @@ class PreferencesService {
     // on ready, win.show() is called
   }
 
+  public reloadPreferences(): void {
+    AppState.preferences!.webContents.reload();
+  }
+
   public queryPermissions(query: string): void {
     PreferencesPropagator.sendToRender('permissions-query', query);
   }
