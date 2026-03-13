@@ -45,13 +45,13 @@ app.component('SyncTab', {
           </div>
         </div>
         <div class="sync-card-actions">
-          <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPush">
-            <span v-if="loading === 'gist-push'" class="spinner-border spinner-border-sm me-1"></span>
-            Import
-          </button>
           <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPull">
             <span v-if="loading === 'gist-pull'" class="spinner-border spinner-border-sm me-1"></span>
-            Export
+            Import
+          </button>
+          <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPush">
+            <span v-if="loading === 'gist-push'" class="spinner-border spinner-border-sm me-1"></span>
+             Export
           </button>
         </div>
       </div>
