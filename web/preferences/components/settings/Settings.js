@@ -1,6 +1,6 @@
 app.component('Settings', {
   template: /*html*/ `
-        <updates></updates>
+      <div id="settings-tab">
         <template v-if="inputs" v-for="(section, i) in Object.keys(inputs)" :key="section">
             <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-3': !i, 'mt-5': i }">{{ section }}</div>
             <template v-for="(input) in inputs[section]" :key="input.id">
@@ -11,6 +11,7 @@ app.component('Settings', {
             </template>
         </template>
         <span v-else>Loading...</span>
+      </div>
     `,
   emits: ['update'],
   inject: ['$remote', '$const', '$clone'],
@@ -33,6 +34,11 @@ app.component('Settings', {
     },
 
     emitUpdate(input) {
+      // if (input.data.type === 'button') {
+      //   this.$remote.preferences.buttonClick(input.id, input.data.value)
+      // } else {
+      //   this.$remote.storage.setSettings(input.id, input.data.value)
+      // }
       this.$remote.storage.setSettings(input.id, input.data.value)
       this.$emit('update', this.$clone(input), input.data.value)
     },
@@ -104,6 +110,12 @@ app.component('Settings', {
             label: 'Use external browser',
             description: 'Open links in the system default browser instead of a new window in the app.',
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
+          },
+          {
+            id: this.$const.Settings.GROUP_PAGES_BY_SESSION,
+            label: 'Group pages by session',
+            description: 'Organize pages in the tray and context menus grouped by their session.',
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
           }
         ],
         Appearance: [
@@ -230,7 +242,7 @@ app.component('Settings', {
             id: this.$const.Settings.GOOGLE_API_KEY,
             label: 'Google API key',
             description: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
-            data: { type: 'bigtext', value: await storage.getSettings(this.$const.Settings.GOOGLE_API_KEY) }
+            data: { type: 'secret', value: await storage.getSettings(this.$const.Settings.GOOGLE_API_KEY) }
           }
         ]
       }

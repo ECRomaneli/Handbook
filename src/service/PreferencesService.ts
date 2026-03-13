@@ -4,8 +4,10 @@ import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
+import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
+import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
@@ -56,13 +58,17 @@ class PreferencesService {
 
     AppState.preferences = win;
 
-    Draggable.from(win, { region: { height: 100 }, exclude: '.exit-btn, ul' });
+    Draggable.from(win, { region: { height: 100 }, exclude: '.exit-btn, li' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
     win.webContents.setWindowOpenHandler(PreferencesService.openExternal);
     win.loadFile(path.join(Path.WEB, 'preferences', 'index.html'));
     // on ready, win.show() is called
+  }
+
+  public reloadPreferences(): void {
+    AppState.preferences!.webContents.reload();
   }
 
   public queryPermissions(query: string): void {
@@ -74,7 +80,6 @@ class PreferencesService {
   }
 
   public applySettingsUpdate(id: string, value: unknown): void {
-    Storage.setSettings(id, value);
     PreferencesPropagator.sendToRender('settings-updated', id, value);
   }
 
@@ -155,6 +160,38 @@ class PreferencesService {
     PreferencesPropagator.handleRender('parse-to-accelerator', (_e, parsedValue: string): string => parseToAccelerator(parsedValue));
     PreferencesPropagator.handleRender('get-os-key-combination-by-event', (_e, input: Input): string => getOSKeyCombinationByEvent(input));
     /* eslint-enable @stylistic/max-len */
+
+    // ─── Sync Handlers ──────────────────────────────────
+
+    PreferencesPropagator.handleRender('sync-import-file', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.importFromFile();
+    });
+
+    PreferencesPropagator.handleRender('sync-export-file', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.exportToFile();
+    });
+
+    PreferencesPropagator.handleRender('sync-get-settings', (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.getSettings();
+    });
+
+    PreferencesPropagator.handleRender('sync-save-settings', (event: IpcMainInvokeEvent, settings: unknown) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.saveSettings(settings as Record<string, unknown>);
+    });
+
+    PreferencesPropagator.handleRender('sync-gist-push', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.gistPush();
+    });
+
+    PreferencesPropagator.handleRender('sync-gist-pull', async (event: IpcMainInvokeEvent) => {
+      if (!this.isPreferences(event.sender)) { return null; }
+      return SyncService.gistPull();
+    });
   }
 
   private buildContextMenu(): void {
@@ -269,6 +306,9 @@ class PreferencesService {
           'A restart is required for the language setting to take effect on all sessions. Restart now?',
           () => { app.relaunch(); app.exit(0); },
         );
+        break;
+      case Settings.GROUP_PAGES_BY_SESSION:
+        ContextMenuService.refreshContextMenu();
         break;
     }
   }

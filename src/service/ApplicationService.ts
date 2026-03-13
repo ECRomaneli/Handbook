@@ -9,13 +9,16 @@ import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import Dialog from '@/util/modal/Dialog';
-import { globalShortcut, Menu, MenuItem, session, WebContentsView } from 'electron';
+import { app, globalShortcut, Menu, MenuItem, Session, session, WebContentsView } from 'electron';
 
 class ApplicationService {
+  private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
+
   public initialize() {
     this.setupAutoLaunch();
     this.registerGlobalShortcut();
     this.setupAccelerators();
+    this.forceLanguageHeader();
     PermissionService.denyPermissionsOnSession(session.defaultSession);
     PermissionService.setupPermissionsHandler();
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
@@ -108,6 +111,25 @@ class ApplicationService {
     const systemMenu = Menu.getApplicationMenu();
     (systemMenu ?? new Menu()).append(pageMenu);
     Menu.setApplicationMenu(systemMenu);
+  }
+
+  public forceLanguageHeader(): void {
+    const preferredLanguage = Storage.getSettings(Settings.PREFERRED_LANGUAGE) as string | undefined;
+    const hasPreferredLanguage = preferredLanguage && preferredLanguage.trim() !== '';
+
+    app.prependListener('session-created', (s: Session) => {
+      hasPreferredLanguage && this.overrideAcceptLanguage(s, preferredLanguage);
+    });
+  }
+
+  private overrideAcceptLanguage(s: Session, preferredLanguage: string): void {
+    // Build Accept-Language header with the preferred language + English fallback
+    const acceptLanguage = `${preferredLanguage},en;q=0.5`;
+
+    s.webRequest.onBeforeSendHeaders((details, callback) => {
+      details.requestHeaders[ApplicationService.ACCEPT_LANGUAGE_HEADER] = acceptLanguage;
+      callback({ requestHeaders: details.requestHeaders });
+    });
   }
 }
 

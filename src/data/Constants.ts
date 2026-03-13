@@ -23,6 +23,7 @@ const Settings = {
   USE_EXTERNAL_BROWSER: 'use_external_browser',
   AUTO_LAUNCH: 'auto_launch',
   PREFERRED_LANGUAGE: 'preferred_language',
+  GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +49,7 @@ DefaultSettings[Settings.GOOGLE_API_KEY] = '';
 DefaultSettings[Settings.USE_EXTERNAL_BROWSER] = false;
 DefaultSettings[Settings.AUTO_LAUNCH] = void 0;
 DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
+DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
 
 const Positions = {
   TOP_LEFT: 'top-left',

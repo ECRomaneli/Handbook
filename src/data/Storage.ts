@@ -50,6 +50,22 @@ class Vault {
     Vault.store.delete(key);
     Vault.isDebug && console.debug(`Store delete: ${key}`);
   }
+
+  static import(data: string): void {
+    const syncSettings = Vault.store.get('SyncSettings');
+    Vault.store.store = JSON.parse(data);
+    if (syncSettings !== undefined) {
+      Vault.store.set('SyncSettings', syncSettings);
+    } else {
+      Vault.store.delete('SyncSettings');
+    }
+  }
+
+  static export(): string {
+    const data = JSON.parse(JSON.stringify(Vault.store.store));
+    delete data.SyncSettings;
+    return JSON.stringify(data);
+  }
 }
 
 /**
@@ -187,6 +203,22 @@ class Storage {
 
   static getPartitionName(sessionName: string): string {
     return `persist:handbook_${sessionName}`;
+  }
+
+  static getSyncSettings(): Record<string, unknown> {
+    return Vault.get('SyncSettings', {}) as Record<string, unknown>;
+  }
+
+  static setSyncSettings(value: Record<string, unknown>): void {
+    Vault.set('SyncSettings', value);
+  }
+
+  static import(data: string): void {
+    Vault.import(data);
+  }
+
+  static export(): string {
+    return Vault.export();
   }
 }
 
