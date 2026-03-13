@@ -114,7 +114,7 @@ class SyncService {
       console.error('Failed to push to GitHub Gist:', error);
       await Dialog.alert(win, {
         title: 'Push Failed',
-        message: `Failed to push configuration to GitHub Gist.\n${(error as Error).message}`,
+        message: this.friendlyGistError(error),
       });
       return null;
     }
@@ -145,7 +145,7 @@ class SyncService {
       console.error('Failed to pull from GitHub Gist:', error);
       await Dialog.alert(win, {
         title: 'Pull Failed',
-        message: `Failed to pull configuration from GitHub Gist.\n${(error as Error).message}`,
+        message: this.friendlyGistError(error),
       });
     }
   }
@@ -205,6 +205,55 @@ class SyncService {
       if (body) { request.write(body); }
       request.end();
     });
+  }
+
+  /**
+   * Analyzes an error from gistPush / gistPull and returns a
+   * human-friendly message for the end user.
+   */
+  private friendlyGistError(error: unknown): string {
+    const msg = (error instanceof Error) ? error.message : String(error);
+
+    // ── GitHub API HTTP status codes ──────────────────
+    if (/401/.test(msg)) {
+      return 'Authentication failed. Please check that your GitHub token is valid and has not expired.';
+    }
+    if (/403/.test(msg)) {
+      return 'Permission denied. Your token may lack the required "gist" scope, or you have hit the API rate limit.';
+    }
+    if (/404/.test(msg)) {
+      return 'Gist not found. The configured Gist ID may be incorrect, or the gist may have been deleted.';
+    }
+    if (/422/.test(msg)) {
+      return 'The request was rejected by GitHub. The data sent may be invalid or the gist content is empty.';
+    }
+    if (/5\d{2}/.test(msg)) {
+      return 'GitHub is experiencing issues. Please try again in a few moments.';
+    }
+
+    // ── File not found inside the gist ────────────────
+    if (/not found in the gist/i.test(msg)) {
+      return `The file "${GIST_FILENAME}" was not found inside the gist.`
+        + ' Make sure you are using a gist created by Handbook.';
+    }
+
+    // ── Network / connectivity errors ─────────────────
+    if (/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|network|socket/i.test(msg)) {
+      return 'Communication failure. Check your internet connection and try again.';
+    }
+
+    // ── DNS resolution ────────────────────────────────
+    if (/EHOSTUNREACH|getaddrinfo/i.test(msg)) {
+      return 'Could not reach GitHub. Please verify your network settings or try again later.';
+    }
+
+    // ── JSON parse errors ─────────────────────────────
+    if (/JSON|Unexpected token/i.test(msg)) {
+      return 'Received an unexpected response from GitHub. The gist content may be corrupted.';
+    }
+
+    // ── Fallback ──────────────────────────────────────
+    return `An unexpected error occurred: ${msg}`;
   }
 
 }
