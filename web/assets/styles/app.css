@@ -315,6 +315,27 @@ body {
   transition: width 0.3s ease;
 }
 
+/* PAGES HINT ========================= */
+
+.pages-sync-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75em;
+  color: var(--color);
+  padding: 6px 14px;
+  border-radius: 6px;
+  background-color: var(--input-background);
+  border: 1px dashed var(--input-border);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.pages-sync-hint code:hover {
+  text-decoration: underline;
+}
+
+
 /* SYNC =============================== */
 
 #sync-tab {
@@ -373,6 +394,10 @@ body {
 }
 
 /* GENERICS =========================== */
+
+.btn:disabled {
+  opacity: .4;
+}
 
 .c-pointer {
   cursor: pointer;

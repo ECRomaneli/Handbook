@@ -39,7 +39,7 @@ const app = Vue.createApp({
 
             <div class="tab-content p-3 overflow-auto">
                 <div class="tab-pane" :class="{ active: tab === 'pages' }">
-                    <pages></pages>
+                    <pages @navigate="navigateToTab"></pages>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'permissions' }">
                     <permissions></permissions>
@@ -79,6 +79,10 @@ const app = Vue.createApp({
     setupLinuxSpecificStyles() {
       if (!this.$const.OS.IS_LINUX) { return }
       this.appEl.style.setProperty('border', '1px solid var(--border-color)')
+    },
+
+    navigateToTab(tab) {
+      this.tab = tab
     },
 
     setupBootstrapTheme() {
