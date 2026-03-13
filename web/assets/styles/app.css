@@ -46,7 +46,7 @@ body {
 .inline-tabs .tab {
   background-color: transparent;
   color: var(--color);
-  font-size: 14px;
+  font-size: .8rem;
   font-weight: bold;
   padding: 8px 16px;
   border-width: 0 0 2px;
@@ -409,6 +409,11 @@ body {
 .square-16 {
   width: 16px;
   height: 16px;
+}
+
+.square-14 {
+  width: 14px;
+  height: 14px;
 }
 
 .smallest {
