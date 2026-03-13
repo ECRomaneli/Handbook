@@ -2,12 +2,14 @@
  * Internationalization (i18n) manager
  */
 import { en, type Strings } from './en';
+import { ptBR } from './pt-BR';
 
-export type Language = 'en';
-
-const locales: Record<Language, Strings> = {
+const locales = {
   en,
+  'pt-BR': ptBR,
 };
+
+export type Language = keyof typeof locales;
 
 /**
  * Get translations for a specific language
@@ -22,8 +24,14 @@ export const getStrings = (lang: Language): Strings => {
  * Get current system language or default to English
  */
 export const getSystemLanguage = (): Language => {
-  // const lang = navigator.language || 'en';
-  return 'en';
+  const lang = navigator.language || 'en';
+  return lang === 'pt-BR' ? 'pt-BR' : 'en';
 };
 
-export { en };
+/**
+ * Get translation strings for the current system language
+ * @returns Translation strings
+ */
+export const getSystemStrings = (): Strings => {
+  return getStrings(getSystemLanguage());
+};

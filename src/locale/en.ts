@@ -171,7 +171,7 @@ export const en = {
       'top-level-storage-access': 'Top-Level Storage Access',
       'persistent-storage': 'Persistent Storage',
       'background-sync': 'Background Sync',
-    } as Record<string, string>,
+    },
   },
 
   preferences: {
