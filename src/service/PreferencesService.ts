@@ -43,7 +43,7 @@ class PreferencesService {
 
     const win = new BrowserWindow({
       icon: undefined,
-      title: 'Preferences',
+      title: AppState.strings.preferences.title,
       width: 700,
       height: 640,
       show: false,
@@ -128,6 +128,11 @@ class PreferencesService {
       (_, sessionName: string, url: string, permission: string): void => {
         Storage.revokePermissions(sessionName, url, permission);
       });
+
+    PreferencesPropagator.handleRender('i18n', () => ({
+      preferences: AppState.strings.preferences,
+      permission: AppState.strings.permission,
+    }));
 
     PreferencesPropagator.handleRender('confirm',
       async (event: IpcMainInvokeEvent, message: string): Promise<boolean> => {
@@ -244,8 +249,9 @@ class PreferencesService {
     this.scheduledModals.push(id);
     this.getWindow()!.prependOnceListener('close', async (e) => {
       e.preventDefault();
+      const d = AppState.strings.dialog;
       await DialogUtil.showConfirmationDialog({
-        title, message, confirmBtn: 'Yes', cancelBtn: 'No', parent: this.getWindow(), confirmAction,
+        title, message, confirmBtn: d.yes, cancelBtn: d.no, parent: this.getWindow(), confirmAction,
       });
 
       this.scheduledModals.splice(this.scheduledModals.indexOf(id), 1);
@@ -260,6 +266,7 @@ class PreferencesService {
    * @param value Settings value
    */
   private updateSettings(id: string, value: unknown): void {
+    const s = AppState.strings.preferences;
     switch (id) {
       case Settings.AUTO_LAUNCH:
         ApplicationService.setupAutoLaunch();
@@ -294,16 +301,16 @@ class PreferencesService {
         AppState.googleApiKey = value as string;
         this.beforeCloseConfirm(
           'restart-application',
-          'Restart app?',
-          'A complete restart is required for the Google API key to take effect. Restart now?',
+          s.restartApp,
+          s.restartForApiKey,
           () => { app.relaunch(); app.exit(0); },
         );
         break;
       case Settings.PREFERRED_LANGUAGE:
         this.beforeCloseConfirm(
           'restart-application',
-          'Restart app?',
-          'A restart is required for the language setting to take effect on all sessions. Restart now?',
+          s.restartApp,
+          s.restartForLanguage,
           () => { app.relaunch(); app.exit(0); },
         );
         break;

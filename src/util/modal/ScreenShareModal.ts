@@ -1,3 +1,4 @@
+import AppState from '@/AppState';
 import { Path } from '@/data/Constants';
 import Modal from '@/util/modal/Modal';
 import { BaseWindow, BrowserWindow, desktopCapturer, DesktopCapturerSource, SourcesOptions } from 'electron';
@@ -92,6 +93,7 @@ class ScreenShareModal {
       requesterUrl: opts.requesterUrl,
       shareAudioBtn: opts.shareAudioBtn,
       sources: this.sources,
+      strings: AppState.strings.screenShare,
     });
   }
 

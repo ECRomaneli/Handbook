@@ -32,8 +32,10 @@ class SyncService {
     const win = AppState.preferences;
     if (!win) { return; }
 
+    const s = AppState.strings.sync;
+
     const result = await dialog.showOpenDialog(win, {
-      title: 'Import Configuration',
+      title: s.importConfig,
       filters: [{ name: 'JSON Files', extensions: ['json'] }],
       properties: ['openFile'],
     });
@@ -46,15 +48,15 @@ class SyncService {
       Storage.import(fileContent);
 
       await Dialog.alert(win, {
-        title: 'Import Successful',
-        message: 'Configuration imported successfully.',
+        title: s.importSuccess,
+        message: s.importSuccessMsg,
       });
       this.reloadAfterImport();
     } catch (error) {
       console.error('Failed to import configuration:', error);
       await Dialog.alert(win, {
-        title: 'Import Failed',
-        message: 'Failed to import configuration file. Please ensure the file is a valid JSON format.',
+        title: s.importFailed,
+        message: s.importFailedMsg,
       });
     }
   }
@@ -63,8 +65,10 @@ class SyncService {
     const win = AppState.preferences;
     if (!win) { return; }
 
+    const s = AppState.strings.sync;
+
     const result = await dialog.showSaveDialog(win, {
-      title: 'Export Configuration',
+      title: s.exportConfig,
       defaultPath: 'config.json',
       filters: [{ name: 'JSON Files', extensions: ['json'] }],
     });
@@ -75,14 +79,14 @@ class SyncService {
       const configData = Storage.export();
       await fs.writeFile(result.filePath, configData, 'utf-8');
       await Dialog.alert(win, {
-        title: 'Export Successful',
-        message: `Configuration exported successfully to:\n${result.filePath}`,
+        title: s.exportSuccess,
+        message: `${s.exportSuccessMsg}\n${result.filePath}`,
       });
     } catch (error) {
       console.error('Failed to export configuration:', error);
       await Dialog.alert(win, {
-        title: 'Export Failed',
-        message: 'Failed to export configuration file. Please try again.',
+        title: s.exportFailed,
+        message: s.exportFailedMsg,
       });
     }
   }
@@ -95,6 +99,8 @@ class SyncService {
 
     const settings = this.getSettings();
     if (!settings.gistToken) { return null; }
+
+    const s = AppState.strings.sync;
 
     try {
       const configData = Storage.export();
@@ -113,15 +119,15 @@ class SyncService {
       }
 
       await Dialog.alert(win, {
-        title: 'Push Successful',
-        message: 'Configuration pushed to GitHub Gist.',
+        title: s.pushSuccess,
+        message: s.pushSuccessMsg,
       });
 
       return { gistId };
     } catch (error) {
       console.error('Failed to push to GitHub Gist:', error);
       await Dialog.alert(win, {
-        title: 'Push Failed',
+        title: s.pushFailed,
         message: this.friendlyGistError(error),
       });
       return null;
@@ -135,6 +141,8 @@ class SyncService {
     const settings = this.getSettings();
     if (!settings.gistToken) { return null; }
 
+    const s = AppState.strings.sync;
+
     try {
       let gistId = settings.gistId;
 
@@ -145,8 +153,8 @@ class SyncService {
 
       if (!gistId) {
         await Dialog.alert(win, {
-          title: 'Pull Failed',
-          message: 'No gist found. Push first to create one, or enter an existing Gist ID.',
+          title: s.pullFailed,
+          message: s.pullNoGistId,
         });
         return null;
       }
@@ -155,15 +163,15 @@ class SyncService {
       Storage.import(content);
 
       await Dialog.alert(win, {
-        title: 'Pull Successful',
-        message: 'Configuration pulled from GitHub Gist.',
+        title: s.pullSuccess,
+        message: s.pullSuccessMsg,
       });
       this.reloadAfterImport();
       return { gistId };
     } catch (error) {
       console.error('Failed to pull from GitHub Gist:', error);
       await Dialog.alert(win, {
-        title: 'Pull Failed',
+        title: s.pullFailed,
         message: this.friendlyGistError(error),
       });
       return null;
@@ -172,7 +180,7 @@ class SyncService {
 
   private async gistCreate(token: string, content: string): Promise<string> {
     const body = JSON.stringify({
-      description: 'Handbook Configuration Backup',
+      description: AppState.strings.sync.gistDescription,
       public: false,
       files: { [GIST_FILENAME]: { content } },
     });
@@ -261,46 +269,37 @@ class SyncService {
   private friendlyGistError(error: unknown): string {
     const msg = (error instanceof Error) ? error.message : String(error);
 
+    const s = AppState.strings.sync.friendlyError;
+
     // ── GitHub API HTTP status codes ──────────────────
-    if (/401/.test(msg)) {
-      return 'Authentication failed. Please check that your GitHub token is valid and has not expired.';
-    }
-    if (/403/.test(msg)) {
-      return 'Permission denied. Your token may lack the required "gist" scope, or you have hit the API rate limit.';
-    }
-    if (/404/.test(msg)) {
-      return 'Gist not found. The configured Gist ID may be incorrect, or the gist may have been deleted.';
-    }
-    if (/422/.test(msg)) {
-      return 'The request was rejected by GitHub. The data sent may be invalid or the gist content is empty.';
-    }
-    if (/5\d{2}/.test(msg)) {
-      return 'GitHub is experiencing issues. Please try again in a few moments.';
-    }
+    if (/401/.test(msg)) { return s.e401; }
+    if (/403/.test(msg)) { return s.e403; }
+    if (/404/.test(msg)) { return s.e404; }
+    if (/422/.test(msg)) { return s.e422; }
+    if (/5\d{2}/.test(msg)) { return s.e5xx; }
 
     // ── File not found inside the gist ────────────────
     if (/not found in the gist/i.test(msg)) {
-      return `The file "${GIST_FILENAME}" was not found inside the gist.`
-        + ' Make sure you are using a gist created by Handbook.';
+      return s.notFoundGist.replace('{fileName}', GIST_FILENAME);
     }
 
     // ── Network / connectivity errors ─────────────────
     if (/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|network|socket/i.test(msg)) {
-      return 'Communication failure. Check your internet connection and try again.';
+      return s.network;
     }
 
     // ── DNS resolution ────────────────────────────────
     if (/EHOSTUNREACH|getaddrinfo/i.test(msg)) {
-      return 'Could not reach GitHub. Please verify your network settings or try again later.';
+      return s.dns;
     }
 
     // ── JSON parse errors ─────────────────────────────
     if (/JSON|Unexpected token/i.test(msg)) {
-      return 'Received an unexpected response from GitHub. The gist content may be corrupted.';
+      return s.jsonParse;
     }
 
     // ── Fallback ──────────────────────────────────────
-    return `An unexpected error occurred: ${msg}`;
+    return s.fallback.replace('{errorMessage}', msg);
   }
 
 }

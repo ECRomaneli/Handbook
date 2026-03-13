@@ -9,6 +9,7 @@ const $remote = (ipc => ({
   listPages: () => { ipc.send('navbar:list-pages') },
   hide: () => { ipc.send('navbar:hide') },
   close: () => { ipc.send('navbar:close') },
+  i18n: () => ipc.invoke('navbar:i18n'),
   onLabelUpdated: (listener) => { ipc.on('navbar:label-updated', listener) },
   onDidNavigate: (listener) => { ipc.on('navbar:did-navigate', listener) },
   onDidStartLoading: (listener) => { ipc.on('navbar:did-start-loading', listener) },
@@ -25,7 +26,7 @@ const icons = {
   unmute: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><mask id="slashMask"><rect width="24" height="24" fill="white"/><path d="M4.5 19.5L19.5 4.5" stroke="black" stroke-width="4"/></mask><path d="M6 9.5V14.5H9.5L16 18.5V5.5L9.5 9.5H6Z" mask="url(#slashMask)"/><path d="M4.5 19.5L19.5 4.5"/></svg>'
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const titleInput = document.getElementById('title')
   const subtitleInput = document.getElementById('subtitle')
   const backBtn = document.getElementById('back')
@@ -40,6 +41,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   const closeBtn = document.getElementById('close')
   const details = document.getElementById('details')
   const subtitleIcons = details.querySelectorAll('button')
+
+  $remote.onLabelUpdated((_e, title) => { titleInput.textContent = title })
+
+  $remote.onDidNavigate((_e, { url, canGoBack, canGoForward }) => {
+    subtitleInput.textContent = url
+    backBtn.classList.toggle('disabled', !canGoBack)
+    forwardBtn.classList.toggle('disabled', !canGoForward)
+    backBtn.disabled = !canGoBack
+    forwardBtn.disabled = !canGoForward
+  })
+
+  $remote.onDidStartLoading(() => {
+    refreshBtn.innerHTML = icons.stop
+  })
+
+  $remote.onDidStopLoading(() => {
+    refreshBtn.innerHTML = icons.refresh
+  })
+
+  muteBtn.innerHTML = icons.unmute;
+  refreshBtn.innerHTML = icons.refresh;
+  copyLinkBtn.innerHTML = icons.copy;
+
+  (async () => {
+    const m = await $remote.i18n()
+    muteBtn.title = m.unmute
+    backBtn.title = m.back
+    forwardBtn.title = m.forward
+    homeBtn.title = m.home
+    refreshBtn.title = m.refresh
+    permissionsBtn.title = m.permissions
+    copyLinkBtn.title = m.copyLink
+    muteBtn.title = m.muteUnmute
+    listBtn.title = m.listPages
+    hideBtn.title = m.hide
+    closeBtn.title = m.close
+
+    $remote.muteStatusChanged((_e, isMuted) => {
+      muteBtn.title = isMuted ? m.unmute : m.mute
+      muteBtn.innerHTML = isMuted ? icons.unmute : icons.mute
+    })
+  })()
 
   subtitleIcons.forEach(btn => { btn.style.opacity = '0' })
   details.addEventListener('mouseover', () => {
@@ -63,33 +106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   hideBtn.addEventListener('click', () => { $remote.hide() })
   closeBtn.addEventListener('click', () => { $remote.close() })
   muteBtn.addEventListener('click', () => { $remote.toggleMute() })
-  $remote.onLabelUpdated((_e, title) => { titleInput.textContent = title })
-
-  $remote.onDidNavigate((_e, { url, canGoBack, canGoForward }) => {
-    subtitleInput.textContent = url
-    backBtn.classList.toggle('disabled', !canGoBack)
-    forwardBtn.classList.toggle('disabled', !canGoForward)
-    backBtn.disabled = !canGoBack
-    forwardBtn.disabled = !canGoForward
-  })
-
-  $remote.onDidStartLoading(() => {
-    refreshBtn.innerHTML = icons.stop
-  })
-
-  $remote.onDidStopLoading(() => {
-    refreshBtn.innerHTML = icons.refresh
-  })
-
-  $remote.muteStatusChanged((_e, isMuted) => {
-    muteBtn.title = isMuted ? "Unmute" : "Mute"
-    muteBtn.innerHTML = isMuted ? icons.unmute : icons.mute
-  })
-
-  refreshBtn.innerHTML = icons.refresh;
-  copyLinkBtn.innerHTML = icons.copy;
-  muteBtn.title = "Unmute"
-  muteBtn.innerHTML = icons.unmute;
 
   console.log('Navigation bar preload loaded')
 })

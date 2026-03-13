@@ -1,3 +1,4 @@
+import AppState from '@/AppState';
 import { Path } from '@/data/Constants';
 import { BaseWindow, BrowserWindow, MessageBoxReturnValue } from 'electron';
 import path from 'node:path';
@@ -60,8 +61,8 @@ export interface ConfirmOptions {
 }
 
 class Dialog {
-  private static readonly DEFAULT_ALERT_BUTTONS = ['OK'];
-  private static readonly DEFAULT_CONFIRM_BUTTONS = ['Yes', 'No'];
+  private static get DEFAULT_ALERT_BUTTONS() { return [AppState.strings.dialog.ok]; }
+  private static get DEFAULT_CONFIRM_BUTTONS() { return [AppState.strings.dialog.yes, AppState.strings.dialog.no]; }
   private static readonly DEFAULT_WIDTH = 400;
   private static readonly ROOT_PATH = path.join(Path.WEB, 'dialog');
 
@@ -158,7 +159,7 @@ class Dialog {
    */
   async confirm(parent: BaseWindow | null, opts?: ConfirmOptions): Promise<boolean> {
     const dialogOpts: DialogOptions = opts || {};
-    dialogOpts.message = dialogOpts.message || 'Confirm?';
+    dialogOpts.message = dialogOpts.message || AppState.strings.dialog.confirm;
     dialogOpts.textWidth = dialogOpts.textWidth || Dialog.DEFAULT_WIDTH;
     if (!dialogOpts.buttons) {
       dialogOpts.buttons = Dialog.DEFAULT_CONFIRM_BUTTONS;

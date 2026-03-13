@@ -92,56 +92,6 @@ const Permission = {
     DENY: 'deny',
     ASK: 'ask',
   },
-  Text: {
-    // Media permissions
-    'media: video': 'Camera',
-    'media: audio': 'Microphone',
-    'speaker-selection': 'Speaker Selection',
-    'media': 'Media Sharing',
-
-    // Location and sensors
-    'geolocation': 'Location',
-
-    // System
-    'notifications': 'Notifications',
-    'midi': 'MIDI Devices',
-    'midiSysex': 'MIDI System Access',
-    'idle-detection': 'User Activity Detection',
-    'clipboard-read': 'Read from Clipboard',
-    'clipboard-write': 'Write to Clipboard',
-    'clipboard-sanitized-write': 'Write Text to Clipboard',
-
-    // File system
-    'file-system': 'File System Access',
-    'file-system-write': 'Write to Files',
-    'file-system-read': 'Read Files',
-
-    // External resources
-    'openExternal': 'Open External Applications',
-    'protocol-register': 'Register Protocol Handler',
-
-    // Device access
-    'usb': 'USB Devices',
-    'serial': 'Serial Ports',
-    'bluetooth': 'Bluetooth Devices',
-    'bluetooth-scanning': 'Bluetooth Scanning',
-    'hid': 'Input Devices',
-    'pointerLock': 'Lock Pointer',
-    'keyboardLock': 'Lock Keyboard',
-
-    // Window management
-    'fullscreen': 'Fullscreen Mode',
-    'automatic-fullscreen': 'Automatic Fullscreen',
-
-    // Storage
-    'top-level-storage-access': 'Top-Level Storage Access',
-    'persistent-storage': 'Persistent Storage',
-    'background-sync': 'Background Sync',
-
-    // Other
-    'screen-wake-lock': 'Prevent Sleep Mode',
-    'sensors': 'Sensor Access',
-  },
 };
 
 const IsProduction = process.env.NODE_ENV === 'production';

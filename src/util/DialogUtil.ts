@@ -26,13 +26,14 @@ class DialogUtil {
   }
 
   public async showConfirmationDialog(data: DialogOptions): Promise<void> {
+    const d = AppState.strings.dialog;
     const result = await Dialog.show(
       data.parent ?? null,
       {
         type: data.type || 'question',
-        title: data.title || 'Confirmation',
-        message: data.message || 'Are you sure?',
-        buttons: [data.confirmBtn ?? 'Ok', data.cancelBtn ?? 'Cancel'],
+        title: data.title || d.confirmation,
+        message: data.message || d.areYouSure,
+        buttons: [data.confirmBtn ?? d.ok, data.cancelBtn ?? d.cancel],
         defaultId: 1,
         cancelId: 1,
       },

@@ -40,11 +40,17 @@ export default [
         ignorePattern: '^import ',
         ignoreUrls: true,
         ignoreStrings: false,
-        ignoreComments: false
+        ignoreComments: false,
       }],
       '@stylistic/eol-last': ['error', 'always'],           // Ensure blank line at EOF
       '@stylistic/no-trailing-spaces': 'error',             // Disallow trailing spaces
       '@stylistic/no-multiple-empty-lines': ['error', { max: 1 }], // Max one empty line
+    },
+  },
+  {
+    files: ['src/locale/**/*.ts'],
+    rules: {
+      '@stylistic/max-len': 'off',
     },
   },
 ];

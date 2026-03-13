@@ -146,15 +146,15 @@ class ViewService {
 
       contextMenu({
         window: childWindow, append: () => [
-          { label: 'Find...', click: () => findbar.open(), visible: childWindow.isVisible() },
-          { label: 'Back', click: () => childWindow.webContents.navigationHistory.goBack() },
-          { label: 'Forward', click: () => childWindow.webContents.navigationHistory.goForward() },
+          { label: AppState.strings.menu.find, click: () => findbar.open(), visible: childWindow.isVisible() },
+          { label: AppState.strings.menu.back, click: () => childWindow.webContents.navigationHistory.goBack() },
+          { label: AppState.strings.menu.forward, click: () => childWindow.webContents.navigationHistory.goForward() },
           { type: 'separator' },
-          { label: 'Refresh', click: () => childWindow.reload() },
+          { label: AppState.strings.menu.refresh, click: () => childWindow.reload() },
           { type: 'separator' },
-          { label: 'Copy URL', click: () => { clipboard.writeText(childWindow.webContents.getURL()); } },
-          { label: 'Open in Browser', click: () => { shell.openExternal(childWindow.webContents.getURL()); } },
-          { label: 'Open DevTools', click: () => childWindow.webContents.openDevTools() },
+          { label: AppState.strings.menu.copyUrl, click: () => { clipboard.writeText(childWindow.webContents.getURL()); } },
+          { label: AppState.strings.menu.openInBrowser, click: () => { shell.openExternal(childWindow.webContents.getURL()); } },
+          { label: AppState.strings.menu.openDevTools, click: () => childWindow.webContents.openDevTools() },
         ],
       });
       fixUserAgent(childWindow.webContents);
@@ -194,7 +194,7 @@ class ViewService {
       append: () => {
         return [
           {
-            label: 'Save...',
+            label: AppState.strings.menu.save,
             visible: view.webContents.getURL().startsWith('data:'),
             click: async () => { saveBase64ToFile(view.webContents.getURL()); },
           },
@@ -236,7 +236,7 @@ async function saveBase64ToFile(base64Data: string, suggestedName?: string) {
 
     // Show save dialog
     const result = await dialog.showSaveDialog({
-      title: 'Save File',
+      title: AppState.strings.dialog.saveFile,
       defaultPath: fileName,
       filters: filters,
     });

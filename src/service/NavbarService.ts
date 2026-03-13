@@ -87,6 +87,8 @@ class NavbarService {
   }
 
   private registerRenderListeners(): void {
+    NavbarPropagator.handleRender('i18n', () => AppState.strings.menu);
+
     NavbarPropagator.onRender('back', (): void => {
       PageService.getCurrentView()!.webContents.navigationHistory.goBack();
     });

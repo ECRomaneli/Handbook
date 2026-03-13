@@ -25,9 +25,10 @@ class ContextMenuService {
   public refreshContextMenu(): void {
     const menuItems: MenuItemConstructorOptions[] = [];
     const windowMenuItems: MenuItemConstructorOptions[] = [];
+    const s = AppState.strings.menu;
 
     if (OS.IS_LINUX) {
-      menuItems.push({ label: 'Show / Hide Page', click: () => PageService.setupOrTogglePage() });
+      menuItems.push({ label: s.showHidePage, click: () => PageService.setupOrTogglePage() });
       menuItems.push({ type: 'separator' });
     }
 
@@ -74,7 +75,7 @@ class ContextMenuService {
     let currentPageSubmenu;
 
     if (activePages.length > 0) {
-      const activePagesMenu: MenuItem = { label: 'Active Pages', submenu: [] };
+      const activePagesMenu: MenuItem = { label: s.activePages, submenu: [] };
       windowMenuItems.push(activePagesMenu);
 
       // If there is a current page, create its submenu.
@@ -97,14 +98,14 @@ class ContextMenuService {
         });
 
         windowMenuItems.push({
-          label: 'Close Other Pages', click: () =>
+          label: s.closeOtherPages, click: () =>
             otherActivePages.forEach((p) => PageService.closePageView(p)),
         });
       }
     }
 
     windowMenuItems.push({
-      label: 'Close All Pages', enabled: !!activePages.length, click: () => {
+      label: s.closeAllPages, enabled: !!activePages.length, click: () => {
         FrameService.forceClose();
         activePages.forEach((p) => PageService.closePageView(p));
       },
@@ -112,16 +113,17 @@ class ContextMenuService {
 
     windowMenuItems.push({ type: 'separator' });
 
-    windowMenuItems.push({ label: 'Preferences...', click: () => PreferencesService.open() });
+    windowMenuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
 
     menuItems.push(...windowMenuItems);
     menuItems.push({
-      label: 'Exit', click: () => {
+      label: s.exit, click: () => {
+        const d = AppState.strings.exitDialog;
         this.showConfirmationDialog({
-          title: 'Exit',
-          message: 'Are you sure you want to exit Handbook?',
-          confirmBtn: 'Confirm',
-          cancelBtn: 'Cancel',
+          title: d.title,
+          message: d.message,
+          confirmBtn: d.confirm,
+          cancelBtn: AppState.strings.dialog.cancel,
           parent: null,
           confirmAction: () => app.quit(),
         });
@@ -130,8 +132,8 @@ class ContextMenuService {
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
-        { label: 'Window', submenu: currentPageSubmenu },
-        { label: 'Handbook', submenu: windowMenuItems },
+        { label: s.window, submenu: currentPageSubmenu },
+        { label: s.handbook, submenu: windowMenuItems },
       ];
     }
 
@@ -181,13 +183,14 @@ class ContextMenuService {
       cancelAction?: () => void,
     },
   ): Promise<void> {
+    const d = AppState.strings.dialog;
     const result = await Dialog.show(
       data.parent ?? null,
       {
         type: data.type || 'question',
-        title: data.title || 'Confirmation',
-        message: data.message || 'Are you sure?',
-        buttons: [data.confirmBtn ?? 'Ok', data.cancelBtn ?? 'Cancel'],
+        title: data.title || d.confirmation,
+        message: data.message || d.areYouSure,
+        buttons: [data.confirmBtn ?? d.ok, data.cancelBtn ?? d.cancel],
         defaultId: 1,
         cancelId: 1,
       },
@@ -205,36 +208,37 @@ class ContextMenuService {
   private createPageSubmenu(page: Page): MenuItemConstructorOptions[] {
     const view = page.view!;
     const wc = view.webContents;
+    const s = AppState.strings.menu;
 
     return PageService.isCurrentPage(page) ?
       [
-        { label: FrameService.isVisible(true) ? 'Hide' : 'Show', click: () => FrameService.toggleVisibility() },
-        { label: ViewService.isMuted(view) ? 'Unmute' : 'Mute', click: () => ViewService.toggleMute(view) },
-        { label: 'Close', click: () => { FrameService.forceClose(); } },
+        { label: FrameService.isVisible(true) ? s.hide : s.show, click: () => FrameService.toggleVisibility() },
+        { label: ViewService.isMuted(view) ? s.unmute : s.mute, click: () => ViewService.toggleMute(view) },
+        { label: s.close, click: () => { FrameService.forceClose(); } },
         { type: 'separator' },
-        { label: 'Find...', click: () => ViewService.toggleFindbar(view, true), visible: FrameService.isVisible(true) },
-        { label: 'Back', click: () => ViewService.goBack(view) },
-        { label: 'Forward', click: () => ViewService.goForward(view) },
+        { label: s.find, click: () => ViewService.toggleFindbar(view, true), visible: FrameService.isVisible(true) },
+        { label: s.back, click: () => ViewService.goBack(view) },
+        { label: s.forward, click: () => ViewService.goForward(view) },
         { type: 'separator' },
-        { label: 'Refresh', click: () => ViewService.reload(view) },
-        { label: 'Home', click: () => PageService.resetUrl(page) },
+        { label: s.refresh, click: () => ViewService.reload(view) },
+        { label: s.home, click: () => PageService.resetUrl(page) },
         { type: 'separator' },
-        { label: 'Reset Window', click: () => { FrameService.recreateWindow(); } },
-        { label: 'Reset Bounds', click: () => { FrameService.resetBounds(); } },
+        { label: s.resetWindow, click: () => { FrameService.recreateWindow(); } },
+        { label: s.resetBounds, click: () => { FrameService.resetBounds(); } },
         { type: 'separator' },
-        { label: 'Copy URL', click: () => clipboard.writeText(wc.getURL()) },
-        { label: 'Open in Browser', click: () => { shell.openExternal(wc.getURL()); } },
-        { label: 'Create Page from URL', click: () => { PageService.createNewPageFromCurrentUrl(); } },
+        { label: s.copyUrl, click: () => clipboard.writeText(wc.getURL()) },
+        { label: s.openInBrowser, click: () => { shell.openExternal(wc.getURL()); } },
+        { label: s.createPageFromUrl, click: () => { PageService.createNewPageFromCurrentUrl(); } },
         { type: 'separator' },
-        { label: 'Open DevTools', click: () => wc.openDevTools() },
-        { label: 'Permissions', click: () => PreferencesService.openPermissions(wc.getURL()) },
+        { label: s.openDevTools, click: () => wc.openDevTools() },
+        { label: s.permissions, click: () => PreferencesService.openPermissions(wc.getURL()) },
       ] :
       [
-        { label: 'Show', click: () => PageService.selectPage(page) },
-        { label: ViewService.isMuted(view) ? 'Unmute' : 'Mute', click: () => ViewService.toggleMute(view) },
-        { label: 'Close', click: () => PageService.closePageView(page) },
+        { label: s.show, click: () => PageService.selectPage(page) },
+        { label: ViewService.isMuted(view) ? s.unmute : s.mute, click: () => ViewService.toggleMute(view) },
+        { label: s.close, click: () => PageService.closePageView(page) },
         { type: 'separator' },
-        { label: 'Permissions', click: () => PreferencesService.openPermissions(wc.getURL()) },
+        { label: s.permissions, click: () => PreferencesService.openPermissions(wc.getURL()) },
       ];
   }
 

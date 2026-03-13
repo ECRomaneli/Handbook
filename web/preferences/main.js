@@ -17,23 +17,23 @@ const app = Vue.createApp({
         </div>
         <div class="w-100 d-flex flex-column">
             <div class="mt-3 mb-2">
-                <span class="h6 ps-4 pe-none">Preferences</span>
+                <span class="h6 ps-4 pe-none">{{ $i18n.preferences.title }}</span>
             </div>
             <ul class="inline-tabs px-4">
                 <li @click="tab = 'pages'">
-                    <button class="tab" :class="{ active: tab === 'pages' }">Pages</button>
+                    <button class="tab" :class="{ active: tab === 'pages' }">{{ $i18n.preferences.tabs.pages }}</button>
                 </li>
                 <li @click="tab = 'permissions'">
-                    <button class="tab" :class="{ active: tab === 'permissions' }">Permissions</button>
+                    <button class="tab" :class="{ active: tab === 'permissions' }">{{ $i18n.preferences.tabs.permissions }}</button>
                 </li>
                 <li @click="tab = 'settings'">
-                    <button class="tab" :class="{ active: tab === 'settings' }">Settings</button>
+                    <button class="tab" :class="{ active: tab === 'settings' }">{{ $i18n.preferences.tabs.settings }}</button>
                 </li>
                 <li @click="tab = 'sync'">
-                    <button class="tab" :class="{ active: tab === 'sync' }">Sync</button>
+                    <button class="tab" :class="{ active: tab === 'sync' }">{{ $i18n.preferences.tabs.sync }}</button>
                 </li>
                 <li @click="tab = 'about'">
-                    <button class="tab" :class="{ active: tab === 'about' }">About</button>
+                    <button class="tab" :class="{ active: tab === 'about' }">{{ $i18n.preferences.tabs.about }}</button>
                 </li>
             </ul>
 
@@ -57,7 +57,7 @@ const app = Vue.createApp({
         </div>
     `,
 
-  inject: ['$remote', '$const'],
+  inject: ['$remote', '$const', '$i18n'],
   data() { return { tab: 'pages', appEl: document.getElementById('app'), themeChangeListener: null } },
   beforeMount() {
     this.setupBootstrapTheme()

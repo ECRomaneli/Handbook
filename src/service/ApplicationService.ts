@@ -39,9 +39,10 @@ class ApplicationService {
     } catch (e) {
       console.error('Failed to create the shortcut: ', e);
 
+      const s = AppState.strings.application;
       Dialog.confirm(null, {
-        title: 'Failed to create the shortcut',
-        message: `Failed to register [${AppState.globalShortcut}] as a global shortcut. Remove the shortcut?`,
+        title: s.shortcutFailed,
+        message: `${s.shortcutFailed}: [${AppState.globalShortcut}]`,
       }).then((confirmed) => {
         if (confirmed) {
           PreferencesService.applySettingsUpdate(Settings.GLOBAL_SHORTCUT, '');
@@ -52,14 +53,15 @@ class ApplicationService {
   }
 
   public async setupAutoLaunch(): Promise<void> {
+    const s = AppState.strings.application;
     try {
       const isEnabled = await AppState.autoLauncher.isEnabled();
       let autoLaunchEnabled = Storage.getSettings(Settings.AUTO_LAUNCH);
 
       if (!isEnabled && autoLaunchEnabled === void 0) {
         autoLaunchEnabled = await Dialog.confirm(PreferencesService.getWindow() ?? null, {
-          title: 'Launch on Startup',
-          message: 'Do you want Handbook to launch automatically on startup?',
+          title: s.autoLaunchTitle,
+          message: s.autoLaunchMsg,
           defaultId: 0,
         });
         PreferencesService.applySettingsUpdate(Settings.AUTO_LAUNCH, autoLaunchEnabled);
@@ -74,9 +76,8 @@ class ApplicationService {
       console.error('Error setting up auto launch:', err);
 
       const confirmed = await Dialog.confirm(PreferencesService.getWindow() ?? null, {
-        title: 'Failed to set Auto Launch',
-        message: 'Unfortunately, Handbook could not be set to launch automatically on startup. ' +
-          'Do you want to disable it?',
+        title: s.autoLaunchFailed,
+        message: s.autoLaunchFailedMsg,
         defaultId: 0,
       });
 
@@ -95,15 +96,16 @@ class ApplicationService {
       frame?.isVisible() && (FrameService.isFocused() || ViewService.isFindbarFocused()) && viewAction(view);
     };
 
+    const m = AppState.strings.menu;
     const pageMenu = new MenuItem({
-      label: 'Page', submenu: [
+      label: m.page, submenu: [
         /* eslint-disable @stylistic/max-len */
-        { label: 'Find...', click: ifVisible((view) => ViewService.toggleFindbar(view, true)), accelerator: 'CommandOrControl+F' },
-        { label: 'Dismiss', visible: false, click: ifVisible((view) => { ViewService.toggleFindbar(view, false); view.webContents.focus(); }), accelerator: 'Esc' },
-        { label: 'Back', click: ifVisible((view) => ViewService.goBack(view)), accelerator: 'CommandOrControl+Left' },
-        { label: 'Forward', click: ifVisible((view) => ViewService.goForward(view)), accelerator: 'CommandOrControl+Right' },
-        { label: 'Refresh', click: ifVisible((view) => ViewService.reload(view)), accelerator: 'CommandOrControl+R' },
-        { label: 'Open DevTools', click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
+        { label: m.find, click: ifVisible((view) => ViewService.toggleFindbar(view, true)), accelerator: 'CommandOrControl+F' },
+        { label: m.dismiss, visible: false, click: ifVisible((view) => { ViewService.toggleFindbar(view, false); view.webContents.focus(); }), accelerator: 'Esc' },
+        { label: m.back, click: ifVisible((view) => ViewService.goBack(view)), accelerator: 'CommandOrControl+Left' },
+        { label: m.forward, click: ifVisible((view) => ViewService.goForward(view)), accelerator: 'CommandOrControl+Right' },
+        { label: m.refresh, click: ifVisible((view) => ViewService.reload(view)), accelerator: 'CommandOrControl+R' },
+        { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
       ],
       /* eslint-enable @stylistic/max-len */
     });

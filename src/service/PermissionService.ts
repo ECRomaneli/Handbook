@@ -1,3 +1,4 @@
+import AppState from '@/AppState';
 import { IsDebug, Permission } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page } from '@/model/Page';
@@ -165,7 +166,7 @@ class PermissionService {
   }
 
   private static getHumanReadablePermissions(permissions: string[]): string[] {
-    return permissions.map((p) => (Permission.Text as Record<string, string>)[p] ?? p);
+    return permissions.map((p) => AppState.strings.permission.text[p] ?? p);
   }
 
   // eslint-disable-next-line @stylistic/max-len
@@ -178,15 +179,16 @@ class PermissionService {
     }
 
     const humanReadablePermissions = PermissionService.getHumanReadablePermissions(data.permissions);
-
+    const p = AppState.strings.permission;
+    const permissions = '\n - ' + humanReadablePermissions.join('\n - ');
     const result = await Dialog.show(
       parent.isVisible() ? parent : null,
       {
         // icon: Path.LOGO,
         type: 'question',
-        title: 'Permission Request',
-        message: `${data.url} wants to access the following permissions:\n - ${humanReadablePermissions.join('\n - ')}`,
-        buttons: ['Allow', 'Allow this time', 'Deny', 'Ask Later'],
+        title: p.request,
+        message: p.message.replace('{origin}', data.url).replace('{permissions}', permissions),
+        buttons: [p.allow, p.allowOnce, p.deny, p.askLater],
         defaultId: 3,
         cancelId: 3,
         textWidth: 600,

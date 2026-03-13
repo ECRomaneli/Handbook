@@ -10,11 +10,10 @@ app.component('Settings', {
                 </template>
             </template>
         </template>
-        <span v-else>Loading...</span>
       </div>
     `,
   emits: ['update'],
-  inject: ['$remote', '$const', '$clone'],
+  inject: ['$remote', '$const', '$clone', '$i18n'],
   props: { settings: Object },
   data() { return { inputs: null } },
   created() {
@@ -49,6 +48,7 @@ app.component('Settings', {
 
     async loadSettings() {
       const storage = this.$remote.storage
+      const s = this.$i18n.preferences.settings
       const options = []
       Object.keys(this.$const.Positions).forEach(key => {
         const value = this.$const.Positions[key]
@@ -56,170 +56,170 @@ app.component('Settings', {
       })
 
       this.inputs = {
-        General: [
+        [s.general]: [
           {
             id: this.$const.Settings.AUTO_LAUNCH,
-            label: 'Launch at startup',
-            description: 'Automatically launch the app when the system starts. Requires permission to run at startup.',
+            label: s.launchAtStartup,
+            description: s.launchAtStartupDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.AUTO_LAUNCH) }
           },
           {
             id: this.$const.Settings.TRAY_LONGPRESS,
-            label: 'Tray icon long-press timeout',
-            description: 'Specify the duration, in milliseconds, for triggering the context menu when performing a long-press on the tray icon.',
+            label: s.trayLongpress,
+            description: s.trayLongpressDesc,
             disabled: !this.$const.OS.IS_DARWIN,
             data: { type: 'number', min: 200, value: await storage.getSettings(this.$const.Settings.TRAY_LONGPRESS), unit: 'ms' }
           },
           {
             id: this.$const.Settings.ACTION_AREA,
-            label: 'Action area height',
-            description: 'Denotes the height, in pixels, of the region situated atop the window, designated for maximize and move a frameless windows. Automatically disabled when the frame is enabled.',
+            label: s.actionArea,
+            description: s.actionAreaDesc,
             data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.Settings.ACTION_AREA), unit: 'px' }
           },
           {
             id: this.$const.Settings.APP_THEME,
-            label: 'Preferred theme',
-            description: 'Specify the favorite appearance. It may take a few minutes to affect websites.',
+            label: s.appTheme,
+            description: s.appThemeDesc,
             data: {
               type: 'select', value: await storage.getSettings(this.$const.Settings.APP_THEME),
               options: [
-                { label: 'System', value: 'system' },
-                { label: 'Light', value: 'light' },
-                { label: 'Dark', value: 'dark' }
+                { label: s.themeSystem, value: 'system' },
+                { label: s.themeLight, value: 'light' },
+                { label: s.themeDark, value: 'dark' }
               ]
             }
           },
           {
             id: this.$const.Settings.TRAY_ICON_THEME,
-            label: 'Tray icon theme',
-            description: 'Force the tray icon appearance.',
+            label: s.trayIconTheme,
+            description: s.trayIconThemeDesc,
             disabled: this.$const.OS.IS_DARWIN,
             data: {
               type: 'select', value: await storage.getSettings(this.$const.Settings.TRAY_ICON_THEME),
               options: [
-                { label: 'System', value: 'system' },
-                { label: 'Preferred', value: 'preferred' },
-                { label: 'Light', value: 'light' },
-                { label: 'Dark', value: 'dark' },
-                { label: 'Gray', value: 'gray' }
+                { label: s.themeSystem, value: 'system' },
+                { label: s.trayPreferred, value: 'preferred' },
+                { label: s.themeLight, value: 'light' },
+                { label: s.themeDark, value: 'dark' },
+                { label: s.trayGray, value: 'gray' }
               ]
             }
           },
           {
             id: this.$const.Settings.USE_EXTERNAL_BROWSER,
-            label: 'Use external browser',
-            description: 'Open links in the system default browser instead of a new window in the app.',
+            label: s.useExternalBrowser,
+            description: s.useExternalBrowserDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
           },
           {
             id: this.$const.Settings.GROUP_PAGES_BY_SESSION,
-            label: 'Group pages by session',
-            description: 'Organize pages in the tray and context menus grouped by their session.',
+            label: s.groupPagesBySession,
+            description: s.groupPagesBySessionDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
           }
         ],
-        Appearance: [
+        [s.appearance]: [
           {
             id: this.$const.Settings.SHOW_FRAME,
-            label: 'Show frame',
+            label: s.showFrame,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
           },
           {
             id: this.$const.Settings.BACKGROUND_COLOR,
-            label: 'Background color',
-            description: 'Background color for loading windows.',
+            label: s.backgroundColor,
+            description: s.backgroundColorDesc,
             data: { type: 'color', value: await storage.getSettings(this.$const.Settings.BACKGROUND_COLOR) }
           },
           {
             id: this.$const.Settings.FOCUS_OPACITY,
-            label: 'Opacity when focused',
-            description: 'Opacity when window is focused.',
+            label: s.focusOpacity,
+            description: s.focusOpacityDesc,
             disabled: this.$const.OS.IS_LINUX,
             data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.FOCUS_OPACITY), unit: '%' }
           },
           {
             id: this.$const.Settings.BLUR_OPACITY,
-            label: 'Opacity when blurred',
-            description: 'Opacity when window is blurred.',
+            label: s.blurOpacity,
+            description: s.blurOpacityDesc,
             disabled: this.$const.OS.IS_LINUX,
             data: { type: 'number', min: 10, max: 100, value: await storage.getSettings(this.$const.Settings.BLUR_OPACITY), unit: '%' }
           },
           {
             id: this.$const.Settings.KEEP_OPACITY_WHEN_MAXIMIZED,
-            label: 'Keep opacity when maximized',
-            description: 'Ignore the blur opacity if the window is maximized.',
+            label: s.keepOpacity,
+            description: s.keepOpacityDesc,
             disabled: this.$const.OS.IS_LINUX,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_WHEN_MAXIMIZED) }
           },
           {
             id: this.$const.Settings.ALLOW_FULLSCREEN,
-            label: 'Allow fullscreen',
-            description: 'Allow the window to enter fullscreen mode. If disabled, the media, when in fullscreen, will fit the window.',
+            label: s.allowFullscreen,
+            description: s.allowFullscreenDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
           }
         ],
-        Bounds: [
+        [s.bounds]: [
           {
             id: this.$const.Settings.RESET_BOUNDS,
-            label: 'Reset bounds to defaults on restart',
-            description: 'On restart the app, reset windows to default state. Choose "None" to disable it.',
+            label: s.resetBounds,
+            description: s.resetBoundsDesc,
             data: {
               type: 'select', value: await storage.getSettings(this.$const.Settings.RESET_BOUNDS),
               options: [
-                { label: 'None', value: '' },
-                { label: 'Position', value: 'position' },
-                { label: 'Size/Position', value: 'bounds' }
+                { label: s.boundsNone, value: '' },
+                { label: s.boundsPosition, value: 'position' },
+                { label: s.boundsSizePosition, value: 'bounds' }
               ]
             }
           },
           {
             id: this.$const.Settings.SHARE_BOUNDS,
-            label: 'Share size and position',
-            description: 'If enabled, all windows will share the same size and position when swapping between them.',
+            label: s.shareBounds,
+            description: s.shareBoundsDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHARE_BOUNDS) }
           },
           {
             id: this.$const.Settings.DEFAULT_POSITION,
-            label: 'Default Position',
-            description: 'New window default positioning.',
+            label: s.defaultPosition,
+            description: s.defaultPositionDesc,
             data: { type: 'select', value: await storage.getSettings(this.$const.Settings.DEFAULT_POSITION), options: options }
           },
           {
             id: this.$const.Settings.DEFAULT_WIDTH,
-            label: 'Default width',
-            description: 'New window default width.',
+            label: s.defaultWidth,
+            description: s.defaultWidthDesc,
             data: { type: 'number', value: await storage.getSettings(this.$const.Settings.DEFAULT_WIDTH), unit: 'px' }
           },
           {
             id: this.$const.Settings.DEFAULT_HEIGHT,
-            label: 'Default height',
-            description: 'New window default height.',
+            label: s.defaultHeight,
+            description: s.defaultHeightDesc,
             data: { type: 'number', value: await storage.getSettings(this.$const.Settings.DEFAULT_HEIGHT), unit: 'px' }
           }
         ],
-        Shortcuts: [
+        [s.shortcuts]: [
           {
             id: this.$const.Settings.HIDE_SHORTCUT,
-            label: 'Hide when focused',
-            description: 'Shortcut to hide when window is focused. Minimum of two keys. The supported keys vary by OS.',
+            label: s.hideShortcut,
+            description: s.hideShortcutDesc,
             data: { type: 'key', value: await storage.getSettings(this.$const.Settings.HIDE_SHORTCUT) }
           },
           {
             id: this.$const.Settings.GLOBAL_SHORTCUT,
-            label: 'Toggle window',
-            description: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
+            label: s.globalShortcut,
+            description: s.globalShortcutDesc,
             data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
           }
         ],
-        Advanced: [
+        [s.advanced]: [
           {
             id: this.$const.Settings.PREFERRED_LANGUAGE,
-            label: 'Preferred language',
-            description: 'Force a preferred language for web pages via Accept-Language header. This header does not guarantee the language will be applied. Requires restart to take effect on existing sessions.',
+            label: s.preferredLanguage,
+            description: s.preferredLanguageDesc,
             data: {
               type: 'select', value: await storage.getSettings(this.$const.Settings.PREFERRED_LANGUAGE),
               options: [
-                { label: 'Default', value: '' },
+                { label: s.langDefault, value: '' },
                 { label: 'English (US)', value: 'en-US' },
                 { label: 'English (UK)', value: 'en-GB' },
                 { label: 'Português (Brasil)', value: 'pt-BR' },
@@ -240,8 +240,8 @@ app.component('Settings', {
           },
           {
             id: this.$const.Settings.GOOGLE_API_KEY,
-            label: 'Google API key',
-            description: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
+            label: s.googleApiKey,
+            description: s.googleApiKeyDesc,
             data: { type: 'secret', value: await storage.getSettings(this.$const.Settings.GOOGLE_API_KEY) }
           }
         ]

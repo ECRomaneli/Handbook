@@ -23,7 +23,8 @@ app.use({
         onPermissionsQuery: (callback) => { ipcRenderer.on('preferences:permissions-query', (_, query) => { callback(query) }) },
         onUpdateRenderer: (callback) => { ipcRenderer.on('preferences:settings-updated', (_, id, value) => { callback(id, value) }) },
         confirm: (data) => ipcRenderer.invoke('preferences:confirm', data),
-        getConstants: () => ipcRenderer.invoke('preferences:constants')
+        getConstants: () => ipcRenderer.invoke('preferences:constants'),
+        i18n: () => ipcRenderer.invoke('preferences:i18n')
       },
 
       updater: {
@@ -59,6 +60,7 @@ app.use({
 
     app.provide('$remote', $remote)
     app.provide('$const', await $remote.preferences.getConstants())
+    app.provide('$i18n', await $remote.preferences.i18n());
     window.$remote = $remote
   }
 })

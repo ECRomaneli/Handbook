@@ -22,7 +22,7 @@ class AppState {
   private _systemTheme = this.getSystemTheme();
   private _tray?: Tray;
   private _preferences?: BrowserWindow;
-  private _fromClipboardPage: Page = new Page(void 0, this.strings.contextMenu.fromClipboard);
+  private _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private _pages: Page[] = [];
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
   private readonly contextMenu: {
