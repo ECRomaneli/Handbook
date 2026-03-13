@@ -1,54 +1,54 @@
 @media (prefers-color-scheme: light) {
-    :root {
-        color-scheme: light;
-        
-        /* Main colors */
-        --background-color: #f6f8fa;
-        --color: #1F2328;
-        --divider-border-color: #d8dee4;
-        --border-color: #d0d7de;
+  :root {
+    color-scheme: light;
 
-        /* Table colors */
-        --table-background: #fafafa;
-		--table-border: #e5e5e5;
-        --table-header-background: #e8ecef;
-        --table-header-border: #e5e5e5;
-        --table-body-border: #e8ecef;
-        --table-body-color: #555;
+    /* Main colors */
+    --background-color: #f6f8fa;
+    --color: #1a1e24;
+    --divider-border-color: #cdd3da;
+    --border-color: #c5ccd4;
 
-        /* Accordion colors */
-        --accordion-background: #fafafa;
-		--accordion-border: #e5e5e5;
-		--accordion-header-background: #f7f9f9;
-		--accordion-active-header-background: #e8ecef;
+    /* Table colors */
+    --table-background: #fafafa;
+    --table-border: #d6dbe1;
+    --table-header-background: #e4e9ed;
+    --table-header-border: #d6dbe1;
+    --table-body-border: #e4e9ed;
+    --table-body-color: #3b3f44;
 
-        /* Badges */
-        --badge-bg-low-key: #e3e3e3;
-        --badge-text-low-key: #1F2328;
+    /* Accordion colors */
+    --accordion-background: #fafafa;
+    --accordion-border: #d6dbe1;
+    --accordion-header-background: #f3f5f7;
+    --accordion-active-header-background: #e4e9ed;
 
-        /* Form elements */
-        --input-background: #fff;
-        --input-color: #1F2328;
-        --input-border: #d0d7de;
-        --input-divider-color: #bbb;
+    /* Badges */
+    --badge-bg-low-key: #dcdfe3;
+    --badge-text-low-key: #1a1e24;
 
-        /* Tab styling */
-        --tab-active-color: #1F2328;
-        --tab-active-border: #f78166;
-        --tab-hover-background: #e8ecef;
+    /* Form elements */
+    --input-background: #fff;
+    --input-color: #1a1e24;
+    --input-border: #c5ccd4;
+    --input-divider-color: #999;
 
-        /* Button colors */
-        --btn-secondary-background: #e8ecef;
-        --btn-secondary-border: #d0d7de;
-        --btn-secondary-color: #1F2328;
-        --btn-secondary-hover: #d0d7de;
+    /* Tab styling */
+    --tab-active-color: #1a1e24;
+    --tab-active-border: #f78166;
+    --tab-hover-background: #e4e9ed;
 
-        /* Scrollbar */
-        --scrollbar-thumb: #969696;
-        --scrollbar-track: #e8e8e8;
-    }
+    /* Button colors */
+    --btn-secondary-background: #e4e9ed;
+    --btn-secondary-border: #c5ccd4;
+    --btn-secondary-color: #1a1e24;
+    --btn-secondary-hover: #d4dae0;
 
-    .input-group-text {
-        background-color: #e9ecef !important;
-    }
+    /* Scrollbar */
+    --scrollbar-thumb: #888;
+    --scrollbar-track: #e0e0e0;
+  }
+
+  .input-group-text {
+    background-color: #e9ecef !important;
+  }
 }
