@@ -34,11 +34,12 @@ app.component('Settings', {
     },
 
     emitUpdate(input) {
-      if (input.data.type === 'button') {
-        this.$remote.preferences.buttonClick(input.id, input.data.value)
-      } else {
-        this.$remote.storage.setSettings(input.id, input.data.value)
-      }
+      // if (input.data.type === 'button') {
+      //   this.$remote.preferences.buttonClick(input.id, input.data.value)
+      // } else {
+      //   this.$remote.storage.setSettings(input.id, input.data.value)
+      // }
+      this.$remote.storage.setSettings(input.id, input.data.value)
       this.$emit('update', this.$clone(input), input.data.value)
     },
 

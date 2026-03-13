@@ -18,7 +18,7 @@ app.use({
 
       preferences: {
         emitReady: () => { ipcRenderer.send('preferences:ready') },
-        buttonClick: (id, value) => { ipcRenderer.send('preferences:button-click', id, value) },
+        // buttonClick: (id, value) => { ipcRenderer.send('preferences:button-click', id, value) },
         onPermissionsUpdated: (callback) => { ipcRenderer.on('preferences:permissions-updated', (_, permissions) => { callback(permissions) }) },
         onPermissionsQuery: (callback) => { ipcRenderer.on('preferences:permissions-query', (_, query) => { callback(query) }) },
         onUpdateRenderer: (callback) => { ipcRenderer.on('preferences:settings-updated', (_, id, value) => { callback(id, value) }) },
