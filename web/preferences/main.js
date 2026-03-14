@@ -38,7 +38,7 @@ const app = Vue.createApp({
             </ul>
 
             <div class="tab-content p-3 overflow-auto">
-                <div class="tab-pane" :class="{ active: tab === 'pages' }">
+                <div class="tab-pane container" :class="{ active: tab === 'pages' }">
                     <pages @navigate="navigateToTab"></pages>
                 </div>
                 <div class="tab-pane container" :class="{ active: tab === 'permissions' }">

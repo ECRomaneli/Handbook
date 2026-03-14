@@ -272,11 +272,15 @@ export const ptBR: Strings = {
     pages: {
       syncHint: 'ou importe suas páginas de um backup usando a aba "Sincronização".',
       label: 'Nome',
+      labelPlaceholder: 'Nome da página',
       url: 'URL',
-      sessionId: 'ID da Sessão',
+      urlPlaceholder: 'https://exemplo.com',
+      sessionId: 'Sessão',
       persist: 'Persistir',
       persistTooltip: 'Páginas persistentes não serão fechadas quando outra página for selecionada',
       remove: 'Remover',
+      drag: 'Arrastar para reordenar',
+      addPage: 'Adicionar página',
       defaultSession: 'Padrão',
     },
 

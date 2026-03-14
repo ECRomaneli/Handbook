@@ -271,11 +271,15 @@ export const en = {
     pages: {
       syncHint: 'or import your pages from a backup using the "Sync" tab.',
       label: 'Label',
+      labelPlaceholder: 'Page name',
       url: 'URL',
-      sessionId: 'Session ID',
+      urlPlaceholder: 'https://example.com',
+      sessionId: 'Session',
       persist: 'Persist',
       persistTooltip: 'Persistent pages will not close when another page is selected',
       remove: 'Remove',
+      drag: 'Drag to reorder',
+      addPage: 'Add page',
       defaultSession: 'Default',
     },
 

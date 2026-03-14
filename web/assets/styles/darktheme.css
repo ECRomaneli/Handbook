@@ -71,11 +71,6 @@
     filter: invert(1);
   }
 
-  /* Map table adjustments */
-  .map-table textarea:focus {
-    background-color: var(--input-background);
-  }
-
   .accordion-button::after {
     filter: grayscale(1);
   }
