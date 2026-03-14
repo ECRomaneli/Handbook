@@ -12,11 +12,7 @@ app.component('PageTable', {
            @drop="drop(index)">
 
         <div class="page-card-handle" :title="$i18n.preferences.pages.drag">
-          <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-            <circle cx="5" cy="3" r="1.5"/><circle cx="11" cy="3" r="1.5"/>
-            <circle cx="5" cy="8" r="1.5"/><circle cx="11" cy="8" r="1.5"/>
-            <circle cx="5" cy="13" r="1.5"/><circle cx="11" cy="13" r="1.5"/>
-          </svg>
+          <i class="icon icon-grip"></i>
         </div>
 
         <div class="page-card-content">
@@ -43,24 +39,16 @@ app.component('PageTable', {
 
         <div class="page-card-actions">
           <button class="page-card-action-btn" :class="{ 'page-card-pin-active': page.persist }" :title="$i18n.preferences.pages.persistTooltip" @click="page.persist = !page.persist; emitUpdate(page)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path v-if="page.persist" d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5a.5.5 0 0 1-1 0V10h-4A.5.5 0 0 1 3 9.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 0 1 5 6.708V2.277a2.77 2.77 0 0 1-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 0 1 .146-.354z"/>
-              <path v-else d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5a.5.5 0 0 1-1 0V10h-4A.5.5 0 0 1 3 9.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 0 1 5 6.708V2.277a2.77 2.77 0 0 1-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 0 1 .146-.354zm1.58 1.408l-.002-.001.002.001zm-.002-.001A1.13 1.13 0 0 1 5.375 1h5.25a1.13 1.13 0 0 1 .351.574l.002.001a.5.5 0 0 1-.078.186 2.054 2.054 0 0 1-.174.163V6.75a.5.5 0 0 1-.218.412l-.168.103a4.96 4.96 0 0 0-.625.463c-.336.292-.592.609-.746.906H7.032a3.01 3.01 0 0 0-.746-.906 4.96 4.96 0 0 0-.625-.463l-.168-.103A.5.5 0 0 1 5.275 6.75V1.723A2.054 2.054 0 0 1 5.1 1.56a.5.5 0 0 1-.078-.186z"/>
-            </svg>
+            <i class="icon" :class="page.persist ? 'icon-pin-filled' : 'icon-pin'"></i>
           </button>
-          <button class="page-card-action-btn page-card-remove-btn" :title="$i18n.preferences.pages.remove" @click="removePage(index)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H5.5l1-1h3l1 1h2.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-            </svg>
+          <button tabindex="-1" class="page-card-action-btn page-card-remove-btn" :title="$i18n.preferences.pages.remove" @click="removePage(index)">
+            <i class="icon icon-trash"></i>
           </button>
         </div>
       </div>
 
-      <div class="page-card page-card-add" @click="addPage()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
-        </svg>
+      <div tabindex="-1" class="page-card page-card-add" @click="addPage()">
+        <i class="icon icon-plus"></i>
         <span>{{ $i18n.preferences.pages.addPage }}</span>
       </div>
     </div>
