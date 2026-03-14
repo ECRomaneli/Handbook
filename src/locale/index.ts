@@ -1,14 +1,26 @@
 /**
  * Internationalization (i18n) manager
  */
+import { de } from './de';
 import { en } from './en';
+import { es } from './es';
+import { fr } from './fr';
+import { it } from './it';
 import { ptBR } from './pt-BR';
+import { ptPT } from './pt-PT';
+import { ru } from './ru';
 
 export type Strings = typeof en & Record<string, unknown>;
 
 const locales = {
   en,
+  de,
+  es,
+  fr,
+  it,
   'pt-BR': ptBR,
+  'pt-PT': ptPT,
+  ru,
 };
 
 export type Language = keyof typeof locales;

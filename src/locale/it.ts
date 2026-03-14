@@ -1,0 +1,342 @@
+import { Strings } from '@/locale';
+
+/**
+ * Italian (it) translations
+ */
+export const it: Strings = {
+  app: {
+    title: 'Handbook',
+  },
+
+  tray: {
+    tooltip: 'Clicca per alternare',
+  },
+
+  notifications: {
+    onReady: {
+      title: 'Handbook è pronto!',
+      content: 'Puoi fissarlo nella barra di notifica e cliccare sull\'icona per accedere alle opzioni.',
+      contentNonWin: 'Clicca sull\'icona nella barra di notifica per accedere alle opzioni.',
+    },
+    secondInstance: {
+      title: 'Handbook è già in esecuzione!',
+      content: 'Handbook è già in esecuzione. Usa l\'icona nella barra di notifica.',
+    },
+  },
+
+  menu: {
+    fromClipboard: 'URL dagli Appunti',
+    showHidePage: 'Mostra / Nascondi Pagina',
+    activePages: 'Pagine Attive',
+    closeOtherPages: 'Chiudi Altre Pagine',
+    closeAllPages: 'Chiudi Tutte le Pagine',
+    preferences: 'Preferenze...',
+    exit: 'Esci',
+    hide: 'Nascondi',
+    show: 'Mostra',
+    unmute: 'Attiva Audio',
+    mute: 'Disattiva Audio',
+    close: 'Chiudi',
+    find: 'Cerca...',
+    back: 'Indietro',
+    forward: 'Avanti',
+    refresh: 'Aggiorna',
+    home: 'Home',
+    resetWindow: 'Ripristina Finestra',
+    resetBounds: 'Ripristina Posizione',
+    copyUrl: 'Copia URL',
+    copyLink: 'Copia Link',
+    openInBrowser: 'Apri nel Browser',
+    createPageFromUrl: 'Crea Pagina da URL',
+    openDevTools: 'Apri DevTools',
+    permissions: 'Permessi',
+    save: 'Salva...',
+    page: 'Pagina',
+    dismiss: 'Ignora',
+    window: 'Finestra',
+    handbook: 'Handbook',
+    listPages: 'Elenco Pagine',
+    muteUnmute: 'Attiva/Disattiva Audio',
+  },
+
+  dialog: {
+    ok: 'OK',
+    yes: 'Sì',
+    no: 'No',
+    confirm: 'Confermare?',
+    confirmation: 'Conferma',
+    areYouSure: 'Sei sicuro?',
+    cancel: 'Annulla',
+    saveFile: 'Salva File',
+  },
+
+  sync: {
+    importConfig: 'Importa Configurazione',
+    exportConfig: 'Esporta Configurazione',
+    importSuccess: 'Importazione Riuscita',
+    importSuccessMsg: 'Configurazione importata con successo.',
+    importFailed: 'Importazione Fallita',
+    importFailedMsg: 'Impossibile importare il file di configurazione. Assicurati che il file sia in formato JSON valido.',
+    exportSuccess: 'Esportazione Riuscita',
+    exportSuccessMsg: 'Configurazione esportata con successo in:',
+    exportFailedMsg: 'Impossibile esportare il file di configurazione. Riprova.',
+    exportFailed: 'Esportazione Fallita',
+    pushSuccess: 'Invio Riuscito',
+    pushSuccessMsg: 'Configurazione inviata a GitHub Gist.',
+    pushFailed: 'Invio Fallito',
+    pullFailed: 'Pull Fallito',
+    pullNoGistId: 'Nessun gist trovato. Invia prima per crearne uno o inserisci un ID Gist esistente.',
+    pullSuccess: 'Pull Riuscito',
+    pullSuccessMsg: 'Configurazione scaricata da GitHub Gist.',
+    gistDescription: 'Backup Configurazione Handbook',
+    friendlyError: {
+      e401: 'Autenticazione fallita. Verifica che il tuo token GitHub sia valido e non sia scaduto.',
+      e403: 'Permesso negato. Il tuo token potrebbe non avere l\'ambito "gist" richiesto o hai raggiunto il limite dell\'API.',
+      e404: 'Gist non trovato. L\'ID del Gist configurato potrebbe essere errato o il gist potrebbe essere stato eliminato.',
+      e422: 'La richiesta è stata rifiutata da GitHub. I dati inviati potrebbero non essere validi o il contenuto del gist è vuoto.',
+      e5xx: 'GitHub sta riscontrando problemi. Riprova tra qualche istante.',
+      notFoundGist: 'Il file "{fileName}" non è stato trovato nel gist. Assicurati di utilizzare un gist creato da Handbook.',
+      network: 'Errore di comunicazione. Verifica la tua connessione internet e riprova.',
+      dns: 'Impossibile raggiungere GitHub. Verifica le impostazioni di rete o riprova più tardi.',
+      jsonParse: 'Risposta inattesa ricevuta da GitHub. Il contenuto del gist potrebbe essere corrotto.',
+      fallback: 'Si è verificato un errore imprevisto: {errorMessage}',
+    },
+  },
+
+  application: {
+    shortcutFailed: 'Impossibile creare il collegamento',
+    autoLaunchTitle: 'Avvia con il Sistema',
+    autoLaunchMsg: 'Vuoi che Handbook si avvii automaticamente all\'avvio del sistema?',
+    autoLaunchFailed: 'Avvio Automatico Fallito',
+    autoLaunchFailedMsg: 'Purtroppo non è stato possibile configurare Handbook per l\'avvio automatico. Vuoi disabilitarlo?',
+  },
+
+  exitDialog: {
+    title: 'Esci',
+    message: 'Sei sicuro di voler uscire da Handbook?',
+    confirm: 'Conferma',
+  },
+
+  permission: {
+    request: 'Richiesta di Permesso',
+    message: '{origin} desidera accedere ai seguenti permessi: {permissions}',
+    allow: 'Consenti',
+    allowOnce: 'Consenti questa volta',
+    deny: 'Nega',
+    askLater: 'Chiedi Dopo',
+    ask: 'Chiedi',
+    text: {
+      // Media permissions
+      'media: video': 'Fotocamera',
+      'media: audio': 'Microfono',
+      'speaker-selection': 'Selezione Altoparlante',
+      'media': 'Condivisione Media',
+
+      // Location and sensors
+      'geolocation': 'Posizione',
+      'sensors': 'Accesso ai Sensori',
+
+      // System
+      'notifications': 'Notifiche',
+      'midi': 'Dispositivi MIDI',
+      'midiSysex': 'Accesso al Sistema MIDI',
+      'idle-detection': 'Rilevamento Attività Utente',
+      'clipboard-read': 'Leggere dagli Appunti',
+      'clipboard-write': 'Scrivere negli Appunti',
+      'clipboard-sanitized-write': 'Scrivere Testo negli Appunti',
+
+      // File system
+      'file-system': 'Accesso al File System',
+      'file-system-write': 'Scrivere File',
+      'file-system-read': 'Leggere File',
+
+      // External resources
+      'openExternal': 'Aprire Applicazioni Esterne',
+      'protocol-register': 'Registrare Gestore Protocollo',
+
+      // Device access
+      'usb': 'Dispositivi USB',
+      'serial': 'Porte Seriali',
+      'bluetooth': 'Dispositivi Bluetooth',
+      'bluetooth-scanning': 'Scansione Bluetooth',
+      'hid': 'Dispositivi di Input',
+      'pointerLock': 'Bloccare il Puntatore',
+      'keyboardLock': 'Bloccare la Tastiera',
+
+      // Window management
+      'fullscreen': 'Modalità Schermo Intero',
+      'automatic-fullscreen': 'Schermo Intero Automatico',
+      'screen-wake-lock': 'Impedire la Sospensione',
+
+      // Storage
+      'top-level-storage-access': 'Accesso allo Storage di Livello Superiore',
+      'persistent-storage': 'Storage Persistente',
+      'background-sync': 'Sincronizzazione in Background',
+    },
+  },
+
+  preferences: {
+    title: 'Preferenze',
+    tabs: {
+      pages: 'Pagine',
+      permissions: 'Permessi',
+      settings: 'Impostazioni',
+      sync: 'Sincronizzazione',
+      about: 'Informazioni',
+    },
+    restartApp: 'Riavviare l\'applicazione?',
+    restartForApiKey: 'È necessario un riavvio completo affinché la chiave API di Google abbia effetto. Riavviare ora?',
+    restartForLanguage: 'È necessario un riavvio affinché l\'impostazione della lingua abbia effetto su tutte le sessioni. Riavviare ora?',
+
+    settings: {
+      general: 'Generale',
+      appearance: 'Aspetto',
+      bounds: 'Dimensione e Posizione',
+      shortcuts: 'Scorciatoie',
+      advanced: 'Avanzate',
+
+      launchAtStartup: 'Avvia con il sistema',
+      launchAtStartupDesc: 'Avvia automaticamente l\'app all\'avvio del sistema. Richiede il permesso di esecuzione all\'avvio.',
+      trayLongpress: 'Timeout pressione prolungata sull\'icona di notifica',
+      trayLongpressDesc: 'Specifica la durata, in millisecondi, per attivare il menu contestuale durante una pressione prolungata sull\'icona di notifica.',
+      actionArea: 'Altezza dell\'area di azione',
+      actionAreaDesc: 'Indica l\'altezza, in pixel, della regione nella parte superiore della finestra, destinata a massimizzare e spostare le finestre senza cornice. Si disattiva automaticamente quando la cornice è abilitata.',
+      appTheme: 'Tema preferito',
+      appThemeDesc: 'Specifica l\'aspetto preferito. Potrebbe richiedere alcuni minuti per influenzare i siti web.',
+      trayIconTheme: 'Tema dell\'icona di notifica',
+      trayIconThemeDesc: 'Forza l\'aspetto dell\'icona di notifica.',
+      useExternalBrowser: 'Usa browser esterno',
+      useExternalBrowserDesc: 'Apri i link nel browser predefinito del sistema invece di una nuova finestra nell\'app.',
+      groupPagesBySession: 'Raggruppa pagine per sessione',
+      groupPagesBySessionDesc: 'Organizza le pagine nella barra di notifica e nei menu contestuali raggruppate per sessione.',
+
+      showFrame: 'Mostra barra del titolo',
+      backgroundColor: 'Colore di sfondo',
+      backgroundColorDesc: 'Colore di sfondo per le finestre in caricamento.',
+      focusOpacity: 'Opacità con focus',
+      focusOpacityDesc: 'Opacità quando la finestra è focalizzata.',
+      blurOpacity: 'Opacità senza focus',
+      blurOpacityDesc: 'Opacità quando la finestra non è focalizzata.',
+      keepOpacity: 'Mantieni opacità quando massimizzato',
+      keepOpacityDesc: 'Ignora l\'opacità di sfocatura se la finestra è massimizzata.',
+      allowFullscreen: 'Consenti schermo intero',
+      allowFullscreenDesc: 'Consente alla finestra di entrare in modalità schermo intero. Se disabilitato, il contenuto a schermo intero si adatterà alla finestra.',
+
+      resetBounds: 'Ripristina valori predefiniti al riavvio',
+      resetBoundsDesc: 'Al riavvio dell\'app, ripristina le finestre allo stato predefinito. Scegli "Nessuno" per disabilitarlo.',
+      shareBounds: 'Condividi dimensione e posizione',
+      shareBoundsDesc: 'Se abilitato, tutte le finestre condivideranno la stessa dimensione e posizione quando si alternano tra loro.',
+      defaultPosition: 'Posizione iniziale',
+      defaultPositionDesc: 'Posizionamento predefinito delle nuove finestre.',
+      defaultWidth: 'Larghezza iniziale',
+      defaultWidthDesc: 'Larghezza predefinita delle nuove finestre.',
+      defaultHeight: 'Altezza iniziale',
+      defaultHeightDesc: 'Altezza predefinita delle nuove finestre.',
+
+      hideShortcut: 'Nascondi con focus',
+      hideShortcutDesc: 'Scorciatoia per nascondere quando la finestra è focalizzata. Minimo due tasti. I tasti supportati variano in base al SO.',
+      globalShortcut: 'Alterna visibilità',
+      globalShortcutDesc: 'Scorciatoia per alternare la visibilità della finestra. Minimo due tasti. I tasti supportati variano in base al SO.',
+
+      preferredLanguage: 'Lingua preferita',
+      preferredLanguageDesc: 'Forza una lingua preferita per le pagine web tramite l\'intestazione "Accept-Language". Questa intestazione non garantisce che la lingua venga applicata. Richiede un riavvio per avere effetto sulle sessioni esistenti.',
+      googleApiKey: 'Chiave API Google',
+      googleApiKeyDesc: 'Fornisci una chiave API di Google Maps per una geolocalizzazione precisa. Senza di essa, le richieste di posizione potrebbero fallire o restituire dati imprecisi. Ottieni una chiave dalla Google Cloud Console con l\'API di Geolocalizzazione abilitata.',
+
+      themeSystem: 'Sistema',
+      themeLight: 'Chiaro',
+      themeDark: 'Scuro',
+      trayPreferred: 'Preferito',
+      trayGray: 'Grigio',
+      boundsNone: 'Nessuno',
+      boundsPosition: 'Posizione',
+      boundsSizePosition: 'Dimensione/Posizione',
+      langDefault: 'Predefinito',
+
+      screenPositions: {
+        topLeft: 'In Alto a Sinistra',
+        topCenter: 'In Alto al Centro',
+        topRight: 'In Alto a Destra',
+        middleLeft: 'Al Centro a Sinistra',
+        center: 'Centro',
+        middleRight: 'Al Centro a Destra',
+        bottomLeft: 'In Basso a Sinistra',
+        bottomCenter: 'In Basso al Centro',
+        bottomRight: 'In Basso a Destra',
+      },
+    },
+
+    pages: {
+      syncHint: 'oppure importa le tue pagine da un backup tramite la scheda "Sincronizzazione".',
+      label: 'Etichetta',
+      url: 'URL',
+      sessionId: 'ID Sessione',
+      persist: 'Persistente',
+      persistTooltip: 'Le pagine persistenti non verranno chiuse quando viene selezionata un\'altra pagina',
+      remove: 'Rimuovi',
+      defaultSession: 'Predefinita',
+    },
+
+    permissions: {
+      search: 'Cerca permessi...',
+      session: 'Sessione',
+      noPermissions: 'Nessun permesso',
+      noPermissionsGranted: 'Nessun permesso è stato concesso',
+      revoke: 'Revoca',
+      revokeSession: 'Revoca Permessi Sessione',
+      revokeSessionDialog: 'Revocare tutti i permessi per la sessione "{session}"?',
+      revokeUrl: 'Revoca Permessi URL',
+      revokeUrlDialog: 'Revocare tutti i permessi per "{url}"?',
+    },
+
+    sync: {
+      localFileTitle: 'Backup Locale',
+      localFileDesc: 'Esporta la tua configurazione in un file JSON o importa da un backup salvato in precedenza.',
+      githubGistTitle: 'Backup GitHub Gist',
+      githubGistDesc: 'Sincronizza la tua configurazione usando un GitHub Gist segreto. Richiede un token di accesso personale con ambito gist.',
+      import: 'Importa',
+      export: 'Esporta',
+      personalAccessToken: 'Token di Accesso Personale',
+      gistId: 'ID del Gist',
+      gistIdHint: '(opzionale, rilevato automaticamente dai tuoi gist)',
+      gistIdPlaceholder: 'Lascia vuoto per creare un nuovo gist',
+      hide: 'Nascondi',
+      show: 'Mostra',
+    },
+
+    about: {
+      visitProject: 'Visita il progetto su',
+    },
+
+    updates: {
+      currentVersion: 'Versione attuale:',
+      checkDescription: 'Controlla nuove versioni per mantenere Handbook aggiornato.',
+      checkForUpdates: 'Cerca Aggiornamenti',
+      checking: 'Ricerca aggiornamenti...',
+      macOsUnsupported: 'Gli aggiornamenti automatici non sono supportati su macOS per le app non firmate.',
+      openDownloadPage: 'Apri Pagina di Download',
+      downloadUpdate: 'Scarica Aggiornamento',
+      recheck: 'Ricontrolla',
+      restartNotice: 'L\'applicazione verrà riavviata per applicare l\'aggiornamento.',
+      restartAndInstall: 'Riavvia e Installa',
+      versionAvailable: 'Versione {version} disponibile!',
+      downloading: 'Scaricamento aggiornamento... {progress}%',
+      readyToInstall: 'Versione {version} pronta per l\'installazione.',
+      upToDate: 'Stai usando la versione più recente.',
+      checkAgain: 'Controlla di Nuovo',
+      updateFailed: 'Controllo aggiornamenti fallito',
+      updateError: 'Si è verificato un errore durante il controllo degli aggiornamenti. Riprova più tardi.',
+      retry: 'Riprova',
+    },
+  },
+
+  screenShare: {
+    title: 'Condividi Media',
+    shareYourScreen: 'Condividi il tuo schermo',
+    screen: 'Schermo',
+    window: 'Finestra',
+    shareAudio: 'Condividi audio',
+    cancel: 'Annulla',
+    share: 'Condividi',
+  },
+};

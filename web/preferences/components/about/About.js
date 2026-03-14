@@ -7,7 +7,7 @@ app.component('AboutTab', {
             </div>
             <pre ref="license" class="smallest"></pre>
             <div class="text-center mt-3">
-                <span class="smallest">{{ $i18n.preferences.about.visitProject }} </span><a href="https://github.com/ecromaneli/Handbook" target="_blank" class="smallest">GitHub</a>
+                <span class="smallest">{{ $i18n.preferences.about.visitProject }}&nbsp;</span><a href="https://github.com/ecromaneli/Handbook" target="_blank" class="smallest">GitHub</a>
             </div>
         </div>
     `,

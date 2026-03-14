@@ -1,0 +1,342 @@
+import { Strings } from '@/locale';
+
+/**
+ * Russian (ru) translations
+ */
+export const ru: Strings = {
+  app: {
+    title: 'Handbook',
+  },
+
+  tray: {
+    tooltip: 'Нажмите для переключения',
+  },
+
+  notifications: {
+    onReady: {
+      title: 'Handbook готов!',
+      content: 'Вы можете закрепить его на панели задач и нажать на значок для доступа к настройкам.',
+      contentNonWin: 'Нажмите на значок на панели задач для доступа к настройкам.',
+    },
+    secondInstance: {
+      title: 'Handbook уже запущен!',
+      content: 'Handbook уже запущен. Используйте значок на панели задач.',
+    },
+  },
+
+  menu: {
+    fromClipboard: 'URL из Буфера Обмена',
+    showHidePage: 'Показать / Скрыть Страницу',
+    activePages: 'Активные Страницы',
+    closeOtherPages: 'Закрыть Другие Страницы',
+    closeAllPages: 'Закрыть Все Страницы',
+    preferences: 'Настройки...',
+    exit: 'Выход',
+    hide: 'Скрыть',
+    show: 'Показать',
+    unmute: 'Включить Звук',
+    mute: 'Выключить Звук',
+    close: 'Закрыть',
+    find: 'Найти...',
+    back: 'Назад',
+    forward: 'Вперёд',
+    refresh: 'Обновить',
+    home: 'Домой',
+    resetWindow: 'Сбросить Окно',
+    resetBounds: 'Сбросить Положение',
+    copyUrl: 'Копировать URL',
+    copyLink: 'Копировать Ссылку',
+    openInBrowser: 'Открыть в Браузере',
+    createPageFromUrl: 'Создать Страницу из URL',
+    openDevTools: 'Открыть DevTools',
+    permissions: 'Разрешения',
+    save: 'Сохранить...',
+    page: 'Страница',
+    dismiss: 'Отклонить',
+    window: 'Окно',
+    handbook: 'Handbook',
+    listPages: 'Список Страниц',
+    muteUnmute: 'Включить/Выключить Звук',
+  },
+
+  dialog: {
+    ok: 'OK',
+    yes: 'Да',
+    no: 'Нет',
+    confirm: 'Подтвердить?',
+    confirmation: 'Подтверждение',
+    areYouSure: 'Вы уверены?',
+    cancel: 'Отмена',
+    saveFile: 'Сохранить Файл',
+  },
+
+  sync: {
+    importConfig: 'Импорт Конфигурации',
+    exportConfig: 'Экспорт Конфигурации',
+    importSuccess: 'Импорт Успешен',
+    importSuccessMsg: 'Конфигурация успешно импортирована.',
+    importFailed: 'Ошибка Импорта',
+    importFailedMsg: 'Не удалось импортировать файл конфигурации. Убедитесь, что файл имеет корректный формат JSON.',
+    exportSuccess: 'Экспорт Успешен',
+    exportSuccessMsg: 'Конфигурация успешно экспортирована в:',
+    exportFailedMsg: 'Не удалось экспортировать файл конфигурации. Повторите попытку.',
+    exportFailed: 'Ошибка Экспорта',
+    pushSuccess: 'Отправка Успешна',
+    pushSuccessMsg: 'Конфигурация отправлена в GitHub Gist.',
+    pushFailed: 'Ошибка Отправки',
+    pullFailed: 'Ошибка Получения',
+    pullNoGistId: 'Gist не найден. Сначала отправьте для создания или введите существующий ID Gist.',
+    pullSuccess: 'Получение Успешно',
+    pullSuccessMsg: 'Конфигурация загружена из GitHub Gist.',
+    gistDescription: 'Резервная Копия Конфигурации Handbook',
+    friendlyError: {
+      e401: 'Ошибка аутентификации. Убедитесь, что ваш токен GitHub действителен и не истёк.',
+      e403: 'Доступ запрещён. Ваш токен может не иметь необходимой области "gist" или вы превысили лимит API.',
+      e404: 'Gist не найден. Настроенный ID Gist может быть неверным или gist мог быть удалён.',
+      e422: 'Запрос был отклонён GitHub. Отправленные данные могут быть некорректными или содержимое gist пусто.',
+      e5xx: 'GitHub испытывает проблемы. Повторите попытку через несколько минут.',
+      notFoundGist: 'Файл "{fileName}" не найден в gist. Убедитесь, что вы используете gist, созданный Handbook.',
+      network: 'Ошибка связи. Проверьте подключение к интернету и повторите попытку.',
+      dns: 'Не удалось связаться с GitHub. Проверьте настройки сети или повторите попытку позже.',
+      jsonParse: 'Получен неожиданный ответ от GitHub. Содержимое gist может быть повреждено.',
+      fallback: 'Произошла непредвиденная ошибка: {errorMessage}',
+    },
+  },
+
+  application: {
+    shortcutFailed: 'Не удалось создать ярлык',
+    autoLaunchTitle: 'Запуск при Старте Системы',
+    autoLaunchMsg: 'Хотите, чтобы Handbook запускался автоматически при старте системы?',
+    autoLaunchFailed: 'Ошибка Настройки Автозапуска',
+    autoLaunchFailedMsg: 'К сожалению, не удалось настроить автозапуск Handbook. Хотите отключить эту функцию?',
+  },
+
+  exitDialog: {
+    title: 'Выход',
+    message: 'Вы уверены, что хотите выйти из Handbook?',
+    confirm: 'Подтвердить',
+  },
+
+  permission: {
+    request: 'Запрос Разрешения',
+    message: '{origin} запрашивает доступ к следующим разрешениям: {permissions}',
+    allow: 'Разрешить',
+    allowOnce: 'Разрешить однократно',
+    deny: 'Отклонить',
+    askLater: 'Спросить Позже',
+    ask: 'Спросить',
+    text: {
+      // Media permissions
+      'media: video': 'Камера',
+      'media: audio': 'Микрофон',
+      'speaker-selection': 'Выбор Динамика',
+      'media': 'Общий Доступ к Мультимедиа',
+
+      // Location and sensors
+      'geolocation': 'Местоположение',
+      'sensors': 'Доступ к Датчикам',
+
+      // System
+      'notifications': 'Уведомления',
+      'midi': 'MIDI-устройства',
+      'midiSysex': 'Системный Доступ MIDI',
+      'idle-detection': 'Обнаружение Активности Пользователя',
+      'clipboard-read': 'Чтение из Буфера Обмена',
+      'clipboard-write': 'Запись в Буфер Обмена',
+      'clipboard-sanitized-write': 'Запись Текста в Буфер Обмена',
+
+      // File system
+      'file-system': 'Доступ к Файловой Системе',
+      'file-system-write': 'Запись Файлов',
+      'file-system-read': 'Чтение Файлов',
+
+      // External resources
+      'openExternal': 'Открытие Внешних Приложений',
+      'protocol-register': 'Регистрация Обработчика Протокола',
+
+      // Device access
+      'usb': 'USB-устройства',
+      'serial': 'Последовательные Порты',
+      'bluetooth': 'Bluetooth-устройства',
+      'bluetooth-scanning': 'Сканирование Bluetooth',
+      'hid': 'Устройства Ввода',
+      'pointerLock': 'Блокировка Указателя',
+      'keyboardLock': 'Блокировка Клавиатуры',
+
+      // Window management
+      'fullscreen': 'Полноэкранный Режим',
+      'automatic-fullscreen': 'Автоматический Полноэкранный Режим',
+      'screen-wake-lock': 'Предотвращение Спящего Режима',
+
+      // Storage
+      'top-level-storage-access': 'Доступ к Хранилищу Верхнего Уровня',
+      'persistent-storage': 'Постоянное Хранилище',
+      'background-sync': 'Фоновая Синхронизация',
+    },
+  },
+
+  preferences: {
+    title: 'Настройки',
+    tabs: {
+      pages: 'Страницы',
+      permissions: 'Разрешения',
+      settings: 'Параметры',
+      sync: 'Синхронизация',
+      about: 'О программе',
+    },
+    restartApp: 'Перезапустить приложение?',
+    restartForApiKey: 'Для применения ключа API Google требуется полный перезапуск. Перезапустить сейчас?',
+    restartForLanguage: 'Для применения настройки языка ко всем сессиям требуется перезапуск. Перезапустить сейчас?',
+
+    settings: {
+      general: 'Общие',
+      appearance: 'Внешний Вид',
+      bounds: 'Размер и Положение',
+      shortcuts: 'Горячие Клавиши',
+      advanced: 'Дополнительно',
+
+      launchAtStartup: 'Запускать при старте системы',
+      launchAtStartupDesc: 'Автоматически запускать приложение при старте системы. Требуется разрешение на запуск при старте.',
+      trayLongpress: 'Время долгого нажатия на значок',
+      trayLongpressDesc: 'Укажите продолжительность в миллисекундах для вызова контекстного меню при долгом нажатии на значок в системном трее.',
+      actionArea: 'Высота области действия',
+      actionAreaDesc: 'Указывает высоту в пикселях области вверху окна, предназначенной для развертывания и перемещения окон без рамки. Автоматически отключается при активной рамке.',
+      appTheme: 'Предпочитаемая тема',
+      appThemeDesc: 'Выберите предпочитаемый внешний вид. Может потребоваться несколько минут для применения к сайтам.',
+      trayIconTheme: 'Тема значка в трее',
+      trayIconThemeDesc: 'Принудительно задать вид значка в трее.',
+      useExternalBrowser: 'Использовать внешний браузер',
+      useExternalBrowserDesc: 'Открывать ссылки в системном браузере по умолчанию вместо нового окна в приложении.',
+      groupPagesBySession: 'Группировать страницы по сессиям',
+      groupPagesBySessionDesc: 'Организовать страницы в трее и контекстных меню с группировкой по сессии.',
+
+      showFrame: 'Показывать заголовок окна',
+      backgroundColor: 'Цвет фона',
+      backgroundColorDesc: 'Цвет фона для загружающихся окон.',
+      focusOpacity: 'Прозрачность в фокусе',
+      focusOpacityDesc: 'Прозрачность когда окно в фокусе.',
+      blurOpacity: 'Прозрачность без фокуса',
+      blurOpacityDesc: 'Прозрачность когда окно не в фокусе.',
+      keepOpacity: 'Сохранять прозрачность при развёрнутом окне',
+      keepOpacityDesc: 'Игнорировать прозрачность размытия если окно развёрнуто.',
+      allowFullscreen: 'Разрешить полноэкранный режим',
+      allowFullscreenDesc: 'Позволяет окну переходить в полноэкранный режим. Если отключено, содержимое в полноэкранном режиме будет подогнано под окно.',
+
+      resetBounds: 'Сбросить параметры при перезапуске',
+      resetBoundsDesc: 'При перезапуске приложения сбросить окна в состояние по умолчанию. Выберите "Нет" для отключения.',
+      shareBounds: 'Общий размер и положение',
+      shareBoundsDesc: 'Если включено, все окна будут иметь одинаковый размер и положение при переключении между ними.',
+      defaultPosition: 'Начальное положение',
+      defaultPositionDesc: 'Положение по умолчанию для новых окон.',
+      defaultWidth: 'Начальная ширина',
+      defaultWidthDesc: 'Ширина по умолчанию для новых окон.',
+      defaultHeight: 'Начальная высота',
+      defaultHeightDesc: 'Высота по умолчанию для новых окон.',
+
+      hideShortcut: 'Скрыть при фокусе',
+      hideShortcutDesc: 'Сочетание клавиш для скрытия при фокусе окна. Минимум две клавиши. Поддерживаемые клавиши зависят от ОС.',
+      globalShortcut: 'Переключить видимость',
+      globalShortcutDesc: 'Сочетание клавиш для переключения видимости окна. Минимум две клавиши. Поддерживаемые клавиши зависят от ОС.',
+
+      preferredLanguage: 'Предпочитаемый язык',
+      preferredLanguageDesc: 'Принудительно задать предпочитаемый язык для веб-страниц через заголовок "Accept-Language". Этот заголовок не гарантирует применение языка. Требуется перезапуск для применения к существующим сессиям.',
+      googleApiKey: 'Ключ API Google',
+      googleApiKeyDesc: 'Укажите ключ API Google Maps для точной геолокации. Без него запросы местоположения могут завершиться ошибкой или вернуть неточные данные. Получите ключ в Google Cloud Console с включённым API геолокации.',
+
+      themeSystem: 'Системная',
+      themeLight: 'Светлая',
+      themeDark: 'Тёмная',
+      trayPreferred: 'Предпочитаемая',
+      trayGray: 'Серая',
+      boundsNone: 'Нет',
+      boundsPosition: 'Положение',
+      boundsSizePosition: 'Размер/Положение',
+      langDefault: 'По умолчанию',
+
+      screenPositions: {
+        topLeft: 'Вверху Слева',
+        topCenter: 'Вверху По Центру',
+        topRight: 'Вверху Справа',
+        middleLeft: 'По Центру Слева',
+        center: 'По Центру',
+        middleRight: 'По Центру Справа',
+        bottomLeft: 'Внизу Слева',
+        bottomCenter: 'Внизу По Центру',
+        bottomRight: 'Внизу Справа',
+      },
+    },
+
+    pages: {
+      syncHint: 'или импортируйте свои страницы из резервной копии через вкладку "Синхронизация".',
+      label: 'Название',
+      url: 'URL',
+      sessionId: 'ID Сессии',
+      persist: 'Закрепить',
+      persistTooltip: 'Закреплённые страницы не будут закрыты при выборе другой страницы',
+      remove: 'Удалить',
+      defaultSession: 'По умолчанию',
+    },
+
+    permissions: {
+      search: 'Поиск разрешений...',
+      session: 'Сессия',
+      noPermissions: 'Нет разрешений',
+      noPermissionsGranted: 'Разрешения не предоставлены',
+      revoke: 'Отозвать',
+      revokeSession: 'Отозвать Разрешения Сессии',
+      revokeSessionDialog: 'Отозвать все разрешения для сессии "{session}"?',
+      revokeUrl: 'Отозвать Разрешения URL',
+      revokeUrlDialog: 'Отозвать все разрешения для "{url}"?',
+    },
+
+    sync: {
+      localFileTitle: 'Локальная Резервная Копия',
+      localFileDesc: 'Экспортируйте конфигурацию в JSON-файл или импортируйте из ранее сохранённой копии.',
+      githubGistTitle: 'Резервная Копия GitHub Gist',
+      githubGistDesc: 'Синхронизируйте конфигурацию через секретный GitHub Gist. Требуется персональный токен доступа с областью gist.',
+      import: 'Импорт',
+      export: 'Экспорт',
+      personalAccessToken: 'Персональный Токен Доступа',
+      gistId: 'ID Gist',
+      gistIdHint: '(необязательно, определяется автоматически из ваших gist)',
+      gistIdPlaceholder: 'Оставьте пустым для создания нового gist',
+      hide: 'Скрыть',
+      show: 'Показать',
+    },
+
+    about: {
+      visitProject: 'Посетите проект на',
+    },
+
+    updates: {
+      currentVersion: 'Текущая версия:',
+      checkDescription: 'Проверьте наличие новых версий для поддержания Handbook в актуальном состоянии.',
+      checkForUpdates: 'Проверить Обновления',
+      checking: 'Проверка обновлений...',
+      macOsUnsupported: 'Автоматические обновления не поддерживаются в macOS для неподписанных приложений.',
+      openDownloadPage: 'Открыть Страницу Загрузки',
+      downloadUpdate: 'Загрузить Обновление',
+      recheck: 'Проверить Снова',
+      restartNotice: 'Приложение будет перезапущено для применения обновления.',
+      restartAndInstall: 'Перезапустить и Установить',
+      versionAvailable: 'Доступна версия {version}!',
+      downloading: 'Загрузка обновления... {progress}%',
+      readyToInstall: 'Версия {version} готова к установке.',
+      upToDate: 'Вы используете последнюю версию.',
+      checkAgain: 'Проверить Снова',
+      updateFailed: 'Ошибка проверки обновлений',
+      updateError: 'Произошла ошибка при проверке обновлений. Повторите попытку позже.',
+      retry: 'Повторить',
+    },
+  },
+
+  screenShare: {
+    title: 'Общий Доступ к Экрану',
+    shareYourScreen: 'Поделитесь своим экраном',
+    screen: 'Экран',
+    window: 'Окно',
+    shareAudio: 'Общий доступ к аудио',
+    cancel: 'Отмена',
+    share: 'Поделиться',
+  },
+};
