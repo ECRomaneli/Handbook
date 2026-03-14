@@ -251,6 +251,18 @@ export const en = {
       boundsPosition: 'Position',
       boundsSizePosition: 'Size/Position',
       langDefault: 'Default',
+
+      screenPositions: {
+        topLeft: 'Top Left',
+        topCenter: 'Top Center',
+        topRight: 'Top Right',
+        middleLeft: 'Middle Left',
+        center: 'Center',
+        middleRight: 'Middle Right',
+        bottomLeft: 'Bottom Left',
+        bottomCenter: 'Bottom Center',
+        bottomRight: 'Bottom Right',
+      },
     },
 
     pages: {
@@ -327,5 +339,3 @@ export const en = {
     share: 'Share',
   },
 };
-
-export type Strings = typeof en & Record<string, unknown>;

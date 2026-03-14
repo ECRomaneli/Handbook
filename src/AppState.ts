@@ -1,7 +1,6 @@
 import { IsDebug, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
-import { getStrings } from '@/locale';
-import { Strings } from '@/locale/en';
+import { getStrings, Strings } from '@/locale';
 import { Page } from '@/model/Page';
 import FramePropagator from '@/propagator/FramePropagator';
 import NavbarPropagator from '@/propagator/NavbarPropagator';

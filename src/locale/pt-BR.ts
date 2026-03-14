@@ -1,8 +1,8 @@
+import { Strings } from '@/locale';
+
 /**
  * Portuguese (pt-BR) translations
  */
-import type { Strings } from './en';
-
 export const ptBR: Strings = {
   app: {
     title: 'Handbook',
@@ -35,15 +35,15 @@ export const ptBR: Strings = {
     hide: 'Ocultar',
     show: 'Mostrar',
     unmute: 'Ativar Som',
-    mute: 'Silenciar',
+    mute: 'Desativar Som',
     close: 'Fechar',
-    find: 'Localizar...',
+    find: 'Procurar...',
     back: 'Voltar',
     forward: 'Avançar',
     refresh: 'Atualizar',
     home: 'Início',
     resetWindow: 'Redefinir Janela',
-    resetBounds: 'Redefinir Limites',
+    resetBounds: 'Redefinir Posição',
     copyUrl: 'Copiar URL',
     copyLink: 'Copiar Link',
     openInBrowser: 'Abrir no Navegador',
@@ -56,7 +56,7 @@ export const ptBR: Strings = {
     window: 'Janela',
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
-    muteUnmute: 'Silenciar / Ativar Som',
+    muteUnmute: 'Ativar/Desativar Som',
   },
 
   dialog: {
@@ -105,7 +105,7 @@ export const ptBR: Strings = {
 
   application: {
     shortcutFailed: 'Falha ao criar o atalho',
-    autoLaunchTitle: 'Iniciar na Inicialização',
+    autoLaunchTitle: 'Iniciar com o Sistema',
     autoLaunchMsg: 'Você deseja que o Handbook seja iniciado automaticamente na inicialização?',
     autoLaunchFailed: 'Falha ao Definir Inicialização Automática',
     autoLaunchFailedMsg: 'Infelizmente, o Handbook não pôde ser definido para iniciar automaticamente na inicialização. Deseja desabilitá-lo?',
@@ -191,13 +191,13 @@ export const ptBR: Strings = {
     settings: {
       general: 'Geral',
       appearance: 'Aparência',
-      bounds: 'Limites',
+      bounds: 'Tamanho e Posição',
       shortcuts: 'Atalhos',
       advanced: 'Avançado',
 
-      launchAtStartup: 'Iniciar na inicialização',
+      launchAtStartup: 'Iniciar com o sistema',
       launchAtStartupDesc: 'Inicia automaticamente o aplicativo quando o sistema é iniciado. Requer permissão para executar na inicialização.',
-      trayLongpress: 'Tempo limite de pressão longa do ícone da bandeja',
+      trayLongpress: 'Tempo de pressionamento no ícone da bandeja',
       trayLongpressDesc: 'Especifique a duração, em milissegundos, para ativar o menu de contexto ao realizar uma pressão longa no ícone da bandeja.',
       actionArea: 'Altura da área de ação',
       actionAreaDesc: 'Denota a altura, em pixels, da região localizada acima da janela, designada para maximizar e mover janelas sem moldura. Automaticamente desabilitado quando a moldura está ativada.',
@@ -210,7 +210,7 @@ export const ptBR: Strings = {
       groupPagesBySession: 'Agrupar páginas por sessão',
       groupPagesBySessionDesc: 'Organize páginas na bandeja e menus de contexto agrupadas por sua sessão.',
 
-      showFrame: 'Mostrar moldura',
+      showFrame: 'Mostrar barra de título',
       backgroundColor: 'Cor de fundo',
       backgroundColorDesc: 'Cor de fundo para janelas em carregamento.',
       focusOpacity: 'Opacidade quando focado',
@@ -222,24 +222,24 @@ export const ptBR: Strings = {
       allowFullscreen: 'Permitir tela cheia',
       allowFullscreenDesc: 'Permite que a janela entre em modo tela cheia. Se desabilitado, a mídia em tela cheia se ajustará à janela.',
 
-      resetBounds: 'Redefinir limites para padrões na reinicialização',
+      resetBounds: 'Redefinir padrões na reinicialização',
       resetBoundsDesc: 'Na reinicialização do aplicativo, redefina as janelas para o estado padrão. Escolha "Nenhum" para desabilitá-lo.',
       shareBounds: 'Compartilhar tamanho e posição',
       shareBoundsDesc: 'Se ativado, todas as janelas compartilharão o mesmo tamanho e posição ao alternar entre elas.',
-      defaultPosition: 'Posição Padrão',
-      defaultPositionDesc: 'Posicionamento padrão da nova janela.',
-      defaultWidth: 'Largura padrão',
-      defaultWidthDesc: 'Largura padrão da nova janela.',
-      defaultHeight: 'Altura padrão',
-      defaultHeightDesc: 'Altura padrão da nova janela.',
+      defaultPosition: 'Posição inicial',
+      defaultPositionDesc: 'Posicionamento padrão de novas janelas.',
+      defaultWidth: 'Largura inicial',
+      defaultWidthDesc: 'Largura padrão de novas janelas.',
+      defaultHeight: 'Altura inicial',
+      defaultHeightDesc: 'Altura padrão de novas janelas.',
 
       hideShortcut: 'Ocultar quando focado',
       hideShortcutDesc: 'Atalho para ocultar quando a janela está focada. Mínimo de duas teclas. As teclas suportadas variam por SO.',
-      globalShortcut: 'Alternar janela',
+      globalShortcut: 'Alternar visibilidade',
       globalShortcutDesc: 'Atalho para alternar a visibilidade da janela. Mínimo de duas teclas. As teclas suportadas variam por SO.',
 
       preferredLanguage: 'Idioma preferido',
-      preferredLanguageDesc: 'Force um idioma preferido para páginas da web via cabeçalho Accept-Language. Este cabeçalho não garante que o idioma será aplicado. Requer reinicialização para ter efeito em sessões existentes.',
+      preferredLanguageDesc: 'Force um idioma preferido para páginas da web via cabeçalho "Accept-Language". Este cabeçalho não garante que o idioma será aplicado. Requer reinicialização para ter efeito em sessões existentes.',
       googleApiKey: 'Chave da API do Google',
       googleApiKeyDesc: 'Forneça uma chave da API do Google Maps para geolocalização precisa. Sem ela, solicitações de localização podem falhar ou retornar dados imprecisos. Obtenha uma chave do Google Cloud Console com a API de Geolocalização ativada.',
 
@@ -252,6 +252,18 @@ export const ptBR: Strings = {
       boundsPosition: 'Posição',
       boundsSizePosition: 'Tamanho/Posição',
       langDefault: 'Padrão',
+
+      screenPositions: {
+        topLeft: 'Superior Esquerdo',
+        topCenter: 'Centro Superior',
+        topRight: 'Superior Direito',
+        middleLeft: 'Centro Esquerdo',
+        center: 'Centro',
+        middleRight: 'Centro Direito',
+        bottomLeft: 'Inferior Esquerdo',
+        bottomCenter: 'Centro Inferior',
+        bottomRight: 'Inferior Direito',
+      },
     },
 
     pages: {
@@ -293,7 +305,7 @@ export const ptBR: Strings = {
     },
 
     about: {
-      visitProject: 'Visite o projeto em',
+      visitProject: 'Visite o projeto no',
     },
 
     updates: {

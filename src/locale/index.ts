@@ -1,8 +1,10 @@
 /**
  * Internationalization (i18n) manager
  */
-import { en, type Strings } from './en';
+import { en } from './en';
 import { ptBR } from './pt-BR';
+
+export type Strings = typeof en & Record<string, unknown>;
 
 const locales = {
   en,
@@ -25,7 +27,10 @@ export const getStrings = (lang: Language): Strings => {
  */
 export const getSystemLanguage = (): Language => {
   const lang = navigator.language || 'en';
-  return lang === 'pt-BR' ? 'pt-BR' : 'en';
+  if (lang in locales) { return lang as Language; }
+  const baseLang = lang.split('-')[0];
+  if (baseLang in locales) { return baseLang as Language; }
+  return 'en';
 };
 
 /**

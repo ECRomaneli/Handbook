@@ -42,17 +42,13 @@ app.component('Settings', {
       this.$emit('update', this.$clone(input), input.data.value)
     },
 
-    capitalize(str) {
-      return str.replace(/\b\w/g, (c) => c.toUpperCase())
-    },
-
     async loadSettings() {
       const storage = this.$remote.storage
       const s = this.$i18n.preferences.settings
       const options = []
       Object.keys(this.$const.Positions).forEach(key => {
         const value = this.$const.Positions[key]
-        options.push({ label: this.capitalize(value), value: value })
+        options.push({ label: s.screenPositions[value], value: value })
       })
 
       this.inputs = {

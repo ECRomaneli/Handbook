@@ -52,15 +52,15 @@ DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
 
 const Positions = {
-  TOP_LEFT: 'top-left',
-  TOP_CENTER: 'top-center',
-  TOP_RIGHT: 'top-right',
-  MIDDLE_LEFT: 'middle-left',
+  TOP_LEFT: 'topLeft',
+  TOP_CENTER: 'topCenter',
+  TOP_RIGHT: 'topRight',
+  MIDDLE_LEFT: 'middleLeft',
   CENTER: 'center',
-  MIDDLE_RIGHT: 'middle-right',
-  BOTTOM_LEFT: 'bottom-left',
-  BOTTOM_CENTER: 'bottom-center',
-  BOTTOM_RIGHT: 'bottom-right',
+  MIDDLE_RIGHT: 'middleRight',
+  BOTTOM_LEFT: 'bottomLeft',
+  BOTTOM_CENTER: 'bottomCenter',
+  BOTTOM_RIGHT: 'bottomRight',
 };
 
 const OS = {
