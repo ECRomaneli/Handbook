@@ -27,6 +27,18 @@ const Settings = {
   GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
 };
 
+const Positions = {
+  TOP_LEFT: 'topLeft',
+  TOP_CENTER: 'topCenter',
+  TOP_RIGHT: 'topRight',
+  MIDDLE_LEFT: 'middleLeft',
+  CENTER: 'center',
+  MIDDLE_RIGHT: 'middleRight',
+  BOTTOM_LEFT: 'bottomLeft',
+  BOTTOM_CENTER: 'bottomCenter',
+  BOTTOM_RIGHT: 'bottomRight',
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DefaultSettings: Record<string, any> = {};
 DefaultSettings[Settings.SHOW_FRAME] = true;
@@ -37,8 +49,8 @@ DefaultSettings[Settings.KEEP_OPACITY_WHEN_MAXIMIZED] = false;
 DefaultSettings[Settings.ALLOW_FULLSCREEN] = false;
 DefaultSettings[Settings.RESET_BOUNDS] = 'position';
 DefaultSettings[Settings.SHARE_BOUNDS] = true;
-DefaultSettings[Settings.DEFAULT_POSITION] = 'top-right';
-DefaultSettings[Settings.DEFAULT_WIDTH] = 640;
+DefaultSettings[Settings.DEFAULT_POSITION] = Positions.TOP_RIGHT;
+DefaultSettings[Settings.DEFAULT_WIDTH] = 620;
 DefaultSettings[Settings.DEFAULT_HEIGHT] = 480;
 DefaultSettings[Settings.ACTION_AREA] = 40;
 DefaultSettings[Settings.HIDE_SHORTCUT] = '';
@@ -52,18 +64,6 @@ DefaultSettings[Settings.AUTO_LAUNCH] = void 0;
 DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.APP_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
-
-const Positions = {
-  TOP_LEFT: 'topLeft',
-  TOP_CENTER: 'topCenter',
-  TOP_RIGHT: 'topRight',
-  MIDDLE_LEFT: 'middleLeft',
-  CENTER: 'center',
-  MIDDLE_RIGHT: 'middleRight',
-  BOTTOM_LEFT: 'bottomLeft',
-  BOTTOM_CENTER: 'bottomCenter',
-  BOTTOM_RIGHT: 'bottomRight',
-};
 
 const OS = {
   IS_DARWIN: process.platform === 'darwin',

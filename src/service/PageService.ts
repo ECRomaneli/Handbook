@@ -278,7 +278,6 @@ class PageService {
 
     // Get user position preference
     const position = Storage.getSettings(Settings.DEFAULT_POSITION);
-    if (position === Positions.CENTER) { return bounds; }
 
     // Get the available area
     const area = screen.getPrimaryDisplay().workAreaSize as Rectangle;
@@ -298,6 +297,7 @@ class PageService {
       case Positions.BOTTOM_LEFT: bounds.y = area.height - Page.MARGIN.y; bounds.x = area.x + Page.MARGIN.x; break;
       case Positions.BOTTOM_CENTER: bounds.y = area.height - Page.MARGIN.y; bounds.x = area.width / 2 | 0; break;
       case Positions.BOTTOM_RIGHT: bounds.y = area.height - Page.MARGIN.y; bounds.x = area.width - Page.MARGIN.x; break;
+      default: bounds.y = area.y + Page.MARGIN.y; bounds.x = area.width - Page.MARGIN.x;
     }
 
     return bounds;
