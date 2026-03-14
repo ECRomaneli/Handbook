@@ -173,7 +173,8 @@ body {
   opacity: .8;
 }
 
-.page-card:hover {
+.page-card:hover,
+.page-card:focus-within {
   border-color: var(--border-color);
   opacity: 1;
 }
@@ -362,29 +363,321 @@ body {
 
 /* PERMISSIONS ======================== */
 
-#permissionsAccordion small {
+.perm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perm-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.perm-search-icon {
+  position: absolute;
+  left: 10px;
+  opacity: .35;
+  pointer-events: none;
+  color: var(--color);
+}
+
+.perm-search-input {
+  width: 100%;
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--color);
   font-size: .8em;
+  padding: 7px 10px 7px 32px;
+  outline: none;
+  transition: border-color .15s ease;
 }
 
-.accordion-item {
-  background-color: var(--accordion-background);
-  border: var(--accordion-border) solid 1px;
+.perm-search-input:focus {
+  border-color: var(--border-color);
 }
 
-.accordion-button {
-  background-color: var(--accordion-header-background);
+.perm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Session Card */
+.perm-session-card {
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.perm-session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .1s ease;
+}
+
+.perm-session-header:hover {
+  background-color: var(--table-header-background);
+}
+
+.perm-session-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.perm-session-icon {
   color: var(--color);
+  opacity: .5;
+  flex-shrink: 0;
 }
 
-.accordion-button:not(.collapsed) {
-  background-color: var(--accordion-active-header-background);
+.perm-session-name {
+  font-size: .8em;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Chevron */
+.perm-chevron {
   color: var(--color);
+  opacity: .4;
+  transition: transform .15s ease;
+  flex-shrink: 0;
 }
 
-.permission-badge {
-  font-size: xx-small;
-  background-color: var(--badge-bg-low-key) !important;
-  color: var(--badge-text-low-key) !important;
+.perm-chevron-open {
+  transform: rotate(90deg);
+}
+
+.perm-chevron-sm {
+  width: 10px;
+  height: 10px;
+}
+
+/* Count Badge */
+.perm-count-badge {
+  font-size: .65em;
+  font-weight: 600;
+  background-color: var(--badge-bg-low-key);
+  color: var(--badge-text-low-key);
+  padding: 1px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+
+.perm-count-badge-sm {
+  font-size: .6em;
+  padding: 0px 5px;
+}
+
+/* Session Body */
+.perm-session-body {
+  border-top: 1px solid var(--input-border);
+}
+
+/* URL Group */
+.perm-url-group {
+  border-bottom: 1px solid var(--input-border);
+}
+
+.perm-url-group:last-child {
+  border-bottom: none;
+}
+
+.perm-url-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 6px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .1s ease;
+}
+
+.perm-url-header:hover {
+  background-color: var(--table-header-background);
+}
+
+.perm-url-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.perm-url-icon {
+  color: var(--color);
+  opacity: .4;
+  flex-shrink: 0;
+}
+
+.perm-url-name {
+  font-size: .75em;
+  font-family: var(--font-monospace);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: .8;
+}
+
+/* Permission Items */
+.perm-items {
+  border-top: 1px solid var(--input-border);
+  background-color: var(--table-background);
+}
+
+.perm-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 5px 44px;
+  gap: 8px;
+}
+
+.perm-item:not(:last-child) {
+  border-bottom: 1px solid var(--input-border);
+}
+
+.perm-item-left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.perm-item-name {
+  font-size: .75em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.perm-item-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Status Toggle Group */
+.perm-status-group {
+  display: flex;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.perm-status-btn {
+  background: transparent;
+  border: none;
+  color: var(--color);
+  font-size: .65em;
+  font-weight: 500;
+  padding: 2px 8px;
+  cursor: pointer;
+  opacity: .4;
+  transition: all .12s ease;
+}
+
+.perm-status-btn:not(:last-child) {
+  border-right: 1px solid var(--input-border);
+}
+
+.perm-status-btn:hover {
+  opacity: .7;
+  background-color: var(--table-header-background);
+}
+
+.perm-status-active {
+  opacity: 1 !important;
+  font-weight: 600;
+}
+
+.perm-status-allow {
+  background-color: rgba(92, 184, 92, .15);
+  color: #5cb85c;
+}
+
+.perm-status-allow:hover {
+  background-color: rgba(92, 184, 92, .25);
+}
+
+.perm-status-deny {
+  background-color: rgba(217, 83, 79, .15);
+  color: #d9534f;
+}
+
+.perm-status-deny:hover {
+  background-color: rgba(217, 83, 79, .25);
+}
+
+.perm-status-ask {
+  background-color: rgba(240, 173, 78, .15);
+  color: #f0ad4e;
+}
+
+.perm-status-ask:hover {
+  background-color: rgba(240, 173, 78, .2);
+}
+
+/* Action Buttons */
+.perm-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  color: var(--color);
+  opacity: .25;
+  cursor: pointer;
+  transition: opacity .12s ease, background-color .12s ease, color .12s ease;
+  flex-shrink: 0;
+}
+
+.perm-revoke-btn:hover {
+  opacity: .9;
+  color: #d9534f;
+  background-color: rgba(217, 83, 79, .1);
+}
+
+.perm-revoke-inline {
+  width: 20px;
+  height: 20px;
+}
+
+/* Empty State */
+.perm-empty {
+  padding: 8px 44px;
+  font-size: .75em;
+  font-style: italic;
+  opacity: .5;
+}
+
+.perm-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--color);
+  opacity: .5;
+  font-size: .8em;
+  font-style: italic;
 }
 
 /* ABOUT ============================== */

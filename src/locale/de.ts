@@ -272,11 +272,15 @@ export const de: Strings = {
     pages: {
       syncHint: 'oder importieren Sie Ihre Seiten aus einer Sicherung über den Tab "Synchronisierung".',
       label: 'Bezeichnung',
+      labelPlaceholder: 'Seitenname',
       url: 'URL',
-      sessionId: 'Sitzungs-ID',
+      urlPlaceholder: 'https://beispiel.de',
+      sessionId: 'Sitzung',
       persist: 'Beibehalten',
       persistTooltip: 'Beibehaltene Seiten werden nicht geschlossen, wenn eine andere Seite ausgewählt wird',
       remove: 'Entfernen',
+      drag: 'Ziehen zum Neuanordnen',
+      addPage: 'Seite hinzufügen',
       defaultSession: 'Standard',
     },
 

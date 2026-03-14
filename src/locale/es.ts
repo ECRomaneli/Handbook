@@ -272,11 +272,15 @@ export const es: Strings = {
     pages: {
       syncHint: 'o importa tus páginas desde una copia de seguridad usando la pestaña "Sincronización".',
       label: 'Etiqueta',
+      labelPlaceholder: 'Nombre de la página',
       url: 'URL',
-      sessionId: 'ID de Sesión',
+      urlPlaceholder: 'https://ejemplo.com',
+      sessionId: 'Sesión',
       persist: 'Persistir',
       persistTooltip: 'Las páginas persistentes no se cerrarán cuando se seleccione otra página',
       remove: 'Eliminar',
+      drag: 'Arrastrar para reordenar',
+      addPage: 'Agregar página',
       defaultSession: 'Predeterminada',
     },
 

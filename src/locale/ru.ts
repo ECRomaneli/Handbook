@@ -272,11 +272,15 @@ export const ru: Strings = {
     pages: {
       syncHint: 'или импортируйте свои страницы из резервной копии через вкладку "Синхронизация".',
       label: 'Название',
+      labelPlaceholder: 'Название страницы',
       url: 'URL',
-      sessionId: 'ID Сессии',
+      urlPlaceholder: 'https://example.com',
+      sessionId: 'Сессия',
       persist: 'Закрепить',
       persistTooltip: 'Закреплённые страницы не будут закрыты при выборе другой страницы',
       remove: 'Удалить',
+      drag: 'Перетащите для изменения порядка',
+      addPage: 'Добавить страницу',
       defaultSession: 'По умолчанию',
     },
 

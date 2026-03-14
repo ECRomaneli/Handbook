@@ -2,74 +2,102 @@ const SearchEngine = require("@ecromaneli/search-engine")
 
 app.component('Permissions', {
   template: /*html*/ `
-        <div v-if="permissions" class="d-flex flex-column">
-            <input v-if="Object.keys(permissions).length > 0" type="search" class="form-control mb-3 w-100" :placeholder="$i18n.preferences.permissions.search" v-model="searchQuery" @input="filterPermissions" spellcheck="false" style="font-size: small">
+    <div v-if="permissions" class="perm-container">
 
-            <!-- Session accordion -->
-            <div class="accordion" id="permissionsAccordion">
-                <div v-for="(sessionData, session) in filteredPermissions" :key="session" class="accordion-item">
-                    <h2 class="accordion-header d-flex align-items-center" :id="'session-heading-' + sanitizeId(session)">
+      <div v-if="Object.keys(permissions).length > 0" class="perm-search">
+        <svg class="perm-search-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+        <input type="search" class="perm-search-input" :placeholder="$i18n.preferences.permissions.search" v-model="searchQuery" @input="filterPermissions" spellcheck="false">
+      </div>
 
-                        <button class="accordion-button py-2 px-3" :class="[isFiltered() ? '' : 'collapsed']" type="button" data-bs-toggle="collapse" :data-bs-target="'#session-collapse-' + sanitizeId(session)" :aria-controls="'session-collapse-' + sanitizeId(session)" :ref="'btn-' + sanitizeId(session)">
-                            <img @mousedown="revokeSessionPermissions($event, session)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" :title="$i18n.preferences.permissions.revokeSession">
-                            <span class="badge permission-badge me-2">{{ $i18n.preferences.permissions.session }}</span>
-                            <small>{{ session }}</small>
-                        </button>
+      <div class="perm-list">
+        <div v-for="(sessionData, session) in filteredPermissions" :key="session" class="perm-session-card">
 
-                    </h2>
-
-                    <div :id="'session-collapse-' + sanitizeId(session)" class="accordion-collapse collapse" :class="[isFiltered() ? 'show' : '']" :aria-labelledby="'session-heading-' + sanitizeId(session)" data-bs-parent="#permissionsAccordion">
-                        <div class="accordion-body">
-
-                            <!-- URL accordion within each session -->
-                            <div class="accordion" :id="'urlAccordion-' + sanitizeId(session)">
-                                <div v-for="(urlData, url) in sessionData" :key="url" class="accordion-item">
-                                    <h2 class="accordion-header d-flex align-items-center" :id="'url-heading-' + sanitizeId(session) + '-' + sanitizeId(url)">
-                                        <button class="accordion-button py-2 px-3" :class="[isSingle() ? '' : 'collapsed']" type="button" data-bs-toggle="collapse" :data-bs-target="'#url-collapse-' + sanitizeId(session) + '-' + sanitizeId(url)" aria-expanded="false" :aria-controls="'url-collapse-' + sanitizeId(session) + '-' + sanitizeId(url)">
-                                            <img @mousedown="revokeUrlPermissions($event, session, url)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" :title="$i18n.preferences.permissions.revokeUrl">
-                                            <small>{{ url }}</small>
-                                        </button>
-                                    </h2>
-
-                                    <div :id="'url-collapse-' + sanitizeId(session) + '-' + sanitizeId(url)" class="accordion-collapse collapse" :class="[isSingle() ? 'show' : '']" :aria-labelledby="'url-heading-' + sanitizeId(session) + '-' + sanitizeId(url)" :data-bs-parent="'#urlAccordion-' + sanitizeId(session)">
-                                        <div class="accordion-body">
-
-                                            <!-- Permission items -->
-                                            <div v-for="(_, permission, index) in urlData" :key="permission">
-                                                <hr v-if="index !== 0" class="input-divider my-2">
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="d-flex me-2">
-                                                    <img @mousedown="revokePermission(session, url, permission)" class="svg-icon square-24 c-pointer me-2" :src="$image.src('trash')" alt="revoke" :title="$i18n.preferences.permissions.revoke">
-                                                        <label class="small">{{ $i18n.permission.text[permission] ?? permission }}</label>
-                                                    </div>
-                                                    <div>
-                                                        <div class="input-group-sm">
-                                                            <select class="value-selector input-group-text" v-model="urlData[permission]" @change="updatePermission(session, url, permission, urlData[permission])" style="width: 90px">
-                                                                <option value="ask">{{ $i18n.permission.ask }}</option>
-                                                                <option value="allow">{{ $i18n.permission.allow }}</option>
-                                                                <option value="deny">{{ $i18n.permission.deny }}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div v-if="Object.keys(urlData).length === 0" class="text-muted">
-                                                <span class="fst-italic small">{{ $i18n.preferences.permissions.noPermissions }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="Object.keys(filteredPermissions).length === 0" class="text-center p-3 text-muted">
-                    <span class="fst-italic small">{{ $i18n.preferences.permissions.noPermissionsGranted }}</span>
-                </div>
+          <!-- Session Header -->
+          <div class="perm-session-header" @click="toggleSession(session)">
+            <div class="perm-session-left">
+              <svg class="perm-chevron" :class="{ 'perm-chevron-open': isSessionOpen(session) }" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
+              <svg class="perm-session-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M5 0a.5.5 0 0 1 .5.5V2h5V.5a.5.5 0 0 1 1 0V2h1a2 2 0 0 1 2 2v1H1.5V4a2 2 0 0 1 2-2h1V.5A.5.5 0 0 1 5 0z"/>
+                <path d="M1.5 6v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6h-13z"/>
+              </svg>
+              <span class="perm-session-name">{{ session }}</span>
+              <span class="perm-count-badge">{{ countSessionPermissions(sessionData) }}</span>
             </div>
+            <button class="perm-action-btn perm-revoke-btn" :title="$i18n.preferences.permissions.revokeSession" @click.stop="revokeSessionPermissions(session)">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H5.5l1-1h3l1 1h2.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- URLs (collapsible) -->
+          <div v-if="isSessionOpen(session)" class="perm-session-body">
+            <div v-for="(urlData, url) in sessionData" :key="url" class="perm-url-group">
+
+              <!-- URL Header -->
+              <div class="perm-url-header" @click="toggleUrl(session, url)">
+                <div class="perm-url-left">
+                  <svg class="perm-chevron perm-chevron-sm" :class="{ 'perm-chevron-open': isUrlOpen(session, url) }" width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+                  <svg class="perm-url-icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
+                  </svg>
+                  <span class="perm-url-name">{{ url }}</span>
+                  <span class="perm-count-badge perm-count-badge-sm">{{ Object.keys(urlData).length }}</span>
+                </div>
+                <button class="perm-action-btn perm-revoke-btn" :title="$i18n.preferences.permissions.revokeUrl" @click.stop="revokeUrlPermissions(session, url)">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H5.5l1-1h3l1 1h2.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Permission Items -->
+              <div v-if="isUrlOpen(session, url)" class="perm-items">
+                <div v-for="(_, permission) in urlData" :key="permission" class="perm-item">
+                  <div class="perm-item-left">
+                    <span class="perm-item-name">{{ $i18n.permission.text[permission] ?? permission }}</span>
+                  </div>
+                  <div class="perm-item-right">
+                    <div class="perm-status-group">
+                      <button v-for="opt in ['allow', 'ask', 'deny']" :key="opt"
+                        class="perm-status-btn"
+                        :class="{ 'perm-status-active': urlData[permission] === opt, ['perm-status-' + opt]: urlData[permission] === opt }"
+                        @click="updatePermission(session, url, permission, opt)">
+                        {{ $i18n.permission[opt] }}
+                      </button>
+                    </div>
+                    <button class="perm-action-btn perm-revoke-btn perm-revoke-inline" :title="$i18n.preferences.permissions.revoke" @click="revokePermission(session, url, permission)">
+                      <svg class="square-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="Object.keys(urlData).length === 0" class="perm-empty">
+                  {{ $i18n.preferences.permissions.noPermissions }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div v-if="Object.keys(filteredPermissions).length === 0" class="perm-empty-state">
+          <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor" opacity=".2">
+            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+          </svg>
+          <span>{{ $i18n.preferences.permissions.noPermissionsGranted }}</span>
+        </div>
+      </div>
+    </div>
     `,
   inject: ['$remote', '$image', '$const', '$i18n'],
   data() {
@@ -77,7 +105,9 @@ app.component('Permissions', {
       permissions: null,
       filteredPermissions: null,
       permissionsList: null,
-      searchQuery: ''
+      searchQuery: '',
+      openSessions: {},
+      openUrls: {},
     }
   },
   created() {
@@ -135,6 +165,16 @@ app.component('Permissions', {
         filteredPermissions[data.session][data.url] = data.permissions
       })
       this.filteredPermissions = filteredPermissions
+
+      // Auto-expand all when filtering
+      if (this.isFiltered()) {
+        for (const session in filteredPermissions) {
+          this.openSessions[session] = true
+          for (const url in filteredPermissions[session]) {
+            this.openUrls[session + '::' + url] = true
+          }
+        }
+      }
     },
 
     async loadPermissions() {
@@ -146,26 +186,43 @@ app.component('Permissions', {
       }
     },
 
-    sanitizeId(str) {
-      // Replace invalid characters for use in HTML ids
-      return String(str).replace(/[^a-zA-Z0-9]/g, '_')
+    toggleSession(session) {
+      this.openSessions[session] = !this.openSessions[session]
     },
 
-    async revokeSessionPermissions(e, session) {
-      const parent = e.target.parentElement
-      parent.dataset.bsToggle = '';
+    isSessionOpen(session) {
+      // Auto-open if only one session or is filtered
+      if (this.openSessions[session] !== undefined) { return this.openSessions[session] }
+      return this.isFiltered() || Object.keys(this.filteredPermissions).length === 1
+    },
 
+    toggleUrl(session, url) {
+      const key = session + '::' + url
+      this.openUrls[key] = !this.openUrls[key]
+    },
+
+    isUrlOpen(session, url) {
+      const key = session + '::' + url
+      if (this.openUrls[key] !== undefined) { return this.openUrls[key] }
+      return this.isFiltered() || this.isSingle()
+    },
+
+    countSessionPermissions(sessionData) {
+      let count = 0
+      for (const url in sessionData) {
+        count += Object.keys(sessionData[url]).length
+      }
+      return count
+    },
+
+    async revokeSessionPermissions(session) {
       if (await this.confirmModal(this.$i18n.preferences.permissions.revokeSessionDialog.replace('{session}', session))) {
         delete this.permissions[session]
         this.revokePermissions(session)
       }
-      parent.dataset.bsToggle = 'collapse';
     },
 
-    async revokeUrlPermissions(e, session, url) {
-      const parent = e.target.parentElement
-      parent.dataset.bsToggle = '';
-
+    async revokeUrlPermissions(session, url) {
       if (await this.confirmModal(this.$i18n.preferences.permissions.revokeUrlDialog.replace('{url}', url))) {
         delete this.permissions[session][url]
         if (Object.keys(this.permissions[session]).length === 0) {
@@ -173,7 +230,6 @@ app.component('Permissions', {
         }
         this.revokePermissions(session, url)
       }
-      parent.dataset.bsToggle = 'collapse';
     },
 
     revokePermission(session, url, permission) {
@@ -188,6 +244,7 @@ app.component('Permissions', {
     },
 
     updatePermission(session, url, permission, value) {
+      this.permissions[session][url][permission] = value
       this.$remote.storage.setPermission(session, url, permission, value)
       this.filterPermissions()
     },

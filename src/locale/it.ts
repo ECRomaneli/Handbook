@@ -272,11 +272,15 @@ export const it: Strings = {
     pages: {
       syncHint: 'oppure importa le tue pagine da un backup tramite la scheda "Sincronizzazione".',
       label: 'Etichetta',
+      labelPlaceholder: 'Nome della pagina',
       url: 'URL',
-      sessionId: 'ID Sessione',
+      urlPlaceholder: 'https://esempio.com',
+      sessionId: 'Sessione',
       persist: 'Persistente',
       persistTooltip: 'Le pagine persistenti non verranno chiuse quando viene selezionata un\'altra pagina',
       remove: 'Rimuovi',
+      drag: 'Trascina per riordinare',
+      addPage: 'Aggiungi pagina',
       defaultSession: 'Predefinita',
     },
 

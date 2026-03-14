@@ -271,12 +271,16 @@ export const ptPT: Strings = {
 
     pages: {
       syncHint: 'ou importe as suas páginas a partir de uma cópia de segurança utilizando o separador "Sincronização".',
-      label: 'Rótulo',
+      label: 'Nome',
+      labelPlaceholder: 'Nome da página',
       url: 'URL',
-      sessionId: 'ID da Sessão',
+      urlPlaceholder: 'https://exemplo.com',
+      sessionId: 'Sessão',
       persist: 'Persistir',
       persistTooltip: 'Páginas persistentes não serão fechadas quando outra página for selecionada',
       remove: 'Remover',
+      drag: 'Arrastar para reordenar',
+      addPage: 'Adicionar página',
       defaultSession: 'Predefinida',
     },
 

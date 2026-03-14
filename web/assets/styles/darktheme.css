@@ -70,8 +70,4 @@
   .updates img {
     filter: invert(1);
   }
-
-  .accordion-button::after {
-    filter: grayscale(1);
-  }
 }
