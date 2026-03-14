@@ -271,7 +271,7 @@ export const ptBR: Strings = {
 
     pages: {
       syncHint: 'ou importe suas páginas de um backup usando a aba "Sincronização".',
-      label: 'Rótulo',
+      label: 'Nome',
       url: 'URL',
       sessionId: 'ID da Sessão',
       persist: 'Persistir',
