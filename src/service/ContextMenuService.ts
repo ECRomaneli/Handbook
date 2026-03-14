@@ -52,7 +52,7 @@ class ContextMenuService {
 
     windowMenuItems.push({
       id: 'clipboard-url',
-      type: 'radio',
+      type: 'checkbox',
       checked: PageService.isCurrentPage(AppState.fromClipboardPage),
       label: AppState.fromClipboardPage!.labelWithStatus,
       click: () => {
@@ -244,7 +244,7 @@ class ContextMenuService {
 
   private createMenuPageItem(page: Page): MenuItemConstructorOptions {
     return {
-      type: 'radio',
+      type: 'checkbox',
       checked: PageService.isCurrentPage(page),
       label: page.labelWithStatus,
       click: () => PageService.selectPage(page),
