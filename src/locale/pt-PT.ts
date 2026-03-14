@@ -238,8 +238,10 @@ export const ptPT: Strings = {
       globalShortcut: 'Alternar visibilidade',
       globalShortcutDesc: 'Atalho para alternar a visibilidade da janela. Mínimo de duas teclas. As teclas suportadas variam consoante o SO.',
 
+      appLanguage: 'Idioma da aplicação',
+      appLanguageDesc: 'Definir o idioma utilizado na interface da aplicação. "Predefinido" utiliza o idioma do sistema.',
       preferredLanguage: 'Idioma preferido',
-      preferredLanguageDesc: 'Forçar um idioma preferido para páginas web através do cabeçalho "Accept-Language". Este cabeçalho não garante que o idioma será aplicado. Requer reinício para ter efeito em sessões existentes.',
+      preferredLanguageDesc: 'Forçar um idioma preferido para páginas web através do cabeçalho "Accept-Language". "Aplicação" segue o idioma da aplicação. Requer reinício para ter efeito em sessões existentes.',
       googleApiKey: 'Chave da API do Google',
       googleApiKeyDesc: 'Forneça uma chave da API do Google Maps para geolocalização precisa. Sem ela, os pedidos de localização podem falhar ou devolver dados imprecisos. Obtenha uma chave na Google Cloud Console com a API de Geolocalização ativada.',
 
@@ -252,6 +254,7 @@ export const ptPT: Strings = {
       boundsPosition: 'Posição',
       boundsSizePosition: 'Tamanho/Posição',
       langDefault: 'Predefinido',
+      langFollowApp: 'Aplicação',
 
       screenPositions: {
         topLeft: 'Superior Esquerdo',

@@ -1,6 +1,6 @@
 import { IsDebug, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
-import { getStrings, Strings } from '@/locale';
+import { getLanguageStrings, Strings } from '@/locale';
 import { Page } from '@/model/Page';
 import FramePropagator from '@/propagator/FramePropagator';
 import NavbarPropagator from '@/propagator/NavbarPropagator';
@@ -8,14 +8,14 @@ import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import TrayPropagator from '@/propagator/TrayPropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import AutoLaunch from 'auto-launch';
-import { BaseWindow, BrowserWindow, MenuItemConstructorOptions, nativeTheme, Tray, WebContentsView } from 'electron';
+import { app, BaseWindow, BrowserWindow, MenuItemConstructorOptions, nativeTheme, Tray, WebContentsView } from 'electron';
 
 export type SystemTheme = 'light' | 'dark';
 export type ResetBoundType = 'bounds' | 'position' | '';
 
 class AppState {
   private _autoLauncher = new AutoLaunch({ name: 'Handbook' });
-  private _strings: Strings = getStrings('en');
+  private _strings: Strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
   private _globalShortcut = '';
   private _resetBoundsType: ResetBoundType = Storage.getSettings(Settings.RESET_BOUNDS);
   private _systemTheme = this.getSystemTheme();
@@ -68,6 +68,11 @@ class AppState {
 
   set googleApiKey(key: string) { process.env.GOOGLE_API_KEY = key; }
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }
+
+  public refreshStrings() {
+    this._strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+    this._fromClipboardPage.label = this.strings.menu.fromClipboard;
+  }
 
   private getSystemTheme(): SystemTheme {
     const appTheme = Storage.getSettings(Settings.APP_THEME);

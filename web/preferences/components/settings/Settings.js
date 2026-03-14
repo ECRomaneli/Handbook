@@ -54,6 +54,25 @@ app.component('Settings', {
       this.inputs = {
         [s.general]: [
           {
+            id: this.$const.Settings.APP_LANGUAGE,
+            label: s.appLanguage,
+            description: s.appLanguageDesc,
+            data: {
+              type: 'select', value: await storage.getSettings(this.$const.Settings.APP_LANGUAGE),
+              options: [
+                { label: s.langDefault, value: '' },
+                { label: 'English', value: 'en' },
+                { label: 'Deutsch', value: 'de' },
+                { label: 'Español', value: 'es' },
+                { label: 'Français', value: 'fr' },
+                { label: 'Italiano', value: 'it' },
+                { label: 'Português (Brasil)', value: 'pt-BR' },
+                { label: 'Português (Portugal)', value: 'pt-PT' },
+                { label: 'Русский', value: 'ru' }
+              ]
+            }
+          },
+          {
             id: this.$const.Settings.AUTO_LAUNCH,
             label: s.launchAtStartup,
             description: s.launchAtStartupDesc,
@@ -216,6 +235,7 @@ app.component('Settings', {
               type: 'select', value: await storage.getSettings(this.$const.Settings.PREFERRED_LANGUAGE),
               options: [
                 { label: s.langDefault, value: '' },
+                { label: s.langFollowApp, value: 'app' },
                 { label: 'English (US)', value: 'en-US' },
                 { label: 'English (UK)', value: 'en-GB' },
                 { label: 'Português (Brasil)', value: 'pt-BR' },

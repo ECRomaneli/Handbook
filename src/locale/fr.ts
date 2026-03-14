@@ -238,8 +238,10 @@ export const fr: Strings = {
       globalShortcut: 'Basculer la visibilité',
       globalShortcutDesc: 'Raccourci pour basculer la visibilité de la fenêtre. Minimum de deux touches. Les touches prises en charge varient selon le SE.',
 
+      appLanguage: 'Langue de l\'application',
+      appLanguageDesc: 'Définir la langue utilisée pour l\'interface de l\'application. \u00ab Par défaut \u00bb utilise la langue du système.',
       preferredLanguage: 'Langue préférée',
-      preferredLanguageDesc: 'Forcer une langue préférée pour les pages web via l\'en-tête "Accept-Language". Cet en-tête ne garantit pas que la langue sera appliquée. Nécessite un redémarrage pour prendre effet sur les sessions existantes.',
+      preferredLanguageDesc: 'Forcer une langue préférée pour les pages web via l\'en-tête "Accept-Language". \u00ab Application \u00bb suit la langue de l\'application. Nécessite un redémarrage pour prendre effet sur les sessions existantes.',
       googleApiKey: 'Clé API Google',
       googleApiKeyDesc: 'Fournissez une clé API Google Maps pour une géolocalisation précise. Sans elle, les requêtes de localisation peuvent échouer ou renvoyer des données inexactes. Obtenez une clé depuis Google Cloud Console avec l\'API de Géolocalisation activée.',
 
@@ -252,6 +254,7 @@ export const fr: Strings = {
       boundsPosition: 'Position',
       boundsSizePosition: 'Taille/Position',
       langDefault: 'Par défaut',
+      langFollowApp: 'Application',
 
       screenPositions: {
         topLeft: 'Haut Gauche',

@@ -25,6 +25,8 @@ const locales = {
 
 export type Language = keyof typeof locales;
 
+export const availableLanguages = Object.keys(locales) as Language[];
+
 /**
  * Get translations for a specific language
  * @param lang Language code
@@ -35,20 +37,14 @@ export const getStrings = (lang: Language): Strings => {
 };
 
 /**
- * Get current system language or default to English
+ * Resolve a locale string to a supported Language key.
+ * Tries exact match first, then base language fallback.
  */
-export const getSystemLanguage = (): Language => {
-  const lang = navigator.language || 'en';
+export const resolveLanguage = (lang: string): Language => {
   if (lang in locales) { return lang as Language; }
   const baseLang = lang.split('-')[0];
   if (baseLang in locales) { return baseLang as Language; }
   return 'en';
 };
 
-/**
- * Get translation strings for the current system language
- * @returns Translation strings
- */
-export const getSystemStrings = (): Strings => {
-  return getStrings(getSystemLanguage());
-};
+export const getLanguageStrings = (lang: string): Strings => getStrings(resolveLanguage(lang));

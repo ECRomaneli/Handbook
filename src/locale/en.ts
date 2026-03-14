@@ -237,8 +237,10 @@ export const en = {
       globalShortcut: 'Toggle window',
       globalShortcutDesc: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
 
+      appLanguage: 'Application language',
+      appLanguageDesc: 'Set the language used for the application interface. "Default" uses the system language.',
       preferredLanguage: 'Preferred language',
-      preferredLanguageDesc: 'Force a preferred language for web pages via Accept-Language header. This header does not guarantee the language will be applied. Requires restart to take effect on existing sessions.',
+      preferredLanguageDesc: 'Force a preferred language for web pages via Accept-Language header. "Application" follows the app language setting. Requires restart to take effect on existing sessions.',
       googleApiKey: 'Google API key',
       googleApiKeyDesc: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
 
@@ -251,6 +253,7 @@ export const en = {
       boundsPosition: 'Position',
       boundsSizePosition: 'Size/Position',
       langDefault: 'Default',
+      langFollowApp: 'Application',
 
       screenPositions: {
         topLeft: 'Top Left',

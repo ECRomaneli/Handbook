@@ -238,8 +238,10 @@ export const de: Strings = {
       globalShortcut: 'Sichtbarkeit Umschalten',
       globalShortcutDesc: 'Tastenkürzel zum Umschalten der Fenstersichtbarkeit. Mindestens zwei Tasten. Die unterstützten Tasten variieren je nach Betriebssystem.',
 
+      appLanguage: 'Anwendungssprache',
+      appLanguageDesc: 'Die Sprache für die Benutzeroberfläche der Anwendung festlegen. „Standard“ verwendet die Systemsprache.',
       preferredLanguage: 'Bevorzugte Sprache',
-      preferredLanguageDesc: 'Eine bevorzugte Sprache für Webseiten über den "Accept-Language"-Header erzwingen. Dieser Header garantiert nicht, dass die Sprache angewendet wird. Erfordert einen Neustart, um auf bestehende Sitzungen zu wirken.',
+      preferredLanguageDesc: 'Eine bevorzugte Sprache für Webseiten über den "Accept-Language"-Header erzwingen. „Anwendung“ folgt der Anwendungssprache. Erfordert einen Neustart, um auf bestehende Sitzungen zu wirken.',
       googleApiKey: 'Google API-Schlüssel',
       googleApiKeyDesc: 'Geben Sie einen Google Maps API-Schlüssel für genaue Geolokalisierung an. Ohne ihn können Standortanfragen fehlschlagen oder ungenaue Daten liefern. Holen Sie sich einen Schlüssel von der Google Cloud Console mit aktivierter Geolocation-API.',
 
@@ -252,6 +254,7 @@ export const de: Strings = {
       boundsPosition: 'Position',
       boundsSizePosition: 'Größe/Position',
       langDefault: 'Standard',
+      langFollowApp: 'Anwendung',
 
       screenPositions: {
         topLeft: 'Oben Links',

@@ -116,11 +116,14 @@ class ApplicationService {
   }
 
   public forceLanguageHeader(): void {
-    const preferredLanguage = Storage.getSettings(Settings.PREFERRED_LANGUAGE) as string | undefined;
+    let preferredLanguage = Storage.getSettings(Settings.PREFERRED_LANGUAGE) as string | undefined;
+    if (preferredLanguage === 'app') {
+      preferredLanguage = Storage.getSettings(Settings.APP_LANGUAGE) as string || undefined;
+    }
     const hasPreferredLanguage = preferredLanguage && preferredLanguage.trim() !== '';
 
     app.prependListener('session-created', (s: Session) => {
-      hasPreferredLanguage && this.overrideAcceptLanguage(s, preferredLanguage);
+      hasPreferredLanguage && this.overrideAcceptLanguage(s, preferredLanguage!);
     });
   }
 

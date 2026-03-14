@@ -67,7 +67,7 @@ class PreferencesService {
     // on ready, win.show() is called
   }
 
-  public reloadPreferences(): void {
+  public reload(): void {
     AppState.preferences!.webContents.reload();
   }
 
@@ -305,6 +305,12 @@ class PreferencesService {
           s.restartForApiKey,
           () => { app.relaunch(); app.exit(0); },
         );
+        break;
+      case Settings.APP_LANGUAGE:
+        AppState.refreshStrings();
+        FrameService.getFrame() && FrameService.recreateFrame();
+        ContextMenuService.refreshContextMenu();
+        this.reload();
         break;
       case Settings.PREFERRED_LANGUAGE:
         this.beforeCloseConfirm(

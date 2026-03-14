@@ -238,8 +238,10 @@ export const es: Strings = {
       globalShortcut: 'Alternar visibilidad',
       globalShortcutDesc: 'Atajo para alternar la visibilidad de la ventana. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
 
+      appLanguage: 'Idioma de la aplicación',
+      appLanguageDesc: 'Establece el idioma utilizado en la interfaz de la aplicación. "Predeterminado" utiliza el idioma del sistema.',
       preferredLanguage: 'Idioma preferido',
-      preferredLanguageDesc: 'Forzar un idioma preferido para páginas web mediante el encabezado "Accept-Language". Este encabezado no garantiza que el idioma se aplique. Requiere reinicio para surtir efecto en sesiones existentes.',
+      preferredLanguageDesc: 'Forzar un idioma preferido para páginas web mediante el encabezado "Accept-Language". "Aplicación" sigue el idioma de la aplicación. Requiere reinicio para surtir efecto en sesiones existentes.',
       googleApiKey: 'Clave de la API de Google',
       googleApiKeyDesc: 'Proporciona una clave de la API de Google Maps para una geolocalización precisa. Sin ella, las solicitudes de ubicación pueden fallar o devolver datos imprecisos. Obtén una clave desde Google Cloud Console con la API de Geolocalización habilitada.',
 
@@ -252,6 +254,7 @@ export const es: Strings = {
       boundsPosition: 'Posición',
       boundsSizePosition: 'Tamaño/Posición',
       langDefault: 'Predeterminado',
+      langFollowApp: 'Aplicación',
 
       screenPositions: {
         topLeft: 'Arriba a la izquierda',

@@ -230,7 +230,7 @@ class SyncService {
   }
 
   private reloadAfterImport() {
-    PreferencesService.reloadPreferences();
+    PreferencesService.reload();
     ContextMenuService.refreshContextMenu();
   }
 
