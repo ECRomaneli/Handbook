@@ -2,6 +2,7 @@ import AppState from '@/AppState';
 import { IsDebug } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import ContextMenuService from '@/service/ContextMenuService';
+import FrameService from '@/service/FrameService';
 import PreferencesService from '@/service/PreferencesService';
 import Dialog from '@/util/modal/Dialog';
 import { dialog, net } from 'electron';
@@ -230,8 +231,10 @@ class SyncService {
   }
 
   private reloadAfterImport() {
-    PreferencesService.reload();
+    AppState.refreshStrings();
     ContextMenuService.refreshContextMenu();
+    FrameService.getFrame() && FrameService.recreateFrame();
+    PreferencesService.reload();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

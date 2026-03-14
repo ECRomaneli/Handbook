@@ -170,7 +170,7 @@ body {
   border-radius: 8px;
   overflow: hidden;
   transition: border-color .15s ease, box-shadow .15s ease;
-  opacity: .8;
+  opacity: .9;
 }
 
 .page-card:hover,

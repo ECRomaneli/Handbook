@@ -44,8 +44,8 @@ class PreferencesService {
     const win = new BrowserWindow({
       icon: undefined,
       title: AppState.strings.preferences.title,
-      width: 700,
-      height: 640,
+      width: 620,
+      height: 620,
       show: false,
       frame: false,
       alwaysOnTop: true,
@@ -308,8 +308,8 @@ class PreferencesService {
         break;
       case Settings.APP_LANGUAGE:
         AppState.refreshStrings();
-        FrameService.getFrame() && FrameService.recreateFrame();
         ContextMenuService.refreshContextMenu();
+        FrameService.getFrame() && FrameService.recreateFrame();
         this.reload();
         break;
       case Settings.PREFERRED_LANGUAGE:

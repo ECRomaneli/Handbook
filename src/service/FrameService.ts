@@ -259,7 +259,7 @@ class FrameService {
       });
     }
     if (newView.webContents.isLoading()) {
-      ViewPropagator.onceCurrentView('dom-ready', () => {
+      ViewPropagator.onceCurrentView('did-stop-loading', () => {
         const frame = this.getFrame();
         if (!frame || newView !== PageService.getCurrentView()) { return; } // View changed while loading
         frame.contentView.addChildView(newView);
@@ -344,7 +344,7 @@ class FrameService {
     }
 
     NavbarService.hasView() || NavbarService.createView();
-    NavbarService.changeView();
+    NavbarService.onLoadChangeView();
   }
 
   public isFocused(): boolean {

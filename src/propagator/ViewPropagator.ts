@@ -15,12 +15,9 @@ export class ViewPropagator extends Propagator<WebContentsView> {
     wc.on('enter-html-full-screen', () => { this.emitCurrentEvent(wc, 'enter-html-full-screen'); });
     wc.on('leave-html-full-screen', () => { this.emitCurrentEvent(wc, 'leave-html-full-screen'); });
     wc.on('did-navigate-in-page', () => { this.emitCurrentEvent(wc, 'did-navigate-in-page'); });
-    wc.on('did-navigate', () => { this.emitCurrentEvent(wc, 'did-navigate'); });
-    wc.on('did-navigate-in-page', () => { this.emitCurrentEvent(wc, 'did-navigate-in-page'); });
     wc.on('did-start-loading', () => { this.emitCurrentEvent(wc, 'did-start-loading'); });
     wc.on('did-stop-loading', () => { this.emitCurrentEvent(wc, 'did-stop-loading'); });
-    wc.on('did-finish-load', () => { this.emitCurrentEvent(wc, 'did-finish-load'); });
-    wc.prependListener('dom-ready', () => { this.emitCurrentEvent(wc, 'dom-ready'); });
+    wc.on('did-navigate', () => { this.emitCurrentEvent(wc, 'did-navigate'); });
     // @ts-expect-error Custom event emitted when the view is attached to a frame
     emitter.on('attached', () => { this.emit('attached', wc); });
     // @ts-expect-error Custom event emitted when the view mute/unmute

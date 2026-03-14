@@ -12,7 +12,7 @@ export class NavbarPropagator extends RenderablePropagator<WebContentsView> {
 
   protected registerEvents(emitter: WebContentsView): void {
     const wc = emitter.webContents;
-    wc.on('destroyed', () => { this.emit('destroyed'); });
+    wc.on('did-stop-loading', () => { this.emit('did-stop-loading'); });
   }
 
   protected registerIpcEvents(): void {

@@ -50,10 +50,22 @@ class NavbarService {
     NavbarPropagator.sendToRender('label-updated', label);
   }
 
+  public onLoadChangeView(): void {
+    this.onLoad(() => this.changeView());
+  }
+
+  private onLoad(callback: () => void): void {
+    if (this.getView()!.webContents.isLoading()) {
+      NavbarPropagator.once('did-stop-loading', callback);
+    } else {
+      callback();
+    }
+  }
+
   /**
    * Change the current view being controlled by the navigation bar
    */
-  public changeView(): void {
+  private changeView(): void {
     const page = AppState.currentPage;
     if (!page || !page.hasView) { return; }
     const view = page.view;
@@ -74,13 +86,10 @@ class NavbarService {
   }
 
   private registerStateListeners(): void {
-    NavbarPropagator.once('destroyed', () => { AppState.navbar = undefined; });
     ViewPropagator.onCurrentView('did-navigate', () => { this.sendDidNavigate(); });
     ViewPropagator.onCurrentView('did-navigate-in-page', () => { this.sendDidNavigate(); });
     ViewPropagator.onCurrentView('did-start-loading', () => { NavbarPropagator.sendToRender('did-start-loading'); });
     ViewPropagator.onCurrentView('did-stop-loading', () => { NavbarPropagator.sendToRender('did-stop-loading'); });
-
-    // Handle mute status changes
     ViewPropagator.onCurrentView('mute-status-changed', () => {
       NavbarPropagator.sendToRender('mute-status-changed', PageService.getCurrentView()?.webContents.isAudioMuted());
     });

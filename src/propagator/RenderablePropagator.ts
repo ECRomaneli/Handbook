@@ -30,7 +30,10 @@ abstract class RenderablePropagator<T extends EventEmitter = EventEmitter> exten
 
   public sendToRender(eventName: string, ...args: unknown[]): void {
     const wc = this.getWebContents();
-    if (!wc || wc.isDestroyed()) { return; }
+    if (!wc || wc.isDestroyed()) {
+      console.error('"sendToRender" should not be called when WebContents is destroyed');
+      return;
+    }
     Propagator.IS_DEBUG && console.debug(`Sending event to render: ${this.getEventName(eventName)}`);
     wc.send(this.getEventName(eventName), ...args);
   }
