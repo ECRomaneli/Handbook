@@ -202,11 +202,12 @@ class PreferencesService {
   private buildContextMenu(): void {
     const win = AppState.preferences;
     if (!win) { return; }
+    const s = AppState.strings.menu;
     contextMenu({
       window: win,
       append: () => [
-        { role: 'toggleDevTools' },
-        { role: 'close' },
+        { label: s.openDevTools, click: () => win.webContents.openDevTools() },
+        { label: s.close, click: () => win.close() },
       ],
     });
   }
