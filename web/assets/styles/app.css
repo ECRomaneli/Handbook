@@ -288,7 +288,7 @@ body {
 .page-card-input-url {
   font-family: var(--font-monospace);
   font-size: .65em;
-  opacity: .35;
+  opacity: .6;
   padding: 0 6px;
   height: 16px;
   transition: border-color .15s ease, background-color .15s ease, opacity .15s ease, font-size .15s ease, height .15s ease, padding .15s ease;
