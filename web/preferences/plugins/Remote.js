@@ -7,6 +7,7 @@ app.use({
       storage: {
         getPages: () => ipcRenderer.invoke('preferences:get-pages'),
         setPages: (pages) => { ipcRenderer.send('preferences:pages-updated', pages) },
+        onPagesUpdated: (callback) => { ipcRenderer.on('preferences:pages-updated', (_, pages) => { callback(pages) }) },
 
         getSettings: (id) => ipcRenderer.invoke('preferences:get-settings', id),
         setSettings: (id, newValue) => { ipcRenderer.send('preferences:settings-updated', id, newValue) },

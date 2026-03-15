@@ -59,6 +59,9 @@ app.component('PageTable', {
     pages: Array,
   },
   data() { return { list: this.pages, draggingIndex: null, dropTargetIndex: null, draggable: true } },
+  watch: {
+    pages(newPages) { this.list = newPages; }
+  },
   methods: {
     addPage() {
       if (this.list.length !== 0) {

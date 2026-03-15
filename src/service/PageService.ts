@@ -159,6 +159,7 @@ class PageService {
     const newPage = new Page(undefined, webContents.getTitle(), url, undefined, currentPage.session, false);
     Storage.setPage(newPage.toPlainPage());
     TrayService.updateAndRefresh();
+    PreferencesService.sendPagesUpdated();
   }
 
   public isCurrentPage(page?: Page): boolean {

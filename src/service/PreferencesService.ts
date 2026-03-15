@@ -211,6 +211,10 @@ class PreferencesService {
     });
   }
 
+  public sendPagesUpdated(): void {
+    PreferencesPropagator.sendToRender('pages-updated', Storage.getPages());
+  }
+
   public onPagesUpdated(listener: PagesUpdatedListener): void {
     PreferencesPropagator.onRender('pages-updated', listener);
   }

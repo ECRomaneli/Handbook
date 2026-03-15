@@ -10,8 +10,11 @@ app.component('Pages', {
     `,
   emits: ['update', 'navigate'],
   inject: ['$const', '$remote', '$i18n'],
-  data() { return { pages: null } },
-  created() { this.retrievePages() },
+  data() { return { pages: null, onPagesUpdated: (p) => { this.pages = p } } },
+  created() {
+    this.$remote.storage.onPagesUpdated(this.onPagesUpdated)
+    this.retrievePages();
+  },
   methods: {
     async retrievePages() {
       this.pages = await this.$remote.storage.getPages()
