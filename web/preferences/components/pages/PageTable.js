@@ -70,6 +70,10 @@ app.component('PageTable', {
         if (!last.label && !last.url) { return }
       }
       this.list.push({ id: `${Date.now()}${this.list.length}`, label: '', url: '', session: '', persist: false })
+      this.$nextTick(() => {
+        const inputs = this.$el.querySelectorAll('.page-card-input-title')
+        inputs.length && inputs[inputs.length - 1]?.focus()
+      })
     },
 
     removePage(index) { this.$emit('remove', this.$clone(this.list.splice(index, 1)[0])) },
