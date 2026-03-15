@@ -1,6 +1,7 @@
 import AppState from '@/AppState';
 import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
+import { PageView } from '@/model/Page';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import { ContextMenuType } from '@/service/ApplicationService';
 import ContextMenuService from '@/service/ContextMenuService';
@@ -18,7 +19,7 @@ class ViewService {
     return WebContentsView.webContents.getURL();
   }
 
-  public createView(options: WebContentsViewConstructorOptions): WebContentsView {
+  public createView(options: WebContentsViewConstructorOptions): PageView {
     const view = new WebContentsView(options);
     this.configureView(view);
     return view;

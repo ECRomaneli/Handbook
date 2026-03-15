@@ -8,14 +8,16 @@ export interface PlainPage {
   persist?: boolean;
 }
 
+export type PageView = WebContentsView & { isReady?: boolean };
+
 export class Page {
   public static readonly MARGIN = { x: 30, y: 30 };
   public static readonly DEFAULT_SESSION = 'Default';
   private _id?: string;
   private _label: string;
   private _url: string;
-  private _view?: WebContentsView;
-  private _onViewChange?: (page: Page, view?: WebContentsView, previousView?: WebContentsView) => void;
+  private _view?: PageView;
+  private _onViewChange?: (page: Page, view?: PageView, previousView?: PageView) => void;
   private _session: string;
   private _persist: boolean;
   private _hasBounds?: true;
@@ -24,7 +26,7 @@ export class Page {
     id: string | undefined,
     label: string,
     url?: string,
-    view?: WebContentsView,
+    view?: PageView,
     session?: string,
     persist?: boolean,
   ) {
@@ -95,11 +97,11 @@ export class Page {
     this._url = value;
   }
 
-  get view(): WebContentsView | undefined {
+  get view(): PageView | undefined {
     return this._view;
   }
 
-  set view(value: WebContentsView | undefined) {
+  set view(value: PageView | undefined) {
     if (this._view === value) { return; }
     const previousView = this._view;
     this._view = value;
@@ -107,7 +109,7 @@ export class Page {
   }
 
   public setViewChangeHandler(
-    handler?: (page: Page, view?: WebContentsView, previousView?: WebContentsView) => void,
+    handler?: (page: Page, view?: PageView, previousView?: PageView) => void,
   ): void {
     this._onViewChange = handler;
   }
