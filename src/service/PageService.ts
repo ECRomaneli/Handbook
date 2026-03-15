@@ -79,7 +79,7 @@ class PageService {
       this.closePageView(p);
       if (this.isCurrentPage(p)) {
         AppState.currentPage = void 0;
-        FrameService.forceClose(false);
+        FrameService.getFrame() && FrameService.forceClose(false);
       }
       return false;
     });
