@@ -270,7 +270,7 @@ export const ptBR: Strings = {
     },
 
     pages: {
-      syncHint: 'ou importe suas páginas de um backup usando a aba "Sincronização".',
+      syncHint: 'ou importe usando a aba "Sincronização"',
       label: 'Nome',
       labelPlaceholder: 'Nome da página',
       url: 'URL',

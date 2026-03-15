@@ -270,7 +270,7 @@ export const fr: Strings = {
     },
 
     pages: {
-      syncHint: 'ou importez vos pages depuis une sauvegarde via l\'onglet "Synchronisation".',
+      syncHint: 'ou importez via l\'onglet "Synchronisation"',
       label: 'Libellé',
       labelPlaceholder: 'Nom de la page',
       url: 'URL',

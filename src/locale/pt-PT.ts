@@ -270,7 +270,7 @@ export const ptPT: Strings = {
     },
 
     pages: {
-      syncHint: 'ou importe as suas páginas a partir de uma cópia de segurança utilizando o separador "Sincronização".',
+      syncHint: 'ou importe usando o separador "Sincronização"',
       label: 'Nome',
       labelPlaceholder: 'Nome da página',
       url: 'URL',

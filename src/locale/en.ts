@@ -269,7 +269,7 @@ export const en = {
     },
 
     pages: {
-      syncHint: 'or import your pages from a backup using the "Sync" tab.',
+      syncHint: 'or import using the "Sync" tab',
       label: 'Label',
       labelPlaceholder: 'Page name',
       url: 'URL',
