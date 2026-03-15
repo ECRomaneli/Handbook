@@ -206,7 +206,7 @@ export const es: Strings = {
       trayIconTheme: 'Tema del icono de bandeja',
       trayIconThemeDesc: 'Forzar la apariencia del icono de bandeja.',
       useExternalBrowser: 'Usar navegador externo',
-      useExternalBrowserDesc: 'Abre enlaces en el navegador predeterminado del sistema en lugar de una nueva ventana en la aplicación.',
+      useExternalBrowserDesc: 'Abre enlaces en el navegador estándar del sistema en lugar de una nueva ventana en la aplicación.',
       groupPagesBySession: 'Agrupar páginas por sesión',
       groupPagesBySessionDesc: 'Organiza las páginas en la bandeja y menús contextuales agrupadas por su sesión.',
 
@@ -222,16 +222,16 @@ export const es: Strings = {
       allowFullscreen: 'Permitir pantalla completa',
       allowFullscreenDesc: 'Permite que la ventana entre en modo pantalla completa. Si está deshabilitado, el contenido en pantalla completa se ajustará a la ventana.',
 
-      resetBounds: 'Restablecer valores predeterminados al reiniciar',
-      resetBoundsDesc: 'Al reiniciar la aplicación, restablece las ventanas al estado predeterminado. Elige "Ninguno" para deshabilitarlo.',
+      resetBounds: 'Restablecer valores estándar al reiniciar',
+      resetBoundsDesc: 'Al reiniciar la aplicación, restablece las ventanas al estado estándar. Elige "Ninguno" para deshabilitarlo.',
       shareBounds: 'Compartir tamaño y posición',
       shareBoundsDesc: 'Si está habilitado, todas las ventanas compartirán el mismo tamaño y posición al alternar entre ellas.',
       defaultPosition: 'Posición inicial',
-      defaultPositionDesc: 'Posicionamiento predeterminado de nuevas ventanas.',
+      defaultPositionDesc: 'Posicionamiento estándar de nuevas ventanas.',
       defaultWidth: 'Ancho inicial',
-      defaultWidthDesc: 'Ancho predeterminado de nuevas ventanas.',
+      defaultWidthDesc: 'Ancho estándar de nuevas ventanas.',
       defaultHeight: 'Alto inicial',
-      defaultHeightDesc: 'Alto predeterminado de nuevas ventanas.',
+      defaultHeightDesc: 'Alto estándar de nuevas ventanas.',
 
       hideShortcut: 'Ocultar cuando está enfocado',
       hideShortcutDesc: 'Atajo para ocultar cuando la ventana está enfocada. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
@@ -239,7 +239,7 @@ export const es: Strings = {
       globalShortcutDesc: 'Atajo para alternar la visibilidad de la ventana. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
 
       appLanguage: 'Idioma de la aplicación',
-      appLanguageDesc: 'Establece el idioma utilizado en la interfaz de la aplicación. "Predeterminado" utiliza el idioma del sistema.',
+      appLanguageDesc: 'Establece el idioma utilizado en la interfaz de la aplicación. "Estándar" utiliza el idioma del sistema.',
       preferredLanguage: 'Idioma preferido',
       preferredLanguageDesc: 'Forzar un idioma preferido para páginas web mediante el encabezado "Accept-Language". "Aplicación" sigue el idioma de la aplicación. Requiere reinicio para surtir efecto en sesiones existentes.',
       googleApiKey: 'Clave de la API de Google',
@@ -253,7 +253,7 @@ export const es: Strings = {
       boundsNone: 'Ninguno',
       boundsPosition: 'Posición',
       boundsSizePosition: 'Tamaño/Posición',
-      langDefault: 'Predeterminado',
+      langDefault: 'Estándar',
       langFollowApp: 'Aplicación',
 
       screenPositions: {
@@ -281,7 +281,7 @@ export const es: Strings = {
       remove: 'Eliminar',
       drag: 'Arrastrar para reordenar',
       addPage: 'Agregar página',
-      defaultSession: 'Predeterminada',
+      defaultSession: 'Estándar',
     },
 
     permissions: {

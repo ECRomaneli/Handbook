@@ -17,7 +17,7 @@ app.component('Permissions', {
             <div class="perm-session-left">
               <i class="icon icon-chevron-right perm-chevron" :class="{ 'perm-chevron-open': isSessionOpen(session) }"></i>
               <i class="icon icon-session perm-session-icon"></i>
-              <span class="perm-session-name">{{ session }}</span>
+              <span class="perm-session-name">{{ getSession(session) }}</span>
               <span class="perm-count-badge">{{ countSessionPermissions(sessionData) }}</span>
             </div>
             <button class="perm-action-btn perm-revoke-btn" :title="$i18n.preferences.permissions.revokeSession" @click.stop="revokeSessionPermissions(session)">
@@ -133,7 +133,7 @@ app.component('Permissions', {
         const sessionData = this.permissions[session]
         for (const url in sessionData) {
           const permissions = sessionData[url]
-          filterableList.push({ session, url, permissions, permission: Object.keys(permissions).map(p => this.$i18n.permission.text[p] || p) })
+          filterableList.push({ session, translatedSession: this.getSession(session), url, permissions, permission: Object.keys(permissions).map(p => this.$i18n.permission.text[p] || p) })
         }
       }
 
@@ -195,7 +195,7 @@ app.component('Permissions', {
     },
 
     async revokeSessionPermissions(session) {
-      if (await this.confirmModal(this.$i18n.preferences.permissions.revokeSessionDialog.replace('{session}', session))) {
+      if (await this.confirmModal(this.$i18n.preferences.permissions.revokeSessionDialog.replace('{session}', this.getSession(session)))) {
         delete this.permissions[session]
         this.revokePermissions(session)
       }
@@ -209,6 +209,10 @@ app.component('Permissions', {
         }
         this.revokePermissions(session, url)
       }
+    },
+
+    getSession(session) {
+      return session === 'Default' ? this.$i18n.preferences.pages.defaultSession : session
     },
 
     revokePermission(session, url, permission) {
