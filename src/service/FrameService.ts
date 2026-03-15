@@ -3,6 +3,7 @@ import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import ViewPropagator from '@/propagator/ViewPropagator';
 
+import { PageView } from '@/model/Page';
 import FramePropagator from '@/propagator/FramePropagator';
 import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
@@ -258,20 +259,24 @@ class FrameService {
         maximize: true,
       });
     }
-    if (newView.webContents.isLoading()) {
-      ViewPropagator.onceCurrentView('did-stop-loading', () => {
-        const frame = this.getFrame();
-        if (!frame || newView !== PageService.getCurrentView()) { return; } // View changed while loading
-        frame.contentView.addChildView(newView);
-        newView.emit('attached');
-      });
-    } else {
-      frame.contentView.addChildView(newView);
-      newView.emit('attached');
-    }
-
+    this.safeDisplay(frame, newView);
     this.buildViewFindbar(newView);
     show && this.show();
+  }
+
+  private safeDisplay(frame: BaseWindow, view: PageView): void {
+    if (view.isReady) {
+      frame.contentView.addChildView(view);
+      view.emit('attached');
+      return;
+    }
+
+    view.webContents.once('dom-ready', () => {
+      if (frame.isDestroyed() || view !== PageService.getCurrentView()) { console.debug('a'); return; }
+      console.debug('b');
+      frame.contentView.addChildView(view);
+      view.emit('attached');
+    });
   }
 
   private buildViewFindbar(view: EventEmitter & { webContents: WebContents }): void {

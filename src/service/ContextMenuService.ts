@@ -111,7 +111,7 @@ class ContextMenuService {
 
     windowMenuItems.push({
       label: s.closeAllPages, enabled: !!activePages.length, click: () => {
-        FrameService.forceClose();
+        FrameService.getFrame() && FrameService.forceClose(false);
         activePages.forEach((p) => PageService.closePageView(p));
       },
     });
@@ -215,7 +215,7 @@ class ContextMenuService {
     const wc = view.webContents;
     const s = AppState.strings.menu;
 
-    return PageService.isCurrentPage(page) ?
+    return PageService.isCurrentPage(page) && FrameService.getFrame() ?
       [
         { label: FrameService.isVisible(true) ? s.hide : s.show, click: () => FrameService.toggleVisibility() },
         { label: ViewService.isMuted(view) ? s.unmute : s.mute, click: () => ViewService.toggleMute(view) },
