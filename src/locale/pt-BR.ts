@@ -270,6 +270,7 @@ export const ptBR: Strings = {
     },
 
     pages: {
+      search: 'Pesquisar páginas...',
       syncHint: 'ou importe usando a aba "Sincronização"',
       label: 'Nome',
       labelPlaceholder: 'Nome da página',

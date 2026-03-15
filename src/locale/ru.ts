@@ -270,6 +270,7 @@ export const ru: Strings = {
     },
 
     pages: {
+      search: 'Поиск страниц...',
       syncHint: 'или импортируйте через вкладку "Синхронизация"',
       label: 'Название',
       labelPlaceholder: 'Название страницы',

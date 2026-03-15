@@ -270,6 +270,7 @@ export const fr: Strings = {
     },
 
     pages: {
+      search: 'Rechercher des pages...',
       syncHint: 'ou importez via l\'onglet "Synchronisation"',
       label: 'Libellé',
       labelPlaceholder: 'Nom de la page',

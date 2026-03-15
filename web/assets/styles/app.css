@@ -24,14 +24,6 @@ body {
   color: var(--color);
 }
 
-.exit-btn svg {
-  fill: var(--color);
-}
-
-.exit-btn:hover {
-  background-color: var(--divider-border-color);
-}
-
 
 /* TABS =============================== */
 
@@ -207,6 +199,12 @@ body {
   cursor: grabbing;
 }
 
+.page-card-handle-disabled {
+  opacity: .1;
+  cursor: default;
+  pointer-events: none;
+}
+
 .page-card-content {
   flex: 1;
   display: flex;
@@ -354,17 +352,15 @@ body {
   transition: .1s linear all;
 }
 
+.exit-btn svg {
+  fill: var(--color);
+}
+
 .exit-btn:hover {
   background-color: var(--divider-border-color);
 }
 
-/* PERMISSIONS ======================== */
-
-.perm-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* SEARCH BAR ========================= */
 
 .perm-search {
   position: relative;
@@ -394,6 +390,14 @@ body {
 
 .perm-search-input:focus {
   border-color: var(--border-color);
+}
+
+/* PERMISSIONS ======================== */
+
+.perm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .perm-list {
@@ -731,28 +735,6 @@ body {
   transition: width 0.3s ease;
 }
 
-/* PAGES HINT ========================= */
-
-.pages-sync-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .75em;
-  color: var(--color);
-  padding: 6px 14px;
-  border-radius: 6px;
-  background-color: var(--input-background);
-  border: 1px dashed var(--input-border);
-  margin-bottom: 8px;
-  cursor: pointer;
-  opacity: .7;
-}
-
-.pages-sync-hint:hover {
-  opacity: 1;
-}
-
-
 /* SYNC =============================== */
 
 #sync-tab {
@@ -912,9 +894,6 @@ body {
 
 .svg-icon {
   -webkit-user-drag: none;
-}
-
-.svg-icon {
   filter: brightness(.7);
 }
 

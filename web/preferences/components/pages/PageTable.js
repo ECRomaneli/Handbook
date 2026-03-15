@@ -1,17 +1,17 @@
 app.component('PageTable', {
   template: /*html*/ `
     <div class="page-list">
-      <div v-for="(page, index) in list" :key="index"
+      <div v-for="(page, index) in list" :key="page.id || index"
            class="page-card"
            :class="{ 'page-card-drop-target': dropTargetIndex === index }"
-           :draggable="draggable"
+           :draggable="!readonly && draggable"
            @dragstart="drag($event, index)"
            @dragover.prevent="dragOver(index)"
            @dragleave="dragLeave"
            @dragend="dragEnd"
            @drop="drop(index)">
 
-        <div class="page-card-handle" :title="$i18n.preferences.pages.drag">
+        <div class="page-card-handle" :class="{ 'page-card-handle-disabled': readonly }" :title="!readonly ? $i18n.preferences.pages.drag : undefined">
           <i class="icon icon-grip"></i>
         </div>
 
@@ -47,7 +47,7 @@ app.component('PageTable', {
         </div>
       </div>
 
-      <div tabindex="-1" class="page-card page-card-add" @click="addPage()">
+      <div v-if="!readonly" tabindex="-1" class="page-card page-card-add" @click="addPage()">
         <i class="icon icon-plus"></i>
         <span>{{ $i18n.preferences.pages.addPage }}</span>
       </div>
@@ -57,6 +57,7 @@ app.component('PageTable', {
   inject: ['$image', '$clone', '$i18n'],
   props: {
     pages: Array,
+    readonly: { type: Boolean, default: false },
   },
   data() { return { list: this.pages, draggingIndex: null, dropTargetIndex: null, draggable: true } },
   watch: {

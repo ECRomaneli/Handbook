@@ -269,6 +269,7 @@ export const en = {
     },
 
     pages: {
+      search: 'Search pages...',
       syncHint: 'or import using the "Sync" tab',
       label: 'Label',
       labelPlaceholder: 'Page name',

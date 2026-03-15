@@ -1,5 +1,3 @@
-const SearchEngine = require("@ecromaneli/search-engine")
-
 app.component('Permissions', {
   template: /*html*/ `
     <div v-if="permissions" class="perm-container">
@@ -78,7 +76,7 @@ app.component('Permissions', {
       </div>
     </div>
     `,
-  inject: ['$remote', '$image', '$const', '$i18n'],
+  inject: ['$remote', '$image', '$const', '$i18n', '$searchEngine'],
   data() {
     return {
       permissions: null,
@@ -138,7 +136,7 @@ app.component('Permissions', {
       }
 
       const filteredPermissions = {}
-      SearchEngine.search(filterableList, this.searchQuery, { matchChildKeysAsValues: true }).forEach(data => {
+      this.$searchEngine.search(filterableList, this.searchQuery, { matchChildKeysAsValues: true }).forEach(data => {
         if (!data.permissions || Object.keys(data.permissions).length === 0) { return }
         filteredPermissions[data.session] = filteredPermissions[data.session] || {}
         filteredPermissions[data.session][data.url] = data.permissions
