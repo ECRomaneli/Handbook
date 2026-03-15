@@ -283,6 +283,8 @@ export const ru: Strings = {
       drag: 'Перетащите для изменения порядка',
       addPage: 'Добавить страницу',
       defaultSession: 'По умолчанию',
+      emptyTitle: 'Пока нет страниц',
+      emptyDesc: 'Добавьте первую страницу, чтобы начать',
     },
 
     permissions: {

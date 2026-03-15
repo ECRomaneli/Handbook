@@ -282,6 +282,8 @@ export const en = {
       drag: 'Drag to reorder',
       addPage: 'Add page',
       defaultSession: 'Default',
+      emptyTitle: 'No pages yet',
+      emptyDesc: 'Add your first page to get started',
     },
 
     permissions: {

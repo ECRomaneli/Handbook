@@ -283,6 +283,8 @@ export const fr: Strings = {
       drag: 'Glisser pour réorganiser',
       addPage: 'Ajouter une page',
       defaultSession: 'Par défaut',
+      emptyTitle: 'Aucune page pour l\'instant',
+      emptyDesc: 'Ajoutez votre première page pour commencer',
     },
 
     permissions: {

@@ -283,6 +283,8 @@ export const it: Strings = {
       drag: 'Trascina per riordinare',
       addPage: 'Aggiungi pagina',
       defaultSession: 'Predefinita',
+      emptyTitle: 'Nessuna pagina',
+      emptyDesc: 'Aggiungi la tua prima pagina per iniziare',
     },
 
     permissions: {

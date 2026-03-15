@@ -283,6 +283,8 @@ export const ptPT: Strings = {
       drag: 'Arrastar para reordenar',
       addPage: 'Adicionar página',
       defaultSession: 'Predefinida',
+      emptyTitle: 'Nenhuma página ainda',
+      emptyDesc: 'Adicione a sua primeira página para começar',
     },
 
     permissions: {

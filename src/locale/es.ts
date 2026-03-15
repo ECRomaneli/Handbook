@@ -283,6 +283,8 @@ export const es: Strings = {
       drag: 'Arrastrar para reordenar',
       addPage: 'Agregar página',
       defaultSession: 'Estándar',
+      emptyTitle: 'Sin páginas aún',
+      emptyDesc: 'Agrega tu primera página para comenzar',
     },
 
     permissions: {

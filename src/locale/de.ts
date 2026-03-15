@@ -283,6 +283,8 @@ export const de: Strings = {
       drag: 'Ziehen zum Neuanordnen',
       addPage: 'Seite hinzufügen',
       defaultSession: 'Standard',
+      emptyTitle: 'Noch keine Seiten',
+      emptyDesc: 'Fügen Sie Ihre erste Seite hinzu',
     },
 
     permissions: {
