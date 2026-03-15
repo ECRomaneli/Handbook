@@ -1,6 +1,6 @@
 import AppState from '@/AppState';
 import { Settings } from '@/data/Constants';
-import Persist from '@/data/Storage';
+import Storage from '@/data/Storage';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import { ContextMenuType } from '@/service/ApplicationService';
 import ContextMenuService from '@/service/ContextMenuService';
@@ -152,7 +152,9 @@ class ViewService {
           { type: 'separator' },
           { label: AppState.strings.menu.refresh, click: () => childWindow.reload() },
           { type: 'separator' },
+          // eslint-disable-next-line @stylistic/max-len
           { label: AppState.strings.menu.copyUrl, click: () => { clipboard.writeText(childWindow.webContents.getURL()); } },
+          // eslint-disable-next-line @stylistic/max-len
           { label: AppState.strings.menu.openInBrowser, click: () => { shell.openExternal(childWindow.webContents.getURL()); } },
           { label: AppState.strings.menu.openDevTools, click: () => childWindow.webContents.openDevTools() },
         ],
@@ -162,7 +164,7 @@ class ViewService {
       this.handleChildWindows(parent, childWindow);
     })
       .setWindowOpenHandler((details) => {
-        if (Persist.getSettings(Settings.USE_EXTERNAL_BROWSER)) {
+        if (Storage.getSettings(Settings.USE_EXTERNAL_BROWSER)) {
           shell.openExternal(details.url);
           return { action: 'deny' };
         }
@@ -178,7 +180,7 @@ class ViewService {
             autoHideMenuBar: true,
             acceptFirstMouse: true,
             webPreferences: {
-              partition: Persist.getPartitionName(AppState.currentPage!.session),
+              partition: Storage.getPartitionName(AppState.currentPage!.session),
             },
           },
         };

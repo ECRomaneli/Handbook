@@ -307,7 +307,7 @@ class PageService {
   private createViewOptions(page: Page): WebContentsViewConstructorOptions {
     return {
       webPreferences: {
-        partition: `persist:${Storage.getPartitionName(page.session)}`,
+        partition: Storage.getPartitionName(page.session),
       },
     };
   }

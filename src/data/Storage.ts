@@ -1,5 +1,6 @@
 import { DefaultSettings, IsDebug, Permission, Settings } from '@/data/Constants';
 import { PlainPage } from '@/model/Page';
+import PreferencesService from '@/service/PreferencesService';
 import { app, session } from 'electron';
 import Store from 'electron-store';
 
@@ -238,6 +239,7 @@ function clearUnusedSessionData(oldPages: PlainPage[], newPages: PlainPage[]): v
       console.debug(`Clearing session data for removed session: ${s}`);
       session.fromPartition(Storage.getPartitionName(s)).clearData();
       Storage.revokePermissions(s);
+      PreferencesService.permissionsUpdated();
     }
   });
 }
