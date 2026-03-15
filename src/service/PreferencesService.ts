@@ -12,16 +12,10 @@ import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
-import { BrowserWindow, HandlerDetails, Input, IpcMainEvent, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
+import { BrowserWindow, HandlerDetails, Input, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
 import { Draggable } from 'electron-draggable';
 import path from 'node:path';
-
-/** Listener type for pages updated event */
-type PagesUpdatedListener = (event: IpcMainEvent, pages: Record<string, unknown>[]) => void;
-
-/** Listener type for settings updated event */
-type SettingsUpdatedListener = (event: IpcMainEvent, id: string, value: unknown) => void;
 
 class PreferencesService {
   private readonly dialog: Dialog = new Dialog();
@@ -79,6 +73,7 @@ class PreferencesService {
   }
 
   public applySettingsUpdate(id: string, value: unknown): void {
+    Storage.setSettings(id, value);
     PreferencesPropagator.sendToRender('settings-updated', id, value);
   }
 
