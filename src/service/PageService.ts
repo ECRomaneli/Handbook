@@ -79,7 +79,7 @@ class PageService {
       this.closePageView(p);
       if (this.isCurrentPage(p)) {
         AppState.currentPage = void 0;
-        FrameService.forceClose(false);
+        FrameService.getFrame() && FrameService.forceClose(false);
       }
       return false;
     });
@@ -190,8 +190,10 @@ class PageService {
 
   private openPageView(page = this.getCurrentPage()!): void {
     if (page.view) { throw new Error('Page view already exists.'); }
-    page.view = ViewService.createView(this.createViewOptions(page));
-    page.view.webContents.loadURL(page.url);
+    const view = ViewService.createView(this.createViewOptions(page));
+    page.view = view;
+    view.webContents.once('dom-ready', () => (view.isReady = true));
+    view.webContents.loadURL(page.url);
   }
 
   private reopenPageView(page = this.getCurrentPage()!): void {
