@@ -232,7 +232,7 @@ class SyncService {
 
   private reloadAfterImport() {
     AppState.refreshStrings();
-    ContextMenuService.refreshContextMenu();
+    ContextMenuService.updatePagesAndRefresh();
     FrameService.getFrame() && FrameService.recreateFrame();
     PreferencesService.reload();
   }

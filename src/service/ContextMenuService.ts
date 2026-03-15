@@ -22,6 +22,11 @@ class ContextMenuService {
     StatePropagator.onChange(() => { this.refreshContextMenu(); }, true);
   }
 
+  public updatePagesAndRefresh() {
+    PageService.updatePages();
+    this.refreshContextMenu();
+  }
+
   public refreshContextMenu(): void {
     const menuItems: MenuItemConstructorOptions[] = [];
     const windowMenuItems: MenuItemConstructorOptions[] = [];

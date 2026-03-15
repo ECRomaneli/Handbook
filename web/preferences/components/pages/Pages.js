@@ -5,7 +5,7 @@ app.component('Pages', {
         <!-- Empty state -->
         <template v-if="pages.length === 0">
             <div class="pages-empty-state">
-                <i class="icon icon-globe pages-empty-icon" style="width: 120px; height: 120px;"></i>
+                <i class="icon icon-globe pages-empty-icon" style="width: 80px; height: 80px;"></i>
                 <span class="pages-empty-title">{{ $i18n.preferences.pages.emptyTitle }}</span>
                 <span class="pages-empty-desc">{{ $i18n.preferences.pages.emptyDesc }}</span>
             </div>

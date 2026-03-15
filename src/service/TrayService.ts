@@ -8,29 +8,18 @@ import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import { nativeTheme, Tray } from 'electron';
 import path from 'node:path';
-import PreferencesService from './PreferencesService';
 
 class TrayService {
   public initialize() {
     this.createTray();
-    this.updateAndRefresh();
+    ContextMenuService.updatePagesAndRefresh();
     this.registerDynamicContextMenu();
-    this.registerPreferencesListeners();
     this.registerTrayEvents();
     OS.IS_WIN32 && AppState.tray!.focus();
   }
 
-  private registerPreferencesListeners() {
-    PreferencesService.onPagesUpdated(() => this.updateAndRefresh());
-  }
-
   public updateLinuxTrayContextMenu() {
     if (OS.IS_LINUX) { AppState.tray!.setContextMenu(ContextMenuService.buildContextMenu(ContextMenuType.TRAY)); }
-  }
-
-  public updateAndRefresh() {
-    PageService.updatePages();
-    ContextMenuService.refreshContextMenu();
   }
 
   public updateTrayIcon(): void {

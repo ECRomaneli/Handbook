@@ -35,7 +35,6 @@ class PreferencesService {
   private registerStateListeners(): void {
     PreferencesPropagator.onRender('ready', () => { this.getWindow()!.show(); });
     PreferencesPropagator.on('closed', () => { AppState.preferences = undefined; });
-    this.onSettingsUpdated((_e, id, value) => this.updateSettings(id, value));
   }
 
   public open(): void {
@@ -113,10 +112,12 @@ class PreferencesService {
 
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
+      ContextMenuService.updatePagesAndRefresh();
     });
 
     PreferencesPropagator.onRender('settings-updated', (_, id: string, value: unknown): void => {
       Storage.setSettings(id, value);
+      this.updateSettings(id, value);
     });
 
     PreferencesPropagator.onRender('permissions-updated',
@@ -214,14 +215,6 @@ class PreferencesService {
 
   public sendPagesUpdated(): void {
     PreferencesPropagator.sendToRender('pages-updated', Storage.getPages());
-  }
-
-  public onPagesUpdated(listener: PagesUpdatedListener): void {
-    PreferencesPropagator.onRender('pages-updated', listener);
-  }
-
-  public onSettingsUpdated(listener: SettingsUpdatedListener): void {
-    PreferencesPropagator.onRender('settings-updated', listener);
   }
 
   public isPreferences(senderWebContents: WebContents): boolean {
