@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { IsDebug } from '@/data/Constants';
+import { IsProduction } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
@@ -8,7 +8,7 @@ import Dialog from '@/util/modal/Dialog';
 import { dialog, net } from 'electron';
 import { promises as fs } from 'node:fs';
 
-const FILENAME = IsDebug ? 'handbook-config.debug.json' : 'handbook-config.json';
+const FILENAME = IsProduction ? 'handbook-config.json' : 'handbook-config.debug.json';
 
 interface SyncSettings {
   gistToken?: string;
