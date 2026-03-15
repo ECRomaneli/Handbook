@@ -205,19 +205,23 @@ body {
   pointer-events: none;
 }
 
+.page-card:focus-within .page-card-content {
+  gap: 4px;
+}
+
 .page-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 8px 10px;
-  gap: 4px;
+  gap: 0;
   min-width: 0;
 }
 
-.page-card-top,
-.page-card-bottom {
+.page-card-bottom,
+.page-card-top {
   display: flex;
-  gap: 8px;
+  gap: 8px
 }
 
 .page-card-field {
@@ -241,11 +245,19 @@ body {
   text-transform: uppercase;
   letter-spacing: .04em;
   color: var(--color);
-  opacity: .45;
-  margin-bottom: 1px;
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
   line-height: 1;
   pointer-events: none;
   user-select: none;
+  transition: opacity .15s ease, max-height .15s ease, margin-bottom .15s ease;
+}
+
+.page-card:focus-within .page-card-label {
+  opacity: .45;
+  max-height: 12px;
+  margin-bottom: 1px;
 }
 
 .page-card-input {
@@ -275,8 +287,19 @@ body {
 
 .page-card-input-url {
   font-family: var(--font-monospace);
+  font-size: .65em;
+  opacity: .35;
+  padding: 0 6px;
+  height: 16px;
+  transition: border-color .15s ease, background-color .15s ease, opacity .15s ease, font-size .15s ease, height .15s ease, padding .15s ease;
+}
+
+.page-card-input-url:focus,
+.page-card:focus-within .page-card-input-url {
   font-size: .75em;
   opacity: .8;
+  padding: 2px 6px;
+  height: auto;
 }
 
 .page-card-actions {

@@ -38,10 +38,10 @@ app.component('PageTable', {
         </div>
 
         <div class="page-card-actions">
-          <button class="page-card-action-btn" :class="{ 'page-card-pin-active': page.persist }" :title="$i18n.preferences.pages.persistTooltip" @click="page.persist = !page.persist; emitUpdate(page)">
+          <button class="page-card-action-btn" :class="{ 'page-card-pin-active': page.persist }" :title="$i18n.preferences.pages.persistTooltip" @mousedown.prevent @click="page.persist = !page.persist; emitUpdate(page)">
             <i class="icon" :class="page.persist ? 'icon-pin-filled' : 'icon-pin'"></i>
           </button>
-          <button tabindex="-1" class="page-card-action-btn page-card-remove-btn" :title="$i18n.preferences.pages.remove" @click="removePage(index)">
+          <button tabindex="-1" class="page-card-action-btn page-card-remove-btn" :title="$i18n.preferences.pages.remove" @mousedown.prevent @click="removePage(index)">
             <i class="icon icon-trash"></i>
           </button>
         </div>
