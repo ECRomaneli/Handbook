@@ -6,7 +6,7 @@ app.component('Updates', {
                 <p class="small mb-2">{{ $i18n.preferences.updates.currentVersion }} <span class="fw-bold">v{{ status.currentVersion }}</span>.</p>
 
                 <!-- Idle -->
-                <template  v-if="status.state === 'idle'">
+                <template v-if="status.state === 'idle'">
                     <p class="small mb-2">{{ $i18n.preferences.updates.checkDescription }}</p>
                     <button class="btn btn-sm btn-secondary " @click="checkForUpdates">{{ $i18n.preferences.updates.checkForUpdates }}</button>
                 </template>
@@ -25,14 +25,12 @@ app.component('Updates', {
                         <span class="update-dot update-dot-available me-2"></span>
                         <span class="small fw-bold">{{ $i18n.preferences.updates.versionAvailable.replace('{version}', status.version) }}</span>
                     </div>
-                    <template v-if="status.platform === 'darwin'">
-                        <p class="smallest mb-2 text-muted">{{ $i18n.preferences.updates.macOsUnsupported }}</p>
-                        <button class="btn btn-sm btn-secondary " @click="openDownloadUrl">{{ $i18n.preferences.updates.openDownloadPage }}</button>
-                    </template>
-                    <template v-else>
-                        <button class="btn btn-sm btn-secondary " @click="downloadUpdate">{{ $i18n.preferences.updates.downloadUpdate }}</button>
-                    </template>
-                    <button class="btn btn-sm btn-secondary ms-2" @click="checkForUpdates">{{ $i18n.preferences.updates.recheck }}</button>
+                    <p v-if="status.platform === 'darwin'" class="smallest mb-2 text-muted">{{ $i18n.preferences.updates.macOsUnsupported }}</p>
+                    <div class="update-card-actions">
+                        <button v-if="status.platform === 'darwin'" class="btn btn-sm btn-secondary" @click="openDownloadUrl">{{ $i18n.preferences.updates.openDownloadPage }}</button>
+                        <button v-else class="btn btn-sm btn-secondary" @click="downloadUpdate">{{ $i18n.preferences.updates.downloadUpdate }}</button>
+                        <button class="btn btn-sm btn-secondary" @click="checkForUpdates">{{ $i18n.preferences.updates.recheck }}</button>
+                    </div>
                 </template>
 
                 <!-- Downloading -->

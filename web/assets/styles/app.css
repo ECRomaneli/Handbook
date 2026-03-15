@@ -760,7 +760,7 @@ body {
   color: var(--color);
 }
 
-/* UPDATES ============================ */
+/* SYNC =============================== */
 
 .updates .update-card {
   background-color: var(--input-background);
@@ -803,8 +803,6 @@ body {
   transition: width 0.3s ease;
 }
 
-/* SYNC =============================== */
-
 #sync-tab {
   display: flex;
   flex-direction: column;
@@ -838,7 +836,8 @@ body {
   margin-bottom: 12px;
 }
 
-.sync-card-actions {
+.sync-card-actions,
+.update-card-actions {
   display: flex;
   gap: 8px;
 }
