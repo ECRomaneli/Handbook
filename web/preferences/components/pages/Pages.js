@@ -23,14 +23,18 @@ app.component('Pages', {
 
     </div>
     `,
-  emits: ['update', 'navigate'],
+  emits: ['navigate'],
   inject: ['$const', '$remote', '$i18n', '$searchEngine'],
-  data() { return { pages: null, searchQuery: '', onPagesUpdated: (p) => { this.pages = p } } },
+  data() {
+    return {
+      pages: null, searchQuery: '', defaultSession: this.$i18n.preferences.pages.defaultSession
+    }
+  },
   computed: {
     isFiltered() { return this.searchQuery.trim().length > 0 },
     filteredPages() {
       if (!this.isFiltered) { return this.pages }
-      return this.$searchEngine.search(this.pages, this.searchQuery, { matchChildKeysAsValues: true })
+      return this.$searchEngine.search(this.pages, this.searchQuery, { matchChildKeysAsValues: true, excludeKeys: ['.id', '.session'] })
     },
   },
   created() {
@@ -39,16 +43,22 @@ app.component('Pages', {
   },
   methods: {
     async retrievePages() {
-      this.pages = await this.$remote.storage.getPages()
+      this.onPagesUpdated(await this.$remote.storage.getPages())
     },
 
-    storePages(page) {
-      this.$remote.storage.setPages(Vue.toRaw(this.pages))
-      this.$emit('update', page)
+    storePages() {
+      const pages = Vue.toRaw(this.pages)
+      pages.forEach(p => delete p._session)
+      this.$remote.storage.setPages(pages)
     },
 
     addFirstPage() {
       this.pages.push({ id: `${Date.now()}0`, label: '', url: '', session: '', persist: false })
+    },
+
+    onPagesUpdated(pages) {
+      pages.forEach(p => p._session = p.session || this.defaultSession)
+      this.pages = pages
     }
   }
 })

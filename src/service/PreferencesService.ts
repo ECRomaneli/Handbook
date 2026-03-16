@@ -107,6 +107,7 @@ class PreferencesService {
 
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
+      this.sendPagesUpdated();
       ContextMenuService.updatePagesAndRefresh();
     });
 
