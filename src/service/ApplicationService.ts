@@ -53,6 +53,7 @@ class ApplicationService {
   }
 
   public async setupAutoLaunch(): Promise<void> {
+    if (process.env.HANDBOOK_E2E) { return; }
     const s = AppState.strings.application;
     try {
       const isEnabled = await AppState.autoLauncher.isEnabled();
