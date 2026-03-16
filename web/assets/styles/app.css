@@ -253,7 +253,7 @@ body {
   line-height: 1;
   pointer-events: none;
   user-select: none;
-  transition: opacity .15s ease, max-height .15s ease, margin-bottom .15s ease;
+  transition: opacity .15s ease, margin-bottom .15s ease;
 }
 
 .page-card.selected .page-card-label {
