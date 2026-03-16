@@ -127,6 +127,7 @@ body {
 
 #buttons button {
   width: 100%;
+  white-space: nowrap;
   user-select: none;
   transition: .2s linear background-color;
 }

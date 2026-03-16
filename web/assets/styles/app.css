@@ -2,6 +2,7 @@
 
 body {
   background-color: transparent;
+  overflow-x: hidden;
 }
 
 #app {
@@ -45,6 +46,7 @@ body {
   border-bottom-color: transparent;
   margin-bottom: -1px;
   transition: .15s ease-in-out all;
+  white-space: nowrap;
 }
 
 .inline-tabs .tab:hover,
