@@ -272,8 +272,7 @@ class FrameService {
     }
 
     view.webContents.once('dom-ready', () => {
-      if (frame.isDestroyed() || view !== PageService.getCurrentView()) { console.debug('a'); return; }
-      console.debug('b');
+      if (frame.isDestroyed() || view !== PageService.getCurrentView()) { return; }
       frame.contentView.addChildView(view);
       view.emit('attached');
     });

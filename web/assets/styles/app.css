@@ -166,7 +166,7 @@ body {
 }
 
 .page-card:hover,
-.page-card:focus-within {
+.page-card.selected {
   border-color: var(--border-color);
   opacity: 1;
 }
@@ -205,7 +205,7 @@ body {
   pointer-events: none;
 }
 
-.page-card:focus-within .page-card-content {
+.page-card.selected .page-card-content {
   gap: 4px;
 }
 
@@ -254,7 +254,7 @@ body {
   transition: opacity .15s ease, max-height .15s ease, margin-bottom .15s ease;
 }
 
-.page-card:focus-within .page-card-label {
+.page-card.selected .page-card-label {
   opacity: .45;
   max-height: 12px;
   margin-bottom: 1px;
@@ -295,7 +295,7 @@ body {
 }
 
 .page-card-input-url:focus,
-.page-card:focus-within .page-card-input-url {
+.page-card.selected .page-card-input-url {
   font-size: .75em;
   opacity: .8;
   padding: 2px 6px;

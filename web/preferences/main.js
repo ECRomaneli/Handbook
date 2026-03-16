@@ -38,20 +38,12 @@ const app = Vue.createApp({
             </ul>
 
             <div class="tab-content p-3 overflow-auto">
-                <div class="tab-pane container" :class="{ active: tab === 'pages' }">
-                    <pages @navigate="navigateToTab"></pages>
-                </div>
-                <div class="tab-pane container" :class="{ active: tab === 'permissions' }">
-                    <permissions></permissions>
-                </div>
-                <div class="tab-pane container" :class="{ active: tab === 'settings' }">
-                    <settings></settings>
-                </div>
-                <div class="tab-pane container" :class="{ active: tab === 'sync' }">
-                    <sync-tab></sync-tab>
-                </div>
-                <div class="tab-pane container" :class="{ active: tab === 'about' }">
-                    <about-tab v-if="tab === 'about'"></about-tab>
+                <div class="tab-pane container active">
+                    <pages v-if="tab === 'pages'" @navigate="navigateToTab"></pages>
+                    <permissions v-else-if="tab === 'permissions'"></permissions>
+                    <settings v-else-if="tab === 'settings'"></settings>
+                    <sync-tab v-else-if="tab === 'sync'"></sync-tab>
+                    <about-tab v-else-if="tab === 'about'"></about-tab>
                 </div>
             </div>
         </div>
