@@ -1,3 +1,5 @@
+import { Settings } from '@/data/Constants';
+import Storage from '@/data/Storage';
 import Propagator from '@/propagator/Propagator';
 import debounce from '@/util/Debounce';
 import { BaseWindow } from 'electron';
@@ -20,10 +22,28 @@ export class FramePropagator extends Propagator<BaseWindow> {
   }
 
   private registerDelayedEvents(emitter: BaseWindow): void {
-    const moveDebounce = debounce(() => this.emit('moved'), this.CANCELABLE_INTERVAL);
-    const resizeDebounce = debounce(() => this.emit('resized'), this.CANCELABLE_INTERVAL);
-    emitter.on('move', moveDebounce);
-    emitter.on('resize', () => { this.emit('resize'); resizeDebounce(); });
+    emitter.on('move', debounce(() => this.emit('moved'), this.CANCELABLE_INTERVAL));
+
+    let resizeInterval = undefined as NodeJS.Timeout | null | undefined;
+    const resizeDebounce = debounce(() => {
+      this.emit('resized');
+      clearInterval(resizeInterval!);
+      resizeInterval = undefined;
+    }, this.CANCELABLE_INTERVAL);
+
+    emitter.on('resize', () => {
+      if (resizeInterval === undefined) {
+        const fps = Storage.getSettings(Settings.RESIZE_REFRESH_RATE) as number || null;
+        if (fps) {
+          resizeInterval = setInterval(() => this.emit('resize'), Math.trunc(1000 / fps));
+        } else {
+          resizeInterval = null;
+        }
+      } else if (resizeInterval === null) {
+        this.emit('resize');
+      }
+      resizeDebounce();
+    });
   }
 }
 

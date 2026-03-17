@@ -193,6 +193,7 @@ export const es: Strings = {
       appearance: 'Apariencia',
       bounds: 'Tamaño y Posición',
       shortcuts: 'Atajos',
+      performance: 'Rendimiento',
       advanced: 'Avanzado',
 
       launchAtStartup: 'Iniciar con el sistema',
@@ -209,6 +210,8 @@ export const es: Strings = {
       useExternalBrowserDesc: 'Abre enlaces en el navegador estándar del sistema en lugar de una nueva ventana en la aplicación.',
       groupPagesBySession: 'Agrupar páginas por sesión',
       groupPagesBySessionDesc: 'Organiza las páginas en la bandeja y menús contextuales agrupadas por su sesión.',
+      muteStartupSound: 'Silenciar sonido de inicio',
+      muteStartupSoundDesc: 'Desactiva el sonido que se reproduce cuando la aplicación se inicia.',
 
       showFrame: 'Mostrar barra de título',
       backgroundColor: 'Color de fondo',
@@ -244,6 +247,12 @@ export const es: Strings = {
       preferredLanguageDesc: 'Forzar un idioma preferido para páginas web mediante el encabezado "Accept-Language". "Aplicación" sigue el idioma de la aplicación. Requiere reinicio para surtir efecto en sesiones existentes.',
       googleApiKey: 'Clave de la API de Google',
       googleApiKeyDesc: 'Proporciona una clave de la API de Google Maps para una geolocalización precisa. Sin ella, las solicitudes de ubicación pueden fallar o devolver datos imprecisos. Obtén una clave desde Google Cloud Console con la API de Geolocalización habilitada.',
+
+      resizeRefreshRate: 'Tasa de refresco al redimensionar',
+      resizeRefreshRateDesc: 'Establece la tasa de refresco máxima al redimensionar ventanas. "Auto" utiliza el valor predeterminado del sistema.',
+      dragRefreshRate: 'Tasa de refresco al arrastrar',
+      dragRefreshRateDesc: 'Establece la tasa de refresco máxima al arrastrar ventanas. "Auto" utiliza el valor predeterminado del sistema.',
+      refreshRateAuto: 'Auto',
 
       themeSystem: 'Sistema',
       themeLight: 'Claro',

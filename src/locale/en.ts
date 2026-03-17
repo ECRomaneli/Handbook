@@ -192,6 +192,7 @@ export const en = {
       appearance: 'Appearance',
       bounds: 'Bounds',
       shortcuts: 'Shortcuts',
+      performance: 'Performance',
       advanced: 'Advanced',
 
       launchAtStartup: 'Launch at startup',
@@ -208,6 +209,8 @@ export const en = {
       useExternalBrowserDesc: 'Open links in the system default browser instead of a new window in the app.',
       groupPagesBySession: 'Group pages by session',
       groupPagesBySessionDesc: 'Organize pages in the tray and context menus grouped by their session.',
+      muteStartupSound: 'Mute startup sound',
+      muteStartupSoundDesc: 'Disable the sound that plays when the application starts.',
 
       showFrame: 'Show frame',
       backgroundColor: 'Background color',
@@ -243,6 +246,12 @@ export const en = {
       preferredLanguageDesc: 'Force a preferred language for web pages via Accept-Language header. "Application" follows the app language setting. Requires restart to take effect on existing sessions.',
       googleApiKey: 'Google API key',
       googleApiKeyDesc: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
+
+      resizeRefreshRate: 'Resize refresh rate',
+      resizeRefreshRateDesc: 'Sets the maximum refresh rate when resizing windows. "Auto" uses the system default.',
+      dragRefreshRate: 'Drag refresh rate',
+      dragRefreshRateDesc: 'Sets the maximum refresh rate when dragging windows. "Auto" uses the system default.',
+      refreshRateAuto: 'Auto',
 
       themeSystem: 'System',
       themeLight: 'Light',

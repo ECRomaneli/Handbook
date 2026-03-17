@@ -193,6 +193,7 @@ export const ptPT: Strings = {
       appearance: 'Aparência',
       bounds: 'Tamanho e Posição',
       shortcuts: 'Atalhos',
+      performance: 'Desempenho',
       advanced: 'Avançado',
 
       launchAtStartup: 'Iniciar com o sistema',
@@ -209,6 +210,8 @@ export const ptPT: Strings = {
       useExternalBrowserDesc: 'Abrir ligações no navegador predefinido do sistema em vez de numa nova janela da aplicação.',
       groupPagesBySession: 'Agrupar páginas por sessão',
       groupPagesBySessionDesc: 'Organizar páginas na barra de notificações e menus de contexto agrupadas por sessão.',
+      muteStartupSound: 'Silenciar som de arranque',
+      muteStartupSoundDesc: 'Desativa o som reproduzido quando a aplicação é iniciada.',
 
       showFrame: 'Mostrar barra de título',
       backgroundColor: 'Cor de fundo',
@@ -244,6 +247,12 @@ export const ptPT: Strings = {
       preferredLanguageDesc: 'Forçar um idioma preferido para páginas web através do cabeçalho "Accept-Language". "Aplicação" segue o idioma da aplicação. Requer reinício para ter efeito em sessões existentes.',
       googleApiKey: 'Chave da API do Google',
       googleApiKeyDesc: 'Forneça uma chave da API do Google Maps para geolocalização precisa. Sem ela, os pedidos de localização podem falhar ou devolver dados imprecisos. Obtenha uma chave na Google Cloud Console com a API de Geolocalização ativada.',
+
+      resizeRefreshRate: 'Taxa de atualização ao redimensionar',
+      resizeRefreshRateDesc: 'Define a taxa de atualização máxima ao redimensionar janelas. "Auto" utiliza o valor predefinido do sistema.',
+      dragRefreshRate: 'Taxa de atualização ao arrastar',
+      dragRefreshRateDesc: 'Define a taxa de atualização máxima ao arrastar janelas. "Auto" utiliza o valor predefinido do sistema.',
+      refreshRateAuto: 'Auto',
 
       themeSystem: 'Sistema',
       themeLight: 'Claro',

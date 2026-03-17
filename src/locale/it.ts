@@ -193,6 +193,7 @@ export const it: Strings = {
       appearance: 'Aspetto',
       bounds: 'Dimensione e Posizione',
       shortcuts: 'Scorciatoie',
+      performance: 'Prestazioni',
       advanced: 'Avanzate',
 
       launchAtStartup: 'Avvia con il sistema',
@@ -209,6 +210,8 @@ export const it: Strings = {
       useExternalBrowserDesc: 'Apri i link nel browser predefinito del sistema invece di una nuova finestra nell\'app.',
       groupPagesBySession: 'Raggruppa pagine per sessione',
       groupPagesBySessionDesc: 'Organizza le pagine nella barra di notifica e nei menu contestuali raggruppate per sessione.',
+      muteStartupSound: 'Disattiva suono di avvio',
+      muteStartupSoundDesc: 'Disattiva il suono riprodotto all\'avvio dell\'applicazione.',
 
       showFrame: 'Mostra barra del titolo',
       backgroundColor: 'Colore di sfondo',
@@ -244,6 +247,12 @@ export const it: Strings = {
       preferredLanguageDesc: 'Forza una lingua preferita per le pagine web tramite l\'intestazione "Accept-Language". "Applicazione" segue la lingua dell\'applicazione. Richiede un riavvio per avere effetto sulle sessioni esistenti.',
       googleApiKey: 'Chiave API Google',
       googleApiKeyDesc: 'Fornisci una chiave API di Google Maps per una geolocalizzazione precisa. Senza di essa, le richieste di posizione potrebbero fallire o restituire dati imprecisi. Ottieni una chiave dalla Google Cloud Console con l\'API di Geolocalizzazione abilitata.',
+
+      resizeRefreshRate: 'Frequenza di aggiornamento al ridimensionamento',
+      resizeRefreshRateDesc: 'Imposta la frequenza di aggiornamento massima durante il ridimensionamento delle finestre. "Auto" utilizza il valore predefinito del sistema.',
+      dragRefreshRate: 'Frequenza di aggiornamento al trascinamento',
+      dragRefreshRateDesc: 'Imposta la frequenza di aggiornamento massima durante il trascinamento delle finestre. "Auto" utilizza il valore predefinito del sistema.',
+      refreshRateAuto: 'Auto',
 
       themeSystem: 'Sistema',
       themeLight: 'Chiaro',

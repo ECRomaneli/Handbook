@@ -69,6 +69,13 @@ class FrameService {
     Draggable.from(frame).updateOptions({ region: { height: actionArea } });
   }
 
+  public updateFpsForDrag(): void {
+    const frame = this.getFrame();
+    if (!frame) { return; }
+    const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
+    Draggable.from(frame).updateOptions({ fps });
+  }
+
   private getOrCreateFrame(): BaseWindow {
     if (!this.getFrame()) { this.createFrame(); }
     return this.getFrame()!;
@@ -77,7 +84,8 @@ class FrameService {
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    Draggable.from(frame, { maximize: true });
+    const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
+    Draggable.from(frame, { maximize: true, fps });
     AppState.frame = frame;
   }
 
