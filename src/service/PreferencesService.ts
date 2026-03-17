@@ -50,8 +50,8 @@ class PreferencesService {
     });
 
     AppState.preferences = win;
-
-    Draggable.from(win, { region: { height: 86 }, exclude: '.exit-btn, li' });
+    const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
+    Draggable.from(win, { region: { height: 86 }, exclude: '.exit-btn, li', fps });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
@@ -107,6 +107,7 @@ class PreferencesService {
 
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
+      this.sendPagesUpdated();
       ContextMenuService.updatePagesAndRefresh();
     });
 
@@ -277,6 +278,10 @@ class PreferencesService {
       }
       case Settings.ACTION_AREA:
         FrameService.updateActionArea();
+        break;
+      case Settings.DRAG_REFRESH_RATE:
+        FrameService.updateFpsForDrag();
+        Draggable.from(this.getWindow()!).updateOptions({ fps: value as number || null });
         break;
       case Settings.HIDE_SHORTCUT:
         break;

@@ -210,7 +210,7 @@ app.component('Permissions', {
     },
 
     getSession(session) {
-      return session === 'Default' ? this.$i18n.preferences.pages.defaultSession : session
+      return session === '__default_handbook_session__' ? this.$i18n.preferences.pages.defaultSession : session
     },
 
     revokePermission(session, url, permission) {

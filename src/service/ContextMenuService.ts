@@ -41,9 +41,10 @@ class ContextMenuService {
     const validPages = PageService.getValidPages();
 
     if (groupBySession) {
+      const defaultSessionLabel = AppState.strings.preferences.pages.defaultSession;
       const sessionMap = new Map<string, Page[]>();
       validPages.forEach((p) => {
-        const session = p.session || Page.DEFAULT_SESSION;
+        const session = p.session !== Page.DEFAULT_SESSION ? p.session : defaultSessionLabel;
         if (!sessionMap.has(session)) { sessionMap.set(session, []); }
         sessionMap.get(session)!.push(p);
       });

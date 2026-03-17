@@ -79,6 +79,12 @@ app.component('Settings', {
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.AUTO_LAUNCH) }
           },
           {
+            id: this.$const.Settings.MUTE_STARTUP_SOUND,
+            label: s.muteStartupSound,
+            description: s.muteStartupSoundDesc,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.MUTE_STARTUP_SOUND) }
+          },
+          {
             id: this.$const.Settings.TRAY_LONGPRESS,
             label: s.trayLongpress,
             description: s.trayLongpressDesc,
@@ -131,6 +137,12 @@ app.component('Settings', {
             label: s.groupPagesBySession,
             description: s.groupPagesBySessionDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
+          },
+          {
+            id: this.$const.Settings.ALLOW_FULLSCREEN,
+            label: s.allowFullscreen,
+            description: s.allowFullscreenDesc,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
           }
         ],
         [s.appearance]: [
@@ -165,12 +177,6 @@ app.component('Settings', {
             description: s.keepOpacityDesc,
             disabled: this.$const.OS.IS_LINUX,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.KEEP_OPACITY_WHEN_MAXIMIZED) }
-          },
-          {
-            id: this.$const.Settings.ALLOW_FULLSCREEN,
-            label: s.allowFullscreen,
-            description: s.allowFullscreenDesc,
-            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
           }
         ],
         [s.bounds]: [
@@ -224,6 +230,36 @@ app.component('Settings', {
             label: s.globalShortcut,
             description: s.globalShortcutDesc,
             data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
+          }
+        ],
+        [s.performance]: [
+          {
+            id: this.$const.Settings.RESIZE_REFRESH_RATE,
+            label: s.resizeRefreshRate,
+            description: s.resizeRefreshRateDesc,
+            data: {
+              type: 'select', value: await storage.getSettings(this.$const.Settings.RESIZE_REFRESH_RATE),
+              options: [
+                { label: s.refreshRateAuto, value: '' },
+                { label: '60 Hz', value: 60 },
+                { label: '30 Hz', value: 30 },
+                { label: '15 Hz', value: 15 }
+              ]
+            }
+          },
+          {
+            id: this.$const.Settings.DRAG_REFRESH_RATE,
+            label: s.dragRefreshRate,
+            description: s.dragRefreshRateDesc,
+            data: {
+              type: 'select', value: await storage.getSettings(this.$const.Settings.DRAG_REFRESH_RATE),
+              options: [
+                { label: s.refreshRateAuto, value: '' },
+                { label: '60 Hz', value: 60 },
+                { label: '30 Hz', value: 30 },
+                { label: '15 Hz', value: 15 }
+              ]
+            }
           }
         ],
         [s.advanced]: [

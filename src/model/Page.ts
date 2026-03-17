@@ -12,7 +12,7 @@ export type PageView = WebContentsView & { isReady?: boolean };
 
 export class Page {
   public static readonly MARGIN = { x: 30, y: 30 };
-  public static readonly DEFAULT_SESSION = 'Default';
+  public static readonly DEFAULT_SESSION = '__default_handbook_session__';
   private _id?: string;
   private _label: string;
   private _url: string;

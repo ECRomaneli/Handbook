@@ -193,6 +193,7 @@ export const de: Strings = {
       appearance: 'Erscheinungsbild',
       bounds: 'Größe und Position',
       shortcuts: 'Tastenkürzel',
+      performance: 'Leistung',
       advanced: 'Erweitert',
 
       launchAtStartup: 'Beim Systemstart starten',
@@ -209,6 +210,8 @@ export const de: Strings = {
       useExternalBrowserDesc: 'Links im Standard-Systembrowser statt in einem neuen Fenster der App öffnen.',
       groupPagesBySession: 'Seiten nach Sitzung gruppieren',
       groupPagesBySessionDesc: 'Seiten in der Taskleiste und Kontextmenüs nach Sitzung gruppiert organisieren.',
+      muteStartupSound: 'Startton stummschalten',
+      muteStartupSoundDesc: 'Deaktiviert den Ton, der beim Start der Anwendung abgespielt wird.',
 
       showFrame: 'Titelleiste anzeigen',
       backgroundColor: 'Hintergrundfarbe',
@@ -244,6 +247,12 @@ export const de: Strings = {
       preferredLanguageDesc: 'Eine bevorzugte Sprache für Webseiten über den "Accept-Language"-Header erzwingen. „Anwendung“ folgt der Anwendungssprache. Erfordert einen Neustart, um auf bestehende Sitzungen zu wirken.',
       googleApiKey: 'Google API-Schlüssel',
       googleApiKeyDesc: 'Geben Sie einen Google Maps API-Schlüssel für genaue Geolokalisierung an. Ohne ihn können Standortanfragen fehlschlagen oder ungenaue Daten liefern. Holen Sie sich einen Schlüssel von der Google Cloud Console mit aktivierter Geolocation-API.',
+
+      resizeRefreshRate: 'Aktualisierungsrate bei Größenänderung',
+      resizeRefreshRateDesc: 'Legt die maximale Aktualisierungsrate bei der Größenänderung von Fenstern fest. „Automatisch" verwendet die Systemvorgabe.',
+      dragRefreshRate: 'Aktualisierungsrate beim Ziehen',
+      dragRefreshRateDesc: 'Legt die maximale Aktualisierungsrate beim Ziehen von Fenstern fest. „Automatisch" verwendet die Systemvorgabe.',
+      refreshRateAuto: 'Automatisch',
 
       themeSystem: 'System',
       themeLight: 'Hell',

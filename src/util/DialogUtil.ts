@@ -1,5 +1,6 @@
 import AppState from '@/AppState';
-import { OS } from '@/data/Constants';
+import { OS, Settings } from '@/data/Constants';
+import Storage from '@/data/Storage';
 import Dialog, { DialogOptions as ModalDialogOptions } from '@/util/modal/Dialog';
 import { BrowserWindow, Notification as Notification2 } from 'electron';
 
@@ -17,11 +18,12 @@ class DialogUtil {
    */
   public notify(title: string, content: string, useBalloonIfAvailable = true): void {
     const tray = AppState.tray;
+    const silent = !!Storage.getSettings(Settings.MUTE_STARTUP_SOUND);
 
     if (tray && OS.IS_WIN32 && useBalloonIfAvailable) {
-      tray.displayBalloon({ title, content, iconType: 'info' });
+      tray.displayBalloon({ title, content, iconType: 'info', noSound: silent });
     } else {
-      new Notification2({ title, body: content }).show();
+      new Notification2({ title, body: content, silent }).show();
     }
   }
 

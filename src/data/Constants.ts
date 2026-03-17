@@ -25,6 +25,9 @@ const Settings = {
   PREFERRED_LANGUAGE: 'preferred_language',
   APP_LANGUAGE: 'app_language',
   GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
+  MUTE_STARTUP_SOUND: 'mute_startup_sound',
+  RESIZE_REFRESH_RATE: 'resize_refresh_rate',
+  DRAG_REFRESH_RATE: 'drag_refresh_rate',
 };
 
 const Positions = {
@@ -64,6 +67,9 @@ DefaultSettings[Settings.AUTO_LAUNCH] = void 0;
 DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.APP_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
+DefaultSettings[Settings.MUTE_STARTUP_SOUND] = false;
+DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
+DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
 
 const OS = {
   IS_DARWIN: process.platform === 'darwin',
