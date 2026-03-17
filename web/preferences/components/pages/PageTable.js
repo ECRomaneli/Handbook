@@ -61,7 +61,7 @@ app.component('PageTable', {
     readonly: { type: Boolean, default: false },
   },
   mounted() {
-    this._deselectHandler = (e) => { !e.target.closest('.page-card') && (this.selectedId = null) }
+    this._deselectHandler = (e) => { this.selectedId !== null && !e.target.closest('.page-card') && (this.selectedId = null) }
     document.addEventListener('click', this._deselectHandler)
   },
   unmounted() {
