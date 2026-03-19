@@ -76,7 +76,7 @@ class FrameService {
     Draggable.from(frame).updateOptions({ fps });
   }
 
-  public emitBlur() {
+  public emitBlurIfVisible() {
     if (!this.isVisible(true)) { return; }
     this.getFrame()!.emit('blur');
   }
@@ -268,7 +268,7 @@ class FrameService {
     } else {
       dragHandle.attach(newView.webContents, {
         region: { height: Storage.getSettings(Settings.ACTION_AREA) as number },
-        exclude: 'button, a',
+        exclude: 'button, a, input, select, textarea',
         maximize: true,
       });
     }
