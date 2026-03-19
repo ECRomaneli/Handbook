@@ -5,7 +5,7 @@ import { OS } from './data/Constants';
 import DialogUtil from './util/DialogUtil';
 
 class Bootstrap {
-  public initialize() {
+  constructor() {
     this.registerSecondInstanceEvent();
     ApplicationService.initialize();
     this.notifyAppReady();

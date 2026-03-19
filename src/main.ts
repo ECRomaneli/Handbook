@@ -1,5 +1,3 @@
-import Bootstrap from '@/Bootstrap';
-import { IsProduction, OS } from '@/data/Constants';
 import { app, globalShortcut } from 'electron';
 
 function guaranteeSingleInstance(): boolean {
@@ -12,16 +10,16 @@ function guaranteeSingleInstance(): boolean {
 }
 
 function configElectronApp(): void {
-  OS.IS_DARWIN && app.dock!.hide();
-  if (IsProduction) { console.trace = console.debug = () => { }; }
+  process.platform === 'darwin' && app.dock!.hide();
+  if (process.env.NODE_ENV === 'production') { console.trace = console.debug = () => { }; }
   app.on('window-all-closed', () => { });
   app.on('quit', () => { globalShortcut.unregisterAll(); });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   if (!guaranteeSingleInstance()) { return; }
   configElectronApp();
-  Bootstrap.initialize();
+  (await import('@/Bootstrap'));
 });
