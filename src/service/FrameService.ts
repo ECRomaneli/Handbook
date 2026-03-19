@@ -76,6 +76,11 @@ class FrameService {
     Draggable.from(frame).updateOptions({ fps });
   }
 
+  public emitBlur() {
+    if (!this.isVisible(true)) { return; }
+    this.getFrame()!.emit('blur');
+  }
+
   private getOrCreateFrame(): BaseWindow {
     if (!this.getFrame()) { this.createFrame(); }
     return this.getFrame()!;
