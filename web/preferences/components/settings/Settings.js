@@ -243,7 +243,9 @@ app.component('Settings', {
                 { label: s.refreshRateAuto, value: '' },
                 { label: '60 Hz', value: 60 },
                 { label: '30 Hz', value: 30 },
-                { label: '15 Hz', value: 15 }
+                { label: '15 Hz', value: 15 },
+                { label: '5 Hz', value: 5 },
+                { label: '1 Hz', value: 1 }
               ]
             }
           },
@@ -257,7 +259,9 @@ app.component('Settings', {
                 { label: s.refreshRateAuto, value: '' },
                 { label: '60 Hz', value: 60 },
                 { label: '30 Hz', value: 30 },
-                { label: '15 Hz', value: 15 }
+                { label: '15 Hz', value: 15 },
+                { label: '5 Hz', value: 5 },
+                { label: '1 Hz', value: 1 }
               ]
             }
           }

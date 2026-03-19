@@ -18,15 +18,13 @@ export class ViewPropagator extends Propagator<WebContentsView> {
     wc.on('did-start-loading', () => { this.emitCurrentEvent(wc, 'did-start-loading'); });
     wc.on('did-stop-loading', () => { this.emitCurrentEvent(wc, 'did-stop-loading'); });
     wc.on('did-navigate', () => { this.emitCurrentEvent(wc, 'did-navigate'); });
+    wc.on('destroyed', () => { this.emit('destroyed', wc); });
     // @ts-expect-error Custom event emitted when the view is attached to a frame
     emitter.on('attached', () => { this.emit('attached', wc); });
     // @ts-expect-error Custom event emitted when the view mute/unmute
     wc.on('mute-status-changed', () => {
       this.emit('mute-status-changed', wc);
       this.emitCurrentEvent(wc, 'mute-status-changed');
-    });
-    wc.on('destroyed', () => {
-      this.emit('destroyed', wc);
     });
   }
 

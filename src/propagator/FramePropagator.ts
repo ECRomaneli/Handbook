@@ -26,21 +26,24 @@ export class FramePropagator extends Propagator<BaseWindow> {
 
     let resizeInterval = undefined as NodeJS.Timeout | null | undefined;
     const resizeDebounce = debounce(() => {
-      this.emit('resized');
-      clearInterval(resizeInterval!);
+      if (resizeInterval) {
+        clearInterval(resizeInterval!);
+        this.emit('resize');
+      }
       resizeInterval = undefined;
+      this.emit('resized');
     }, this.CANCELABLE_INTERVAL);
 
     emitter.on('resize', () => {
-      if (resizeInterval === undefined) {
+      if (resizeInterval === null) {
+        this.emit('resize');
+      } else if (resizeInterval === undefined) {
         const fps = Storage.getSettings(Settings.RESIZE_REFRESH_RATE) as number || null;
         if (fps) {
           resizeInterval = setInterval(() => this.emit('resize'), Math.trunc(1000 / fps));
         } else {
           resizeInterval = null;
         }
-      } else if (resizeInterval === null) {
-        this.emit('resize');
       }
       resizeDebounce();
     });

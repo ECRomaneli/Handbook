@@ -322,6 +322,7 @@ class PreferencesService {
         ContextMenuService.refreshContextMenu();
         break;
     }
+    setImmediate(() => { this.getWindow()?.focus(); });
   }
 
   /**
