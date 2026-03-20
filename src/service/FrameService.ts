@@ -323,13 +323,6 @@ class FrameService {
     });
   }
 
-  private forceEmitResize() {
-    const frame = this.getFrame();
-    if (frame && !frame.isDestroyed()) {
-      frame.emit('resize');
-    }
-  }
-
   public show(): void {
     this.getFrame()!.show();
   }
