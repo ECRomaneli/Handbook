@@ -5,7 +5,7 @@ import debounce from '@/util/Debounce';
 import { BaseWindow } from 'electron';
 
 export class FramePropagator extends Propagator<BaseWindow> {
-  private readonly CANCELABLE_INTERVAL = 200;
+  private readonly CANCELABLE_INTERVAL = 300;
 
   protected getEventPrefix(): string { return 'frame'; }
 
@@ -19,6 +19,9 @@ export class FramePropagator extends Propagator<BaseWindow> {
     emitter.on('modal-focus', () => { this.emit('modal-focus'); });
     // @ts-expect-error Custom event triggered by modals including the findbar
     emitter.on('modal-blur', () => { this.emit('modal-blur'); });
+
+    emitter.on('enter-full-screen', () => { this.emit('fullscreen-changed', true); });
+    emitter.on('leave-full-screen', () => { this.emit('fullscreen-changed', false); });
   }
 
   private registerDelayedEvents(emitter: BaseWindow): void {
@@ -44,6 +47,7 @@ export class FramePropagator extends Propagator<BaseWindow> {
         } else {
           resizeInterval = null;
         }
+        this.emit('resize');
       }
       resizeDebounce();
     });
