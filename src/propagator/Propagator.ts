@@ -19,8 +19,6 @@ abstract class Propagator<T extends EventEmitter = EventEmitter> {
     app.on('quit', () => { this.getEmitter().removeAllListeners(); });
   }
 
-  //private listeners: Map<string, EventListener[]> = new Map();
-
   private getEmitter(): EventEmitter {
     return this.emitter;
   }
@@ -38,15 +36,6 @@ abstract class Propagator<T extends EventEmitter = EventEmitter> {
     }
     this.getEmitter().emit(this.getEventName(eventName), ...eventArgs);
   }
-
-  // protected removeAllListeners(): void {
-  //   this.listeners.forEach((listeners, eventName) => {
-  //     listeners.forEach((listener) => {
-  //       this.getEmitter().off(this.getEventName(eventName), listener);
-  //     });
-  //   });
-  //   this.listeners.clear();
-  // }
 
   public on(eventName: string, listener: EventListener) {
     this.initializeOnce();

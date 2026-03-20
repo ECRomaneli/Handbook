@@ -6,7 +6,6 @@ import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
 import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
-import PageService from '@/service/PageService';
 import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
@@ -272,8 +271,7 @@ class PreferencesService {
       case Settings.FOCUS_OPACITY:
       case Settings.BLUR_OPACITY:
       case Settings.KEEP_OPACITY_WHEN_MAXIMIZED: {
-        const view = PageService.getCurrentView();
-        view && FrameService.isVisible() && view.emit('blur');
+        FrameService.emitBlurIfVisible();
         break;
       }
       case Settings.ACTION_AREA:
@@ -282,8 +280,6 @@ class PreferencesService {
       case Settings.DRAG_REFRESH_RATE:
         FrameService.updateFpsForDrag();
         Draggable.from(this.getWindow()!).updateOptions({ fps: value as number || null });
-        break;
-      case Settings.HIDE_SHORTCUT:
         break;
       case Settings.GLOBAL_SHORTCUT:
         ApplicationService.registerGlobalShortcut();

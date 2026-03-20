@@ -22,7 +22,6 @@ export class PreferencesPropagator extends RenderablePropagator<BrowserWindow> {
     this.propagateIpcEvent('settings-updated');
     this.propagateIpcEvent('permissions-updated');
     this.propagateIpcEvent('permissions-revoke');
-    // this.propagateIpcEvent('button-click');
   }
 }
 

@@ -9,7 +9,7 @@ import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
 import ViewService from '@/service/ViewService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
-import { BaseWindow, BaseWindowConstructorOptions, Event, Input, Rectangle, WebContents, WebContentsView, screen } from 'electron';
+import { BaseWindow, BaseWindowConstructorOptions, Event, Input, WebContents, WebContentsView, screen } from 'electron';
 import { Draggable } from 'electron-draggable';
 import Findbar from 'electron-findbar';
 import { EventEmitter } from 'node:stream';
@@ -76,6 +76,11 @@ class FrameService {
     Draggable.from(frame).updateOptions({ fps });
   }
 
+  public emitBlurIfVisible() {
+    if (!this.isVisible(true)) { return; }
+    this.getFrame()!.emit('blur');
+  }
+
   private getOrCreateFrame(): BaseWindow {
     if (!this.getFrame()) { this.createFrame(); }
     return this.getFrame()!;
@@ -106,21 +111,7 @@ class FrameService {
       }
     });
 
-    FramePropagator.on('resize', () => {
-      const navbar = NavbarService.getView();
-      const view = ViewService.getCurrentView();
-      if (!view) { throw new Error('No view to resize.'); }
-
-      const navbarHeight = NavbarService.NAVBAR_HEIGHT;
-      const size = this.getFrame()!.getSize();
-      if (navbar) {
-        navbar.setBounds({ x: 0, y: 0, width: size[0], height: navbarHeight });
-        view.setBounds({ x: 0, y: navbarHeight, width: size[0], height: size[1] - navbarHeight });
-      } else {
-        view.setBounds({ x: 0, y: 0, width: size[0], height: size[1] });
-      }
-    });
-
+    FramePropagator.on('resize', () => this.updateChildrenBounds());
     FramePropagator.on('closed', () => { AppState.frame = undefined; });
 
     ViewPropagator.onCurrentView('before-special-keydown', (e, input) => {
@@ -134,20 +125,32 @@ class FrameService {
       }
     });
 
-    ViewPropagator.onCurrentView('enter-html-full-screen', () => {
-      console.debug('Entering fullscreen, hiding navbar');
-      this.getFrame()!.isFullScreenable() && NavbarService.hasView() && this.toggleNavbar(false);
-    });
-
-    ViewPropagator.onCurrentView('leave-html-full-screen', () => {
-      console.debug('Leaving fullscreen, restoring navbar');
-      this.getFrame()!.isFullScreenable() && NavbarService.hasView() && this.toggleNavbar(true);
+    FramePropagator.on('fullscreen-changed', (isFullScreen) => {
+      this.getFrame()!.isFullScreenable() && NavbarService.hasView() && this.toggleNavbar(!isFullScreen);
     });
   }
 
   private registerInstanceEvents() {
-    FramePropagator.on('moved', () => { this.ensureWindowVisible(); this.saveBounds(); });
-    FramePropagator.on('resized', () => { this.saveBounds(); });
+    const saveBoundsHandler = () => { this.ensureWindowVisible(); this.saveBounds(); };
+    FramePropagator.on('moved', saveBoundsHandler);
+    FramePropagator.on('resized', saveBoundsHandler);
+    // screen.on('display-added', () => console.log('display-added event received'));
+    // screen.on('display-removed', () => console.log('display-removed event received'));
+  }
+
+  private updateChildrenBounds() {
+    const view = ViewService.getCurrentView()!;
+    const frame = this.getFrame()!;
+    const size = frame.getSize();
+    const navbar = NavbarService.getView();
+
+    if (navbar && !frame.isFullScreen()) {
+      const navbarHeight = NavbarService.NAVBAR_HEIGHT;
+      navbar.setBounds({ x: 0, y: 0, width: size[0], height: navbarHeight });
+      view.setBounds({ x: 0, y: navbarHeight, width: size[0], height: size[1] - navbarHeight });
+    } else {
+      view.setBounds({ x: 0, y: 0, width: size[0], height: size[1] });
+    }
   }
 
   /**
@@ -155,7 +158,7 @@ class FrameService {
    * @param frame The frame to ensure visibility for. If not provided, the current frame will be used.
    */
   private ensureWindowVisible(frame = this.getFrame()) {
-    if (!frame || frame.isDestroyed() || frame.isMaximized() || frame.isFullScreen()) { return; }
+    if (!frame || frame.isDestroyed()) { return; }
 
     const bounds = frame.getBounds();
     const display = screen.getDisplayNearestPoint({ x: bounds.x, y: bounds.y });
@@ -176,9 +179,8 @@ class FrameService {
   }
 
   private saveBounds() {
-    const frame = this.getFrame();
-    if (frame && !frame.isMaximized() && !frame.isFullScreen() && !frame.isKiosk()
-      && (!frame.isSnapped || !frame.isSnapped())) {
+    const frame = this.getFrame()!;
+    if (!this.isLockedToTheScreen()) {
       const windowBounds = frame.getBounds();
       const page = PageService.getCurrentPage();
       Storage.setSharedBounds(windowBounds);
@@ -187,17 +189,21 @@ class FrameService {
   }
 
   private toggleNavbar(visible: boolean): void {
-    const navbar = NavbarService.getView()!;
-    const view = PageService.getCurrentView()!;
-    const size = this.getFrame()!.getSize();
-    if (visible) {
-      const navbarHeight = NavbarService.NAVBAR_HEIGHT;
-      navbar.setBounds({ x: 0, y: 0, width: size[0], height: navbarHeight });
-      view.setBounds({ x: 0, y: navbarHeight, width: size[0], height: size[1] - navbarHeight });
-    } else {
-      navbar.setBounds({ x: 0, y: 0, width: 0, height: 0 });
-      view.setBounds({ x: 0, y: 0, width: size[0], height: size[1] });
+    const navbar = NavbarService.getView();
+    if (navbar) {
+      if (visible) {
+        this.getFrame()!.contentView.addChildView(navbar);
+      } else {
+        this.getFrame()!.contentView.removeChildView(navbar);
+      }
     }
+  }
+
+  public isLockedToTheScreen(): boolean {
+    const frame = this.getFrame();
+    return frame ? frame.isMaximized() || frame.isFullScreen()
+      || (frame.isSnapped && frame.isSnapped())
+      || frame.isTabletMode() : false;
   }
 
   public isVisible(ignoreDestroyedError = false): boolean {
@@ -208,7 +214,7 @@ class FrameService {
 
   public resetBounds(): void {
     const page = PageService.getCurrentPage()!;
-    this.setBounds(PageService.getDefaultBounds(page, true));
+    this.getFrame()!.setBounds(PageService.getDefaultBounds(page, true));
   }
 
   public recreateFrame() {
@@ -250,7 +256,8 @@ class FrameService {
     this.setupNavbarForCurrentPage();
 
     const bounds = PageService.getPageBounds(page);
-    this.setBounds(bounds, newView);
+    this.getFrame()!.setBounds(bounds);
+    this.updateChildrenBounds();
 
     const dragHandle = Draggable.from(frame);
     const navbar = NavbarService.getView();
@@ -258,13 +265,11 @@ class FrameService {
       frame.contentView.addChildView(navbar);
       dragHandle.attach(navbar.webContents, {
         exclude: 'button',
-        maximize: true,
       });
     } else {
       dragHandle.attach(newView.webContents, {
         region: { height: Storage.getSettings(Settings.ACTION_AREA) as number },
-        exclude: 'button, a',
-        maximize: true,
+        exclude: 'button, a, input, select, textarea',
       });
     }
     this.safeDisplay(frame, newView);
@@ -318,19 +323,11 @@ class FrameService {
     });
   }
 
-  private setBounds(bounds: Rectangle, view = PageService.getCurrentView()!, isFullScreen = false) {
-    if (AppState.navbar && !isFullScreen) {
-      AppState.navbar.setBounds({ x: 0, y: 0, width: bounds.width, height: NavbarService.NAVBAR_HEIGHT });
-      view.setBounds({
-        x: 0,
-        y: NavbarService.NAVBAR_HEIGHT,
-        width: bounds.width,
-        height: bounds.height - NavbarService.NAVBAR_HEIGHT,
-      });
-    } else {
-      view.setBounds({ x: 0, y: 0, width: bounds.width, height: bounds.height });
+  private forceEmitResize() {
+    const frame = this.getFrame();
+    if (frame && !frame.isDestroyed()) {
+      frame.emit('resize');
     }
-    this.getFrame()!.setBounds(bounds);
   }
 
   public show(): void {
@@ -346,10 +343,10 @@ class FrameService {
     frame && view && frame.contentView.removeChildView(view);
   }
 
-  public setupNavbarForCurrentPage() {
+  public setupNavbarForCurrentPage(frame = this.getFrame()!): void {
     if (!Storage.getSettings(Settings.SHOW_FRAME)) {
       if (NavbarService.hasView()) {
-        this.getFrame()!.contentView.removeChildView(NavbarService.getView()!);
+        frame.contentView.removeChildView(NavbarService.getView()!);
       }
       NavbarService.close();
       return;
