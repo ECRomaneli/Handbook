@@ -19,9 +19,6 @@ export class FramePropagator extends Propagator<BaseWindow> {
     emitter.on('modal-focus', () => { this.emit('modal-focus'); });
     // @ts-expect-error Custom event triggered by modals including the findbar
     emitter.on('modal-blur', () => { this.emit('modal-blur'); });
-
-    emitter.on('enter-full-screen', () => { this.emit('fullscreen-changed', true); });
-    emitter.on('leave-full-screen', () => { this.emit('fullscreen-changed', false); });
   }
 
   private registerDelayedEvents(emitter: BaseWindow): void {

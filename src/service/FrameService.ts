@@ -124,10 +124,6 @@ class FrameService {
         this.hide();
       }
     });
-
-    FramePropagator.on('fullscreen-changed', (isFullScreen) => {
-      this.getFrame()!.isFullScreenable() && NavbarService.hasView() && this.toggleNavbar(!isFullScreen);
-    });
   }
 
   private registerInstanceEvents() {
@@ -185,17 +181,6 @@ class FrameService {
       const page = PageService.getCurrentPage();
       Storage.setSharedBounds(windowBounds);
       page!.id && Storage.setWindowBounds(page!.id, windowBounds);
-    }
-  }
-
-  private toggleNavbar(visible: boolean): void {
-    const navbar = NavbarService.getView();
-    if (navbar) {
-      if (visible) {
-        this.getFrame()!.contentView.addChildView(navbar);
-      } else {
-        this.getFrame()!.contentView.removeChildView(navbar);
-      }
     }
   }
 
