@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const details = document.getElementById('details')
   const subtitleIcons = details.querySelectorAll('button')
 
+
   $remote.onLabelUpdated((_e, title) => { titleInput.textContent = title })
 
   $remote.onDidNavigate((_e, { url, canGoBack, canGoForward }) => {
@@ -102,9 +103,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { copyLinkBtn.innerHTML = icons.copy }, 2000)
   })
   permissionsBtn.addEventListener('click', () => $remote.openPermissions())
-  listBtn.addEventListener('click', () => $remote.listPages())
-  hideBtn.addEventListener('click', () => $remote.hide())
-  closeBtn.addEventListener('click', () => $remote.close())
   muteBtn.addEventListener('click', () => $remote.toggleMute())
+  listBtn.addEventListener('click', () => $remote.listPages())
+
+  const hideWorkaroundHandler = (e) => {
+    if (e.target.closest('button') !== hideBtn) {
+      hideBtn.style.backgroundColor = ''
+      document.body.removeEventListener('mousemove', hideWorkaroundHandler)
+    }
+  }
+
+  hideBtn.addEventListener('click', () => {
+    document.body.addEventListener('mousemove', hideWorkaroundHandler)
+    hideBtn.style.backgroundColor = 'transparent'
+    $remote.hide()
+  })
+  closeBtn.addEventListener('click', () => $remote.close())
+
   console.log('Preloaded')
 })
