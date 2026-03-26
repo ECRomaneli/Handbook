@@ -294,24 +294,26 @@ class Modal {
   }
 
   private registerParentListeners(parent: BaseWindow): void {
+    const closedHandler = () => this.isOpen() && this.window!.close();
     const showCascade = () => { !this.window!.isVisible() && this.window!.show(); };
     const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
+    const boundsCascade = () => { this.updateBounds(parent); };
 
     const draggable = Draggable.create(parent).attach(this.window!.webContents);
     parent.on('show', showCascade);
     parent.on('hide', hideCascade);
+    parent.on('move', boundsCascade);
+    parent.on('resize', boundsCascade);
+    parent.on('closed', closedHandler);
 
     this.window!.on('closed', () => {
       parent.off('show', showCascade);
       parent.off('hide', hideCascade);
-      draggable.disable();
+      parent.off('move', boundsCascade);
+      parent.off('resize', boundsCascade);
+      parent.off('closed', closedHandler);
+      draggable.destroy();
       this.window = undefined;
-    });
-
-    parent.once('closed', () => {
-      if (this.window && !this.window.isDestroyed()) {
-        this.window.close();
-      }
     });
   }
 
