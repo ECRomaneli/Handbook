@@ -1,10 +1,11 @@
 <p align='center'>
     <a href="https://github.com/ECRomaneli/handbook">
-        <img src="https://i.postimg.cc/R0PpDYdB/handbook-logo.png" alt='Handbook' width="70%">
+        <img src="docs/img/readme/top-image.png" alt='Handbook' width="90%">
     </a>
 </p>
 <p align='center'>
-    Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use
+    <b>Quick-access, always-on-top windows for the tools you use most.</b><br/>
+    Stay focused. Stay productive.
 </p>
 <p align='center'>
     <a href="https://github.com/ECRomaneli/handbook/tags"><img src="https://img.shields.io/github/v/tag/ecromaneli/handbook?label=version&sort=semver&style=for-the-badge" alt="Version"></a>
@@ -16,287 +17,167 @@
     <a href="https://github.com/ECRomaneli/handbook/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=for-the-badge" alt="Contributions Welcome"></a>
 </p>
 
-## Objective
+---
 
-Handbook is a versatile app designed to create small, movable, and easily concealable windows for quick use. Its primary goal is to assist in managing RAM memory efficiently while providing quick access to essential information. With Handbook, users can seamlessly optimize their workflow by accessing necessary data without cluttering their screen space.
+## Why Handbook?
 
-> "Handbook was created to assist me in my development process, providing quick-access tools in the most efficient manner while coding. Some of my favorites include ChatGPT, Copilot, Gemini, Notion, WhatsApp, and even YouTube."
+> *"Handbook was created to assist me in my development process, providing quick-access tools in the most efficient manner while coding. Some of my favorites include ChatGPT, Copilot, Gemini, Notion, WhatsApp, and even YouTube."*
 
-### Some Advantages
+Ever need to quickly check something — a chat message, an AI response, a doc — without leaving your workflow? Handbook gives you **lightweight, always-on-top windows** that float over everything, even fullscreen apps. One shortcut to show, one to hide. That's it.
 
-- Always-on-top windows, even atop fullscreen content, allowing quick retrieval of information.
-- Increased focus by avoiding the need to navigate to a web browser for quick searches.
-- Reduction in the number of tabs by adding pages that are typically used once but are often forgotten, leading to the opening of new instances.
-- Low RAM usage, despite using Chromium. There is only one instance per page.
-- Configurability, allowing transparent windows when blurred, customization of default size, position, and shortcuts to show and hide anywhere, among other options.
+### The Problem
 
-## Installing
+- Switching to a browser kills your focus
+- Too many open tabs waste RAM
+- Alt-tabbing through windows is slow and disruptive
 
-Download the appropriate version for your OS from the [releases](https://github.com/ECRomaneli/Handbook/releases) section and follow the instructions below.
+### The Solution
 
-Read about the app signature in "[About App Signature](#about-app-signature)".
+Handbook creates **single-purpose overlay windows** (called **Pages**) that are:
 
-### Mac OS
+- **Always on top** — even over fullscreen content
+- **Instantly toggleable** — show/hide with a global shortcut
+- **Lightweight** — one Chromium instance per page, minimal RAM
+- **Fully customizable** — opacity, size, position, shortcuts, and more
 
-#### Download the ZIP File
+---
 
- [Download the ZIP file](https://github.com/ECRomaneli/Handbook/releases) corresponding to your processor architecture (e.g., `Handbook-{version}-darwin-x64.zip` for Intel processors or `Handbook-{version}-darwin-arm64.zip` for Apple Silicon).
+## Features
 
-#### Unzip the File
+### System Tray Integration
 
-- Locate the downloaded ZIP file in your Downloads folder or the location where you saved it.
-- Double-click the ZIP file to unzip it. This will create a Handbook.app file.
-
-#### Copy to Applications Folder
-
-- Open Finder and navigate to the location of the Handbook.app file.
-- Drag and drop Handbook.app into the **"Applications" folder**.
-    - Alternatively, you can right-click on `Handbook.app`, select "Copy", then navigate to the "Applications" folder and select "Paste".
-
-#### Troubleshooting
-
-#### Security Warning
-
-As Handbook is not signed, it may trigger a security warning and fail to open directly.
-
-The steps to bypass this warning can vary depending on your macOS version. For the most up-to-date instructions, refer to the official [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
-
-#### Latest version
-
-1. On a Mac, select the Apple menu > System Settings and click "Privacy & Security" in the sidebar. (You may need to scroll down.)
-2. Go to Security and click Open.
-3. Click "Open Anyway."
-4. Enter your login password and click OK.
-
-> This button is available for about an hour after attempting to open the app.
-
-Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
-
-
-#### Ventura 13 or lower
-
-1. Open the "Applications" folder.
-2. Press `Ctrl + Left Click` on the Handbook icon.
-3. Select "Open" in the context menu.
-4. Proceed to "Open" the app in the security warning screen.
-
-After these steps, the app will no longer present the warning.
-
-> If the "Open" button does not show, try it twice.
-
-Source: [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
-
-### Linux distributions
-
-#### Download the right Package
-- Visit the [Handbook releases page](https://github.com/ECRomaneli/Handbook/releases) and download the package suitable for your system (e.g. `.deb` for Debian-based distributions and `.rpm` for Red Hat-based).
-
-#### Open a Terminal Window
-- Press `Ctrl + Alt + T` to open a terminal window.
-
-#### Navigate to the Download Directory
-- Use the `cd` command to navigate to the directory where the package is located. For example, if the package is in your Downloads folder, you can use:
-    ```bash
-    cd ~/Downloads
-    ```
-
-#### Install the Package
-
-##### Debian-based (DEB)
-
-- Run the following command to install the package, replacing `handbook_{version}_amd64.deb` with the actual filename if it is different:
-    ```bash
-    sudo dpkg -i handbook_{version}_amd64.deb
-    ```
-- When prompted, enter your password to authorize the installation.
-
-##### Red Hat-based (RPM)
-
-- Run the following command to install the package, replacing `handbook-{version}.x86_64.rpm` with the actual filename if it is different:
-    ```bash
-    sudo rpm -i handbook-{version}.x86_64.rpm
-    ```
-- When prompted, enter your password to authorize the installation.
-
-#### Launch Handbook
- - After the installation is complete, you can launch Handbook from the application menu.
-
-### Windows
-
-#### Download the Installer
-
-Download the [Handbook-Setup-{version}.exe](https://github.com/ECRomaneli/Handbook/releases) from release page.
-
-#### Run the Installer
-
-- Locate the downloaded `Handbook-Setup-{version}.exe` file in your Downloads folder or the location you saved it.
-- Double-click the file to open it and begin the installation process.
-- Follow the on-screen instructions to complete the installation.
-- Wait for the depackaging process to finish.
-- Once the installation is complete, the app will be available in the desktop and the application menu.
-
-#### Verify the Tray Icons
-
-- Look for the Handbook icon in the system tray. This is located in the bottom-right corner of your screen, near the clock.
-
-#### Expand the Tray Icons
-
-- If you don't see the Handbook icon in the system tray, it might be hidden.
-- Click the upward arrow (^) icon to expand the tray icons.
-
-#### Pin the Handbook Icon for Quick Access
-
-- Find the Handbook icon in the expanded tray.
-- Click and drag the Handbook icon from the expanded tray area to the main area of the system tray. This will ensure it is always visible and easily accessible.
-
-## Getting Started
-
-**Handbook** is a tray app and all interaction with it will be available there. Note that the first time the app is opened, the ["Settings"](#settings) will pop up as there is no page configured yet. Once the first page is set, the ["Settings"](#settings) will no longer pop up, but will be accessible through the tray icon.
+Handbook lives in your system tray. Right-click to access pages, settings, and more. Click to toggle the current page.
 
 <p align='center'>
-    <img width="250" src="https://i.postimg.cc/3Nzq7y6c/tray-icon.png" alt='tray-icon'>
-    <br/>
-    Tray Icon
+    <img width="250" src="docs/img/readme/tray-icon.png" alt='Tray Icon'>
 </p>
 
-### Usage
+### Always-On-Top Pages
 
-To keep the user focused, **Handbook** shows a single window at a time, persistent and always-on-top. The user can move, resize, toggle visibility, configure opacity, etc. (see ["Window Settings"](#window-settings) for more). The app refers to these windows as **"Pages"**.
+Each page is a dedicated overlay window. Keep your AI open while coding, check WhatsApp without switching windows, or watch a tutorial on the side.
+
+### Quick Menu (Default: <kbd>Cmd/Ctrl</kbd> + <kbd>P</kbd>)
+
+Instantly switch between pages with a searchable command palette. Type to filter, press Enter to switch. No mouse needed.
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/sDy8HdKP/example.png" alt='Example'>
-    <br/>
-    ChatGPT page overlaying the settings
+    <img src="docs/img/readme/quick-menu.gif" alt='Quick Menu' width="60%">
 </p>
 
-#### Toggle Window Visibility
+### Transparent & Frameless Windows
 
-To toggle window visibility, click on the tray icon or configure the "Toggle Window" shortcut (disabled by default).
+Configure window opacity for focused and blurred states. Windows become semi-transparent when you're not interacting with them, letting you see your work underneath.
 
-> The "Toggle Window" shortcut is a very useful feature. It is by far the most recommended way to toggle the window for productivity.
+### Navigation Bar
 
-#### Change Page
-
-To change the page, right-click on the tray icon and select the desired page. If the current page is selected, the page visibility will toggle.
-
-> Mac OS also supports long-press to open the tray icon context menu.
-
-#### Open from Clipboard
-
-It is possible to open a URL directly from the clipboard. Just copy a URL, right-click on the tray icon, and select **"Clipboard URL"**. The page will act as a non-persistent one (see "[Persistent Pages](#persistent-pages)").
-
-#### Linux Usage
-
-Due to some limitations on tray events, there are some differences in the Linux experience:
-
-- Clicking on the tray icon will open the context menu (instead of toggling page visibility).
-- An item has been added at the top of the context menu to toggle the current window visibility.
-
-#### Context Menu Symbols
-
-There are symbols in the context menu that can be displayed alongside the page names to represent the current status:
-
-| Icon | Description     |
-|------|-----------------|
-| ❏    | Page is alive   |
-| ✕    | Page is muted   |
-
-### Settings
-
-To access the settings, right-click on the tray icon and select **"Settings"**.
-
-### Pages
-
-The **"Pages"** tab enables users to add, sort, customize, or remove pages. Users can also import or export pages as JSON.
+A minimal 40px navigation bar provides essential controls: back, forward, reload, URL display, mute toggle, and find-in-page — without the bloat of a full browser. The navigation bar can also be disabled by turning off the `frame` in the "Preferences".
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/bwrVw0tg/settings-page.png" alt='Pages'>
+    <img src="docs/img/readme/navbar.png" alt='Page Management'>
 </p>
 
-#### Session ID
+### Page Management
 
-Session ID configuration allows for the management of session data, including cache and storage. By specifying a "Session ID", pages sharing this identifier will access the same session. This functionality is particularly useful for maintaining user login status across multiple pages utilizing the same OAuth credentials (e.g., Google and Facebook OAuths). Moreover, it facilitates the simultaneous login of multiple accounts for distinct purposes, such as **"Personal" and "Business"**. If no "Session ID" is provided, the value "default" will be automatically assigned.
-
-#### Persistent Pages
-
-Persistent pages are not destroyed once the page is changed. This means that if there are any unfinished tasks still loading, the user can change the page and come back later without losing it or reloading the URL.
-
-### Window Settings
-
-The **"Window"** tab allows for window customizations, including:
-- Displaying the window frame.
-- Designating a movable area to drag the window.
-- Setting opacity when focused or blurred (not supported in Linux).
-- Adjusting the starting position and size of the windows.
-- Specifying whether the windows will share their bounds when swapping between them.
-- Defining shortcuts to show and hide the window from any location.
-
-&nbsp;
+Add, reorder, and customize your pages. Set a URL, give it a label, assign a session, and choose whether the page should persist in memory when switching.
 
 <p align='center'>
-    <img width="600" src="https://i.postimg.cc/PrYXCYFK/settings-window.png" alt='Pages'>
+    <img width="600" src="docs/img/readme/preferences-pages.png" alt='Page Management'>
 </p>
 
-## Build
+### Session Sharing
 
-**Step 1: Clone the Repository**
-- Open your terminal and navigate to the directory where you want to clone the project.
-- Run the following command to clone the repository:
+Pages with the same **Session ID** share cookies, cache, and login state. Log into Google once and access Gmail, Drive, and YouTube without re-authenticating. Use different sessions for personal and work accounts.
+
+### Window Customization
+
+Fine-tune how your windows look and behave:
+
+- **Position** — 9 preset screen positions (corners, edges, center)
+- **Size** — Custom default width and height
+- **Opacity** — Separate focus and blur opacity levels
+- **Frame** — Show or hide the native window frame
+- **Shortcuts** — Global hotkeys to toggle visibility from anywhere
+- **Shared bounds** — All pages share the same window size and position
+
+<p align='center'>
+    <img width="600" src="docs/img/readme/preferences-settings.png" alt='Settings'>
+</p>
+
+### Sync & Backup
+
+Export your configuration as a JSON file or sync it to a **GitHub Gist** for cloud backup and cross-device sync.
+
+<p align='center'>
+    <img width="600" src="docs/img/readme/preferences-sync.png" alt='Sync Options'>
+</p>
+
+### Fine-Grained Permissions
+
+Control permissions per page — clipboard, geolocation, camera, microphone, notifications, and more. Grant, deny, or prompt on a per-URL, per-session basis.
+
+<p align='center'>
+    <img width="600" src="docs/img/readme/preferences-permissions.png" alt='Permissions'>
+</p>
+
+### Themes & Localization
+
+- **Themes**: System, Light, and Dark
+- **Languages**: English, German, Spanish, French, Italian, Portuguese (BR & PT), and Russian
+- **Tray icon themes**: Light, Dark, and Gray
+
+<p align='center'>
+    <img width="60%" src="docs/img/readme/language-and-theme.gif" alt='Language and themes'>
+</p>
+
+
+---
+
+## Quick Start
+
+1. **Download** the latest release for your OS from the [Releases page](https://github.com/ECRomaneli/Handbook/releases)
+2. **Install** following the [Installation Guide](docs/INSTALLATION.md)
+3. **Add pages** — The settings window opens automatically on first launch
+4. **Configure a shortcut** — Set a global hotkey in Window Settings to toggle visibility
+5. **Start using it** — Click the tray icon or press your shortcut to show/hide pages
+
+> For detailed installation instructions for macOS, Linux, and Windows, see the **[Installation Guide](docs/INSTALLATION.md)**.
+
+---
+
+## Building from Source
 
 ```bash
 git clone https://github.com/ECRomaneli/Handbook.git
-```
-
-**Step 2: Navigate into the Cloned Project**
-- Change your directory to the cloned project:
-
-```bash
 cd Handbook
-```
-
-**Step 3: Install Node**
-- Ensure that Node is installed. This project has been tested with Node versions ranging from `16.x` to `22.x`, but it is designed to always be compatible with the latest version at the Handbook release date.
-- For guidance on installing Node, please visit the [official Node website](https://nodejs.org/) for detailed instructions.
-
-**Step 4: Install Dependencies**
-- Once inside the project directory, install the necessary dependencies by running:
-
-```bash
 npm install
-```
-
-**Step 5: Run the Electron Application**
-- After the installation is complete, you can start the Electron application by running:
-
-```bash
 npm start
 ```
 
-That's it! The Electron application should launch, and you can explore and modify the existing codebase as needed.
+> For the full build guide, artifact creation, and distribution targets, see the **[Build Guide](docs/BUILD.md)**.
 
-## Creating the Artifacts
+---
 
-After setting up the project following the steps in the "[Build](#build)" section, choose the target version and execute one of the commands below.
+## Documentation
 
-| Target                                        | Command                             |
-|-----------------------------------------------|-------------------------------------|
-| MacOS x64 APP (Zipped App)                    | `npm run dist:mac-x64`              |
-| MacOS arm64 APP (Zipped App)                  | `npm run dist:mac-arm64`            |
-| Linux x64 DEB                                 | `npm run make:linux-deb`            |
-| Linux x64 RPM                                 | `npm run make:linux-rpm`            |
-| Windows x64 EXE                               | `npm run make:win`                  |
+| Document | Description |
+|----------|-------------|
+| [Installation Guide](docs/INSTALLATION.md) | Detailed setup instructions for macOS, Linux, and Windows |
+| [Configuration Guide](docs/CONFIGURATION.md) | Pages, window settings, sessions, permissions, and sync |
+| [Build Guide](docs/BUILD.md) | Building from source and creating distribution artifacts |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
+| [Contributing](CONTRIBUTING.md) | How to contribute to Handbook |
 
-## Out of Scope
-
-To maintain the primary goal of enhancing user efficiency and focus while minimizing RAM memory usage, it was decided to abandon the idea of having multiple visible windows or tabs. The objective is not to serve as a widget or a web browser application, as there are many superior apps designed for these purposes. Such functionality would detract from the focus and potentially increase RAM consumption.
+---
 
 ## About App Signature
 
-Please note that, even though it is not recommended to bypass security warnings, Handbook is open-source and contains no malicious code. As an alternative, the build can be done manually to ensure code integrity. As a lone developer aiming to be more productive, I have no intention to sign this app for now.
+Handbook is open-source and contains no malicious code. However, the app is currently **not code-signed**, which may trigger security warnings on some operating systems. You can verify the source code and [build it yourself](docs/BUILD.md) for full code integrity assurance. See the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for instructions on bypassing OS security warnings.
+
+---
 
 ## Author
 
-- Created by [Emerson Capuchi Romaneli](https://github.com/ECRomaneli) (@ECRomaneli).
+Created by [Emerson Capuchi Romaneli](https://github.com/ECRomaneli) (@ECRomaneli).
 
 ## License
 
