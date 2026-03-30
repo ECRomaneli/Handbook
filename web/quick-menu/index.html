@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="script-src 'self'; style-src 'self'; default-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; font-src 'self'; img-src 'self'">
+  <title>Quick Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="quick-menu">
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20">
+        <path fill="currentColor"
+          d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+      </svg>
+      <input type="text" id="search-input" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="results"></div>
+  </div>
+</body>
+
+</html>

@@ -28,6 +28,7 @@ const Settings = {
   MUTE_STARTUP_SOUND: 'mute_startup_sound',
   RESIZE_REFRESH_RATE: 'resize_refresh_rate',
   DRAG_REFRESH_RATE: 'drag_refresh_rate',
+  QUICK_MENU_SHORTCUT: 'quick_menu_shortcut',
 };
 
 const Positions = {
@@ -70,6 +71,7 @@ DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
 DefaultSettings[Settings.MUTE_STARTUP_SOUND] = false;
 DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
 DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
+DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';
 
 const OS = {
   IS_DARWIN: process.platform === 'darwin',

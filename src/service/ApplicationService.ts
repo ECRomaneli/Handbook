@@ -3,13 +3,16 @@ import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import AutoUpdaterService from '@/service/AutoUpdaterService';
 import FrameService from '@/service/FrameService';
+import MenuService from '@/service/MenuService';
+import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
 import PermissionService from '@/service/PermissionService';
 import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
+import { parseToAccelerator } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
-import { app, globalShortcut, Menu, MenuItem, Session, session, WebContentsView } from 'electron';
+import { app, globalShortcut, Menu, MenuItemConstructorOptions, Session, session, WebContentsView } from 'electron';
 
 class ApplicationService {
   private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
@@ -89,6 +92,11 @@ class ApplicationService {
   }
 
   private setupAccelerators() {
+    AppState.defaultAppMenu = (Menu.getApplicationMenu()?.items || []);
+    this.buildApplicationMenu();
+  }
+
+  private buildApplicationMenu() {
     const ifVisible = (viewAction: (view: WebContentsView) => void) => () => {
       const view = ViewService.getCurrentView();
       if (!view) { return; }
@@ -97,22 +105,33 @@ class ApplicationService {
     };
 
     const m = AppState.strings.menu;
-    const pageMenu = new MenuItem({
+    const quickMenuAcc = parseToAccelerator(Storage.getSettings<string>(Settings.QUICK_MENU_SHORTCUT));
+
+    const pageMenu: MenuItemConstructorOptions = {
       label: m.page, submenu: [
         /* eslint-disable @stylistic/max-len */
         { label: m.find, click: ifVisible((view) => ViewService.toggleFindbar(view, true)), accelerator: 'CommandOrControl+F' },
         { label: m.dismiss, visible: false, click: ifVisible((view) => { ViewService.toggleFindbar(view, false); view.webContents.focus(); }), accelerator: 'Esc' },
-        { label: m.back, click: ifVisible((view) => ViewService.goBack(view)), accelerator: 'CommandOrControl+Left' },
-        { label: m.forward, click: ifVisible((view) => ViewService.goForward(view)), accelerator: 'CommandOrControl+Right' },
-        { label: m.refresh, click: ifVisible((view) => ViewService.reload(view)), accelerator: 'CommandOrControl+R' },
+        { label: m.back, click: ifVisible(() => ViewService.goBack()), accelerator: 'CommandOrControl+Left' },
+        { label: m.forward, click: ifVisible(() => ViewService.goForward()), accelerator: 'CommandOrControl+Right' },
+        { label: m.refresh, click: ifVisible(() => ViewService.reload()), accelerator: 'CommandOrControl+R' },
         { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
+        { label: m.navbarOpenDevTools, click: () => NavbarService.getView()?.webContents.openDevTools(), accelerator: 'CommandOrControl+Shift+I+P' },
+        /* eslint-enable @stylistic/max-len */
       ],
-      /* eslint-enable @stylistic/max-len */
-    });
+    };
 
-    const systemMenu = Menu.getApplicationMenu();
-    (systemMenu ?? new Menu()).append(pageMenu);
-    Menu.setApplicationMenu(systemMenu);
+    if (quickMenuAcc) {
+      (pageMenu.submenu! as MenuItemConstructorOptions[]).push(
+        { label: m.quickMenu, click: ifVisible(() => MenuService.toggleQuickMenu()), accelerator: quickMenuAcc },
+      );
+    }
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate([...AppState.defaultAppMenu, pageMenu]));
+  }
+
+  public updateQuickMenuAccelerator() {
+    this.buildApplicationMenu();
   }
 
   public forceLanguageHeader(): void {

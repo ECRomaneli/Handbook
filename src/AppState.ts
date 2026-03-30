@@ -8,7 +8,7 @@ import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import TrayPropagator from '@/propagator/TrayPropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import AutoLaunch from 'auto-launch';
-import { app, BaseWindow, BrowserWindow, MenuItemConstructorOptions, nativeTheme, Tray, WebContentsView } from 'electron';
+import { app, BaseWindow, BrowserWindow, MenuItem, MenuItemConstructorOptions, nativeTheme, Tray, WebContentsView } from 'electron';
 
 export type SystemTheme = 'light' | 'dark';
 export type ResetBoundType = 'bounds' | 'position' | '';
@@ -16,6 +16,7 @@ export type ResetBoundType = 'bounds' | 'position' | '';
 class AppState {
   private _autoLauncher = new AutoLaunch({ name: 'Handbook' });
   private _strings: Strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+  private _defaultAppMenu?: MenuItem[];
   private _globalShortcut = '';
   private _resetBoundsType: ResetBoundType = Storage.getSettings(Settings.RESET_BOUNDS);
   private _systemTheme = this.getSystemTheme();
@@ -23,6 +24,7 @@ class AppState {
   private _preferences?: BrowserWindow;
   private _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private _pages: Page[] = [];
+  private _appMenuTemplate: MenuItemConstructorOptions[] = [];
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
   private readonly contextMenu: {
     tray?: MenuItemConstructorOptions[],
@@ -34,6 +36,8 @@ class AppState {
 
   get autoLauncher(): AutoLaunch { return this._autoLauncher; }
   get strings(): Strings { return this._strings; }
+  set defaultAppMenu(template: MenuItem[]) { this._defaultAppMenu = template; }
+  get defaultAppMenu(): MenuItem[] { return this._defaultAppMenu!; }
   get globalShortcut(): string { return this._globalShortcut; }
   set globalShortcut(shortcut: string) { this._globalShortcut = shortcut; }
   set resetBoundsType(type: ResetBoundType) { this._resetBoundsType = type; }
@@ -65,6 +69,8 @@ class AppState {
   get currentPage(): Page | undefined { return this.currentStack.page; }
   set pages(pages: Page[]) { this._pages = pages; }
   get pages(): Page[] { return this._pages; }
+  get appMenuTemplate(): MenuItemConstructorOptions[] { return this._appMenuTemplate; }
+  set appMenuTemplate(template: MenuItemConstructorOptions[]) { this._appMenuTemplate = template; }
 
   set googleApiKey(key: string) { process.env.GOOGLE_API_KEY = key; }
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }

@@ -4,8 +4,8 @@ import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
-import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
+import MenuService from '@/service/MenuService';
 import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
@@ -107,7 +107,7 @@ class PreferencesService {
     PreferencesPropagator.onRender('pages-updated', (_, pages: Page[]): void => {
       Storage.setPages(pages);
       this.sendPagesUpdated();
-      ContextMenuService.updatePagesAndRefresh();
+      MenuService.updatePagesAndRefresh();
     });
 
     PreferencesPropagator.onRender('settings-updated', (_, id: string, value: unknown): void => {
@@ -302,7 +302,7 @@ class PreferencesService {
         break;
       case Settings.APP_LANGUAGE:
         AppState.refreshStrings();
-        ContextMenuService.refreshContextMenu();
+        MenuService.refreshContextMenu();
         FrameService.getFrame() && FrameService.recreateFrame();
         this.reload();
         break;
@@ -315,7 +315,10 @@ class PreferencesService {
         );
         break;
       case Settings.GROUP_PAGES_BY_SESSION:
-        ContextMenuService.refreshContextMenu();
+        MenuService.refreshContextMenu();
+        break;
+      case Settings.QUICK_MENU_SHORTCUT:
+        ApplicationService.updateQuickMenuAccelerator();
         break;
     }
     setImmediate(() => { this.getWindow()?.focus(); });

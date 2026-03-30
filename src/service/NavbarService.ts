@@ -3,8 +3,8 @@ import { Path } from '@/data/Constants';
 import NavbarPropagator from '@/propagator/NavbarPropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import { ContextMenuType } from '@/service/ApplicationService';
-import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
+import MenuService from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import PreferencesService from '@/service/PreferencesService';
 import ViewService from '@/service/ViewService';
@@ -124,7 +124,7 @@ class NavbarService {
     });
 
     NavbarPropagator.onRender('list-pages', (): void => {
-      ContextMenuService.buildContextMenu(ContextMenuType.NAVBAR).popup({ window: FrameService.getFrame()! });
+      MenuService.buildContextMenu(ContextMenuType.NAVBAR).popup({ window: FrameService.getFrame()! });
     });
 
     NavbarPropagator.onRender('hide', (): void => {

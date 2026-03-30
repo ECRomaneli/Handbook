@@ -49,6 +49,7 @@ export const es: Strings = {
     openInBrowser: 'Abrir en el Navegador',
     createPageFromUrl: 'Crear Página desde URL',
     openDevTools: 'Abrir DevTools',
+    navbarOpenDevTools: 'Abrir DevTools de la Barra de Navegación',
     permissions: 'Permisos',
     save: 'Guardar...',
     page: 'Página',
@@ -57,6 +58,7 @@ export const es: Strings = {
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
     muteUnmute: 'Activar/Desactivar Sonido',
+    quickMenu: 'Menú Rápido',
   },
 
   dialog: {
@@ -240,6 +242,8 @@ export const es: Strings = {
       hideShortcutDesc: 'Atajo para ocultar cuando la ventana está enfocada. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
       globalShortcut: 'Alternar visibilidad',
       globalShortcutDesc: 'Atajo para alternar la visibilidad de la ventana. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
+      quickMenuShortcut: 'Menú rápido',
+      quickMenuShortcutDesc: 'Atajo para abrir el menú rápido de búsqueda de páginas cuando está enfocado. Mínimo de dos teclas. Las teclas compatibles varían según el SO.',
 
       appLanguage: 'Idioma de la aplicación',
       appLanguageDesc: 'Establece el idioma utilizado en la interfaz de la aplicación. "Estándar" utiliza el idioma del sistema.',
@@ -357,5 +361,10 @@ export const es: Strings = {
     shareAudio: 'Compartir audio',
     cancel: 'Cancelar',
     share: 'Compartir',
+  },
+
+  quickMenu: {
+    placeholder: 'Buscar páginas...',
+    noResults: 'No se encontraron páginas',
   },
 };
