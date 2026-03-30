@@ -9,13 +9,18 @@ import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import Dialog, { DialogOptions } from '@/util/modal/Dialog';
+import QuickMenuModal, { QuickMenuItem } from '@/util/modal/QuickMenuModal';
+import SearchEngine from '@ecromaneli/search-engine';
 import { app, BrowserWindow, clipboard, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
 type MenuItem = MenuItemConstructorOptions & { submenu: MenuItemConstructorOptions[] };
 
-class ContextMenuService {
+class MenuService {
+  private quickMenu: QuickMenuModal = new QuickMenuModal();
+
   constructor() {
     this.registerStateListeners();
+    this.registerQuickMenuEventListeners();
   }
 
   private registerStateListeners(): void {
@@ -48,7 +53,6 @@ class ContextMenuService {
         if (!sessionMap.has(session)) { sessionMap.set(session, []); }
         sessionMap.get(session)!.push(p);
       });
-
       sessionMap.forEach((pages, session) => {
         windowMenuItems.push({ label: session, submenu: pages.map(this.createMenuPageItem) });
       });
@@ -61,18 +65,7 @@ class ContextMenuService {
       type: 'checkbox',
       checked: PageService.isCurrentPage(AppState.fromClipboardPage),
       label: AppState.fromClipboardPage!.labelWithStatus,
-      click: () => {
-        const url = this.getClipboardImage() ?? this.getClipboardUrl();
-
-        const page = AppState.fromClipboardPage;
-        const wasChanged = PageService.changeUrl(page, url);
-
-        if (page.hasView && wasChanged) {
-          FrameService.isVisible(true) || FrameService.toggleVisibility();
-        } else if (page.url) {
-          PageService.selectPage(page);
-        }
-      },
+      click: () => this.onClipboardPageClick(),
     });
 
     windowMenuItems.push({ type: 'separator' });
@@ -180,6 +173,19 @@ class ContextMenuService {
       !!this.getClipboardImage();
   }
 
+  public onClipboardPageClick() {
+    const url = this.getClipboardImage() ?? this.getClipboardUrl();
+
+    const page = AppState.fromClipboardPage;
+    const wasChanged = PageService.changeUrl(page, url);
+
+    if (page.hasView && wasChanged) {
+      FrameService.isVisible(true) || FrameService.toggleVisibility();
+    } else if (page.url) {
+      PageService.selectPage(page);
+    }
+  }
+
   private async showConfirmationDialog(
     data: DialogOptions & {
       parent: BrowserWindow | null,
@@ -256,6 +262,68 @@ class ContextMenuService {
       click: () => PageService.selectPage(page),
     };
   }
+
+  public toggleQuickMenu(): void {
+    if (this.quickMenu.isOpen()) {
+      this.quickMenu.close();
+    } else {
+      const frame = FrameService.getFrame();
+      this.quickMenu.open({
+        items: this.getQuickMenuItems(),
+        strings: AppState.strings.quickMenu,
+      }, frame);
+    }
+  }
+
+  private registerQuickMenuEventListeners(): void {
+    this.quickMenu.on('select', (item: QuickMenuItem) => {
+      this.quickMenu.close();
+      if (item.isPreferences) {
+        PreferencesService.open();
+      } else {
+        const targetPage = PageService.getAllPages().find((p) => p.id === item.id);
+        if (targetPage === AppState.fromClipboardPage) {
+          this.onClipboardPageClick();
+          return;
+        }
+        if (targetPage === PageService.getCurrentPage()) { return; }
+        PageService.selectPage(targetPage);
+      }
+    });
+
+    this.quickMenu.on('filter', (query: string) => {
+      const allItems = this.getQuickMenuItems();
+      let filtered: QuickMenuItem[];
+
+      if (!query || !query.trim()) {
+        filtered = allItems;
+      } else {
+        query = query.trim();
+        const parsedQuery = query[0] === '"' || query.includes(':') ? query : query.split(' ').join(' and ');
+        filtered = SearchEngine.search(allItems, parsedQuery);
+      }
+
+      this.quickMenu.sendFilterResults(filtered);
+    });
+  }
+
+  private getQuickMenuItems(): QuickMenuItem[] {
+    const items: QuickMenuItem[] = PageService.getValidPages()
+      .map((p: Page) => ({ id: p.id, label: p.labelWithStatus, url: p.url, session: p.session }));
+
+    if (this.shouldEnableClipboardPage()) {
+      const p = AppState.fromClipboardPage;
+      items.push({ id: p.id!, label: p.labelWithStatus, url: p.url, session: p.session });
+    }
+
+    items.push({
+      label: AppState.strings.menu.preferences,
+      url: '',
+      isPreferences: true,
+    });
+
+    return items;
+  }
 }
 
 export enum ContextMenuType {
@@ -264,4 +332,4 @@ export enum ContextMenuType {
   NAVBAR = 'navbar',
 }
 
-export default new ContextMenuService();
+export default new MenuService();

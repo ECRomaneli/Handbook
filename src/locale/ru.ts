@@ -49,6 +49,7 @@ export const ru: Strings = {
     openInBrowser: 'Открыть в Браузере',
     createPageFromUrl: 'Создать Страницу из URL',
     openDevTools: 'Открыть DevTools',
+    navbarOpenDevTools: 'Открыть DevTools Панели Навигации',
     permissions: 'Разрешения',
     save: 'Сохранить...',
     page: 'Страница',
@@ -57,6 +58,7 @@ export const ru: Strings = {
     handbook: 'Handbook',
     listPages: 'Список Страниц',
     muteUnmute: 'Включить/Выключить Звук',
+    quickMenu: 'Быстрое Меню',
   },
 
   dialog: {
@@ -240,6 +242,8 @@ export const ru: Strings = {
       hideShortcutDesc: 'Сочетание клавиш для скрытия при фокусе окна. Минимум две клавиши. Поддерживаемые клавиши зависят от ОС.',
       globalShortcut: 'Переключить видимость',
       globalShortcutDesc: 'Сочетание клавиш для переключения видимости окна. Минимум две клавиши. Поддерживаемые клавиши зависят от ОС.',
+      quickMenuShortcut: 'Быстрое меню',
+      quickMenuShortcutDesc: 'Сочетание клавиш для открытия быстрого меню поиска страниц при фокусе окна. Минимум две клавиши. Поддерживаемые клавиши зависят от ОС.',
 
       appLanguage: 'Язык приложения',
       appLanguageDesc: 'Установить язык интерфейса приложения. «По умолчанию» использует язык системы.',
@@ -357,5 +361,10 @@ export const ru: Strings = {
     shareAudio: 'Общий доступ к аудио',
     cancel: 'Отмена',
     share: 'Поделиться',
+  },
+
+  quickMenu: {
+    placeholder: 'Поиск страниц...',
+    noResults: 'Страницы не найдены',
   },
 };

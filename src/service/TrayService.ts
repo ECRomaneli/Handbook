@@ -3,8 +3,8 @@ import { OS, Path, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import StatePropagator from '@/propagator/StatePropagator';
 import TrayPropagator from '@/propagator/TrayPropagator';
-import ContextMenuService, { ContextMenuType } from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
+import MenuService, { ContextMenuType } from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import { nativeTheme, Tray } from 'electron';
 import path from 'node:path';
@@ -12,14 +12,14 @@ import path from 'node:path';
 class TrayService {
   public initialize() {
     this.createTray();
-    ContextMenuService.updatePagesAndRefresh();
+    MenuService.updatePagesAndRefresh();
     this.registerDynamicContextMenu();
     this.registerTrayEvents();
     OS.IS_WIN32 && AppState.tray!.focus();
   }
 
   public updateLinuxTrayContextMenu() {
-    if (OS.IS_LINUX) { AppState.tray!.setContextMenu(ContextMenuService.buildContextMenu(ContextMenuType.TRAY)); }
+    if (OS.IS_LINUX) { AppState.tray!.setContextMenu(MenuService.buildContextMenu(ContextMenuType.TRAY)); }
   }
 
   public updateTrayIcon(): void {
@@ -35,15 +35,15 @@ class TrayService {
   private registerDynamicContextMenu() {
     if (OS.IS_LINUX) {
       StatePropagator.onChange(() => {
-        const contextMenu = ContextMenuService.buildContextMenu(ContextMenuType.TRAY);
+        const contextMenu = MenuService.buildContextMenu(ContextMenuType.TRAY);
         this.getTray().setContextMenu(contextMenu);
       });
       return;
     }
 
     const popUpMenu = () => {
-      const contextMenu = ContextMenuService.buildContextMenu(ContextMenuType.TRAY);
-      contextMenu.getMenuItemById('clipboard-url')!.visible = ContextMenuService.shouldEnableClipboardPage();
+      const contextMenu = MenuService.buildContextMenu(ContextMenuType.TRAY);
+      contextMenu.getMenuItemById('clipboard-url')!.visible = MenuService.shouldEnableClipboardPage();
       this.getTray().popUpContextMenu(contextMenu);
     };
 

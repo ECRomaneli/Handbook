@@ -1,8 +1,8 @@
 import AppState from '@/AppState';
 import { IsProduction } from '@/data/Constants';
 import Storage from '@/data/Storage';
-import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
+import MenuService from '@/service/MenuService';
 import PreferencesService from '@/service/PreferencesService';
 import Dialog from '@/util/modal/Dialog';
 import { dialog, net } from 'electron';
@@ -232,7 +232,7 @@ class SyncService {
 
   private reloadAfterImport() {
     AppState.refreshStrings();
-    ContextMenuService.updatePagesAndRefresh();
+    MenuService.updatePagesAndRefresh();
     FrameService.getFrame() && FrameService.recreateFrame();
     PreferencesService.reload();
   }
