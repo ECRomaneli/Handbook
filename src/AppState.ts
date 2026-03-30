@@ -23,6 +23,7 @@ class AppState {
   private _preferences?: BrowserWindow;
   private _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private _pages: Page[] = [];
+  private _appMenuTemplate: MenuItemConstructorOptions[] = [];
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
   private readonly contextMenu: {
     tray?: MenuItemConstructorOptions[],
@@ -65,6 +66,8 @@ class AppState {
   get currentPage(): Page | undefined { return this.currentStack.page; }
   set pages(pages: Page[]) { this._pages = pages; }
   get pages(): Page[] { return this._pages; }
+  get appMenuTemplate(): MenuItemConstructorOptions[] { return this._appMenuTemplate; }
+  set appMenuTemplate(template: MenuItemConstructorOptions[]) { this._appMenuTemplate = template; }
 
   set googleApiKey(key: string) { process.env.GOOGLE_API_KEY = key; }
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }

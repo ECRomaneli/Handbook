@@ -230,6 +230,12 @@ app.component('Settings', {
             label: s.globalShortcut,
             description: s.globalShortcutDesc,
             data: { type: 'key', value: await storage.getSettings(this.$const.Settings.GLOBAL_SHORTCUT) }
+          },
+          {
+            id: this.$const.Settings.QUICK_MENU_SHORTCUT,
+            label: s.spotlightShortcut,
+            description: s.spotlightShortcutDesc,
+            data: { type: 'key', value: await storage.getSettings(this.$const.Settings.QUICK_MENU_SHORTCUT) }
           }
         ],
         [s.performance]: [

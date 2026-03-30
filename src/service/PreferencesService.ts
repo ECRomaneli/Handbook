@@ -317,6 +317,9 @@ class PreferencesService {
       case Settings.GROUP_PAGES_BY_SESSION:
         ContextMenuService.refreshContextMenu();
         break;
+      case Settings.QUICK_MENU_SHORTCUT:
+        ApplicationService.updateQuickMenuAccelerator();
+        break;
     }
     setImmediate(() => { this.getWindow()?.focus(); });
   }

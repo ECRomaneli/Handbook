@@ -6,8 +6,10 @@ import FrameService from '@/service/FrameService';
 import PageService from '@/service/PageService';
 import PermissionService from '@/service/PermissionService';
 import PreferencesService from '@/service/PreferencesService';
+import QuickMenuService from '@/service/QuickMenuService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
+import { parseToAccelerator } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
 import { app, globalShortcut, Menu, MenuItem, Session, session, WebContentsView } from 'electron';
 
@@ -25,6 +27,8 @@ class ApplicationService {
     AppState.googleApiKey = Storage.getSettings(Settings.GOOGLE_API_KEY);
     TrayService.initialize();
     AutoUpdaterService.initialize();
+    // QuickMenuService is self-initializing, this ensures it is imported
+    void QuickMenuService;
   }
 
   public registerGlobalShortcut() {
@@ -96,8 +100,11 @@ class ApplicationService {
       frame?.isVisible() && (FrameService.isFocused() || ViewService.isFindbarFocused()) && viewAction(view);
     };
 
+    const defaultMenus = Menu.getApplicationMenu()?.items || [];
+
     const m = AppState.strings.menu;
     const pageMenu = new MenuItem({
+      ...defaultMenus,
       label: m.page, submenu: [
         /* eslint-disable @stylistic/max-len */
         { label: m.find, click: ifVisible((view) => ViewService.toggleFindbar(view, true)), accelerator: 'CommandOrControl+F' },
@@ -106,13 +113,29 @@ class ApplicationService {
         { label: m.forward, click: ifVisible((view) => ViewService.goForward(view)), accelerator: 'CommandOrControl+Right' },
         { label: m.refresh, click: ifVisible((view) => ViewService.reload(view)), accelerator: 'CommandOrControl+R' },
         { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
+        { label: m.quickMenu, click: () => QuickMenuService.toggle(), accelerator: parseToAccelerator(Storage.getSettings(Settings.QUICK_MENU_SHORTCUT) as string) },
       ],
       /* eslint-enable @stylistic/max-len */
     });
 
+    console.debug('a: ' + parseToAccelerator(Storage.getSettings(Settings.QUICK_MENU_SHORTCUT) as string));
+
     const systemMenu = Menu.getApplicationMenu();
     (systemMenu ?? new Menu()).append(pageMenu);
     Menu.setApplicationMenu(systemMenu);
+  }
+
+  public updateQuickMenuAccelerator() {
+    const systemMenu = Menu.getApplicationMenu()!;
+    const pageMenu = systemMenu.items.find((item) => item.id === 'page')!.submenu!;
+    const lastIndex = pageMenu.items.length - 1;
+    pageMenu.items.pop();
+    const quickMenuItem = new MenuItem({
+      id: 'quickMenu', label: AppState.strings.menu.quickMenu, click: () => QuickMenuService.toggle(), accelerator: parseToAccelerator(Storage.getSettings(Settings.QUICK_MENU_SHORTCUT) as string),
+    });
+    pageMenu.insert(lastIndex, quickMenuItem);
+    Menu.setApplicationMenu(systemMenu);
+    console.debug('b: ' + parseToAccelerator(Storage.getSettings(Settings.QUICK_MENU_SHORTCUT) as string));
   }
 
   public forceLanguageHeader(): void {

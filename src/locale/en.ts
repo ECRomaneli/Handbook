@@ -37,6 +37,7 @@ export const en = {
     mute: 'Mute',
     close: 'Close',
     find: 'Find...',
+    quickMenu: 'Quick Menu',
     back: 'Back',
     forward: 'Forward',
     refresh: 'Refresh',
@@ -239,6 +240,8 @@ export const en = {
       hideShortcutDesc: 'Shortcut to hide when window is focused. Minimum of two keys. The supported keys vary by OS.',
       globalShortcut: 'Toggle window',
       globalShortcutDesc: 'Shortcut to toggle window visibility. Minimum of two keys. The supported keys vary by OS.',
+      spotlightShortcut: 'Quick menu',
+      spotlightShortcutDesc: 'Shortcut to open the quick menu page search when focused. Minimum of two keys. The supported keys vary by OS.',
 
       appLanguage: 'Application language',
       appLanguageDesc: 'Set the language used for the application interface. "Default" uses the system language.',
@@ -356,5 +359,10 @@ export const en = {
     shareAudio: 'Share audio',
     cancel: 'Cancel',
     share: 'Share',
+  },
+
+  quickMenu: {
+    placeholder: 'Search pages...',
+    noResults: 'No pages found',
   },
 };
