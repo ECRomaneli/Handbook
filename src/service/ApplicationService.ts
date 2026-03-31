@@ -157,10 +157,4 @@ class ApplicationService {
   }
 }
 
-export enum ContextMenuType {
-  TRAY = 'tray',
-  VIEW = 'view',
-  NAVBAR = 'navbar',
-}
-
 export default new ApplicationService();
