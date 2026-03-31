@@ -49,6 +49,7 @@ export const ptBR: Strings = {
     openInBrowser: 'Abrir no Navegador',
     createPageFromUrl: 'Criar Página da URL',
     openDevTools: 'Abrir DevTools',
+    navbarOpenDevTools: 'Abrir DevTools da Barra de Navegação',
     permissions: 'Permissões',
     save: 'Salvar...',
     page: 'Página',
@@ -57,6 +58,7 @@ export const ptBR: Strings = {
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
     muteUnmute: 'Ativar/Desativar Som',
+    quickMenu: 'Menu Rápido',
   },
 
   dialog: {
@@ -240,6 +242,8 @@ export const ptBR: Strings = {
       hideShortcutDesc: 'Atalho para ocultar quando a janela está focada. Mínimo de duas teclas. As teclas suportadas variam por SO.',
       globalShortcut: 'Alternar visibilidade',
       globalShortcutDesc: 'Atalho para alternar a visibilidade da janela. Mínimo de duas teclas. As teclas suportadas variam por SO.',
+      quickMenuShortcut: 'Menu rápido',
+      quickMenuShortcutDesc: 'Atalho para abrir o menu rápido de busca de páginas quando focado. Mínimo de duas teclas. As teclas suportadas variam por SO.',
 
       appLanguage: 'Idioma da aplicação',
       appLanguageDesc: 'Defina o idioma utilizado na interface da aplicação. "Padrão" utiliza o idioma do sistema.',
@@ -357,5 +361,10 @@ export const ptBR: Strings = {
     shareAudio: 'Compartilhar áudio',
     cancel: 'Cancelar',
     share: 'Compartilhar',
+  },
+
+  quickMenu: {
+    placeholder: 'Pesquisar páginas...',
+    noResults: 'Nenhuma página encontrada',
   },
 };

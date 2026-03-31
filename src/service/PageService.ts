@@ -2,8 +2,8 @@ import AppState from '@/AppState';
 import { Positions, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page } from '@/model/Page';
-import ContextMenuService from '@/service/ContextMenuService';
 import FrameService from '@/service/FrameService';
+import MenuService from '@/service/MenuService';
 import NavbarService from '@/service/NavbarService';
 import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
@@ -48,13 +48,13 @@ class PageService {
 
   public recreateAllViews(): void {
     this.getAllActivePages().forEach((p) => this.recreateView(p));
-    ContextMenuService.refreshContextMenu();
+    MenuService.refreshContextMenu();
   }
 
   private setupCurrentPage(): void {
     if (!this.getCurrentView()) {
       this.openPageView();
-      ContextMenuService.refreshContextMenu();
+      MenuService.refreshContextMenu();
       TrayService.updateTrayIcon();
     }
     FrameService.updateView(true);
@@ -158,7 +158,7 @@ class PageService {
     // Create a new page with the current URL
     const newPage = new Page(undefined, webContents.getTitle(), url, undefined, currentPage.session, false);
     Storage.setPage(newPage.toPlainPage());
-    ContextMenuService.updatePagesAndRefresh();
+    MenuService.updatePagesAndRefresh();
     PreferencesService.sendPagesUpdated();
   }
 

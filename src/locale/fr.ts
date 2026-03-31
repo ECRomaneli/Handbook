@@ -49,6 +49,7 @@ export const fr: Strings = {
     openInBrowser: 'Ouvrir dans le Navigateur',
     createPageFromUrl: 'Créer une Page depuis l\'URL',
     openDevTools: 'Ouvrir les DevTools',
+    navbarOpenDevTools: 'Ouvrir les DevTools de la Barre de Navigation',
     permissions: 'Autorisations',
     save: 'Enregistrer...',
     page: 'Page',
@@ -57,6 +58,7 @@ export const fr: Strings = {
     handbook: 'Handbook',
     listPages: 'Lister les Pages',
     muteUnmute: 'Activer/Désactiver le Son',
+    quickMenu: 'Menu Rapide',
   },
 
   dialog: {
@@ -240,6 +242,8 @@ export const fr: Strings = {
       hideShortcutDesc: 'Raccourci pour masquer lorsque la fenêtre est focalisée. Minimum de deux touches. Les touches prises en charge varient selon le SE.',
       globalShortcut: 'Basculer la visibilité',
       globalShortcutDesc: 'Raccourci pour basculer la visibilité de la fenêtre. Minimum de deux touches. Les touches prises en charge varient selon le SE.',
+      quickMenuShortcut: 'Menu rapide',
+      quickMenuShortcutDesc: 'Raccourci pour ouvrir le menu rapide de recherche de pages lorsque la fenêtre est focalisée. Minimum de deux touches. Les touches prises en charge varient selon le SE.',
 
       appLanguage: 'Langue de l\'application',
       appLanguageDesc: 'Définir la langue utilisée pour l\'interface de l\'application. \u00ab Par défaut \u00bb utilise la langue du système.',
@@ -357,5 +361,10 @@ export const fr: Strings = {
     shareAudio: 'Partager l\'audio',
     cancel: 'Annuler',
     share: 'Partager',
+  },
+
+  quickMenu: {
+    placeholder: 'Rechercher des pages...',
+    noResults: 'Aucune page trouvée',
   },
 };

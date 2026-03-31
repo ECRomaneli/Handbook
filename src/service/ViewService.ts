@@ -4,7 +4,7 @@ import Storage from '@/data/Storage';
 import { PageView } from '@/model/Page';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import { ContextMenuType } from '@/service/ApplicationService';
-import ContextMenuService from '@/service/ContextMenuService';
+import MenuService from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
 import { getExtensionForMime, getFiltersForMime } from '@/util/MimeTypes';
@@ -201,7 +201,7 @@ class ViewService {
             visible: view.webContents.getURL().startsWith('data:'),
             click: async () => { saveBase64ToFile(view.webContents.getURL()); },
           },
-          ...ContextMenuService.getContextMenu(ContextMenuType.VIEW)!,
+          ...MenuService.getContextMenu(ContextMenuType.VIEW)!,
         ];
       },
     });

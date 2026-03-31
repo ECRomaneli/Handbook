@@ -49,6 +49,7 @@ export const de: Strings = {
     openInBrowser: 'Im Browser Öffnen',
     createPageFromUrl: 'Seite aus URL Erstellen',
     openDevTools: 'DevTools Öffnen',
+    navbarOpenDevTools: 'Navigationsleiste DevTools Öffnen',
     permissions: 'Berechtigungen',
     save: 'Speichern...',
     page: 'Seite',
@@ -57,6 +58,7 @@ export const de: Strings = {
     handbook: 'Handbook',
     listPages: 'Seiten Auflisten',
     muteUnmute: 'Ton Aktivieren/Deaktivieren',
+    quickMenu: 'Schnellmenü',
   },
 
   dialog: {
@@ -240,6 +242,8 @@ export const de: Strings = {
       hideShortcutDesc: 'Tastenkürzel zum Ausblenden bei fokussiertem Fenster. Mindestens zwei Tasten. Die unterstützten Tasten variieren je nach Betriebssystem.',
       globalShortcut: 'Sichtbarkeit Umschalten',
       globalShortcutDesc: 'Tastenkürzel zum Umschalten der Fenstersichtbarkeit. Mindestens zwei Tasten. Die unterstützten Tasten variieren je nach Betriebssystem.',
+      quickMenuShortcut: 'Schnellmenü',
+      quickMenuShortcutDesc: 'Tastenkürzel zum Öffnen des Schnellmenüs zur Seitensuche bei fokussiertem Fenster. Mindestens zwei Tasten. Die unterstützten Tasten variieren je nach Betriebssystem.',
 
       appLanguage: 'Anwendungssprache',
       appLanguageDesc: 'Die Sprache für die Benutzeroberfläche der Anwendung festlegen. „Standard“ verwendet die Systemsprache.',
@@ -357,5 +361,10 @@ export const de: Strings = {
     shareAudio: 'Audio teilen',
     cancel: 'Abbrechen',
     share: 'Teilen',
+  },
+
+  quickMenu: {
+    placeholder: 'Seiten durchsuchen...',
+    noResults: 'Keine Seiten gefunden',
   },
 };
