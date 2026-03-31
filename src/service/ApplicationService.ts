@@ -8,6 +8,7 @@ import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
 import PermissionService from '@/service/PermissionService';
 import PreferencesService from '@/service/PreferencesService';
+import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import { parseToAccelerator } from '@/util/EventKeyCapture';
@@ -26,8 +27,9 @@ class ApplicationService {
     PermissionService.setupPermissionsHandler();
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
     AppState.googleApiKey = Storage.getSettings(Settings.GOOGLE_API_KEY);
-    TrayService.initialize();
     AutoUpdaterService.initialize();
+    SyncService.initialize();
+    TrayService.initialize();
   }
 
   public registerGlobalShortcut() {

@@ -50,12 +50,12 @@ app.use({
       },
 
       sync: {
-        importFromFile: () => ipcRenderer.invoke('preferences:sync-import-file'),
-        exportToFile: () => ipcRenderer.invoke('preferences:sync-export-file'),
-        getSettings: () => ipcRenderer.invoke('preferences:sync-get-settings'),
-        saveSyncSettings: (settings) => ipcRenderer.invoke('preferences:sync-save-settings', settings),
-        gistPush: () => ipcRenderer.invoke('preferences:sync-gist-push'),
-        gistPull: () => ipcRenderer.invoke('preferences:sync-gist-pull')
+        importFromFile: () => ipcRenderer.send('sync:import-file'),
+        exportToFile: () => ipcRenderer.send('sync:export-file'),
+        setSettings: (settings) => ipcRenderer.send('sync:set-settings', settings),
+        getSettings: () => ipcRenderer.invoke('sync:get-settings'),
+        gistPush: () => ipcRenderer.invoke('sync:gist-push'),
+        gistPull: () => ipcRenderer.invoke('sync:gist-pull')
       }
     }
 

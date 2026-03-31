@@ -16,16 +16,20 @@ abstract class RenderablePropagator<T extends EventEmitter = EventEmitter> exten
     this.registerIpcEvents();
   }
 
-  protected propagateIpcEvent(eventName: string, verifyContent?: false): void {
+  protected propagateIpcEvent(eventName: string, strictSender?: false): void {
     ipcMain.on(this.getEventName(eventName), (e: IpcMainEvent, ...args: unknown[]) => {
-      if (e.sender === this.getWebContents() || verifyContent === false) {
+      if (strictSender === false || e.sender === this.getWebContents()) {
         this.emit('render:' + eventName, e, ...args);
       }
     });
   }
 
-  public handleRender(eventName: string, handler: RenderEventHandler): void {
-    ipcMain.handle(this.getEventName(eventName), handler);
+  public handleRender(eventName: string, handler: RenderEventHandler, strictSender?: false): void {
+    ipcMain.handle(this.getEventName(eventName), (e: IpcMainInvokeEvent, ...args: unknown[]) => {
+      if (strictSender === false || e.sender === this.getWebContents()) {
+        return handler(e, ...args);
+      }
+    });
   }
 
   public sendToRender(eventName: string, ...args: unknown[]): void {

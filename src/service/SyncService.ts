@@ -1,6 +1,7 @@
 import AppState from '@/AppState';
-import { IsProduction } from '@/data/Constants';
+import { IsProduction, SyncSettings } from '@/data/Constants';
 import Storage from '@/data/Storage';
+import SyncPropagator from '@/propagator/SyncPropagator';
 import FrameService from '@/service/FrameService';
 import MenuService from '@/service/MenuService';
 import PreferencesService from '@/service/PreferencesService';
@@ -10,22 +11,36 @@ import { promises as fs } from 'node:fs';
 
 const FILENAME = IsProduction ? 'handbook-config.json' : 'handbook-config.debug.json';
 
-interface SyncSettings {
-  gistToken?: string;
-  gistId?: string;
-}
+export type GistSettings = { gistToken?: string; gistId?: string };
 
 class SyncService {
 
-  // ─── Sync Settings ──────────────────────────────────
-
-  public getSettings(): SyncSettings {
-    return Storage.getSyncSettings();
+  public initialize(): void {
+    this.registerIpcEvents();
   }
 
-  public saveSettings(partial: Partial<SyncSettings>): void {
-    const current = this.getSettings();
-    Storage.setSyncSettings({ ...current, ...partial });
+  private registerIpcEvents(): void {
+    SyncPropagator.onRender('import-file', () => { this.importFromFile(); });
+    SyncPropagator.onRender('export-file', () => { this.exportToFile(); });
+    SyncPropagator.onRender('set-settings', (_, settings: GistSettings) => { this.saveSettings(settings); });
+
+    SyncPropagator.handleRender('get-settings', () => this.getSettings());
+    SyncPropagator.handleRender('gist-push', () => this.gistPush());
+    SyncPropagator.handleRender('gist-pull', () => this.gistPull());
+  }
+
+  // ─── Sync Settings ──────────────────────────────────
+
+  public getSettings(): GistSettings {
+    return {
+      gistToken: Storage.getSyncSettings(SyncSettings.GIST_TOKEN),
+      gistId: Storage.getSyncSettings(SyncSettings.GIST_ID),
+    };
+  }
+
+  public saveSettings(settings: GistSettings): void {
+    Storage.setSyncSettings(SyncSettings.GIST_TOKEN, settings.gistToken);
+    Storage.setSyncSettings(SyncSettings.GIST_ID, settings.gistId);
   }
 
   // ─── Local File ─────────────────────────────────────
@@ -99,25 +114,25 @@ class SyncService {
     const win = AppState.preferences;
     if (!win) { return null; }
 
-    const settings = this.getSettings();
-    if (!settings.gistToken) { return null; }
+    const gistToken = Storage.getSyncSettings(SyncSettings.GIST_TOKEN);
+    if (!gistToken) { return null; }
 
     const s = AppState.strings.sync;
 
     try {
       const configData = Storage.export();
-      let gistId = settings.gistId;
+      let gistId = Storage.getSyncSettings(SyncSettings.GIST_ID);
 
       if (!gistId) {
-        gistId = await this.gistFindByFilename(settings.gistToken) ?? undefined;
-        if (gistId) { this.saveSettings({ gistId }); }
+        gistId = await this.gistFindByFilename(gistToken) ?? undefined;
+        if (gistId) { Storage.setSyncSettings(SyncSettings.GIST_ID, gistId); }
       }
 
       if (gistId) {
-        await this.gistUpdate(settings.gistToken, gistId, configData);
+        await this.gistUpdate(gistToken, gistId, configData);
       } else {
-        gistId = await this.gistCreate(settings.gistToken, configData);
-        this.saveSettings({ gistId });
+        gistId = await this.gistCreate(gistToken, configData);
+        Storage.setSyncSettings(SyncSettings.GIST_ID, gistId);
       }
 
       await Dialog.alert(win, {
@@ -140,17 +155,17 @@ class SyncService {
     const win = AppState.preferences;
     if (!win) { return null; }
 
-    const settings = this.getSettings();
-    if (!settings.gistToken) { return null; }
+    const gistToken = Storage.getSyncSettings(SyncSettings.GIST_TOKEN);
+    if (!gistToken) { return null; }
 
     const s = AppState.strings.sync;
 
     try {
-      let gistId = settings.gistId;
+      let gistId = Storage.getSyncSettings(SyncSettings.GIST_ID);
 
       if (!gistId) {
-        gistId = await this.gistFindByFilename(settings.gistToken) ?? undefined;
-        if (gistId) { this.saveSettings({ gistId }); }
+        gistId = await this.gistFindByFilename(gistToken) ?? undefined;
+        if (gistId) { Storage.setSyncSettings(SyncSettings.GIST_ID, gistId); }
       }
 
       if (!gistId) {
@@ -161,7 +176,7 @@ class SyncService {
         return null;
       }
 
-      const content = await this.gistFetch(settings.gistToken, gistId);
+      const content = await this.gistFetch(gistToken, gistId);
       Storage.import(content);
 
       await Dialog.alert(win, {

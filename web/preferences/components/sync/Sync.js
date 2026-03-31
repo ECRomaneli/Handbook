@@ -81,7 +81,7 @@ app.component('SyncTab', {
     },
 
     saveGistSettings() {
-      this.$remote.sync.saveSyncSettings({ gistToken: this.gist.token, gistId: this.gist.id })
+      this.$remote.sync.setSettings({ gistToken: this.gist.token, gistId: this.gist.id })
     },
 
     async importFromFile() {
