@@ -150,7 +150,7 @@ class PageService {
     if (!this.getCurrentPage()) { throw new Error('No view to create page from current URL.'); }
 
     const url = this.getCurrentView()!.webContents.getURL();
-    if (!this.isValidUrl(url)) { throw new Error('Invalid URL to create page: ' + url.substring(0, 20) + '...'); }
+    if (!Page.isValidUrl(url)) { throw new Error('Invalid URL to create page: ' + url.substring(0, 20) + '...'); }
 
     const webContents = this.getCurrentView()!.webContents;
     const currentPage = this.getCurrentPage()!;
@@ -217,10 +217,6 @@ class PageService {
     oldView.removeAllListeners();
     oldView.webContents.removeAllListeners();
     oldView.webContents.close();
-  }
-
-  public isValidUrl(url: string): boolean {
-    return !!url && (url.includes('://') || url.startsWith('data:'));
   }
 
   public resetUrl(page = this.getCurrentPage()!): void {
