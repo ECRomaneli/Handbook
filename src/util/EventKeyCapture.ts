@@ -158,7 +158,7 @@ const CODE_TO_ACCELERATOR: Record<string, string> = {
   ArrowUp: 'Up', ArrowDown: 'Down', ArrowLeft: 'Left', ArrowRight: 'Right',
 
   F1: 'F1', F2: 'F2', F3: 'F3', F4: 'F4', F5: 'F5', F6: 'F6',
-  F7: 'F7', F8: 'F8', F9: 'F9', F10: 'F10', F11: 'F12', F12: 'F12',
+  F7: 'F7', F8: 'F8', F9: 'F9', F10: 'F10', F11: 'F11', F12: 'F12',
 
   Digit0: '0', Digit1: '1', Digit2: '2', Digit3: '3', Digit4: '4',
   Digit5: '5', Digit6: '6', Digit7: '7', Digit8: '8', Digit9: '9',
