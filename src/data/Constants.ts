@@ -31,6 +31,11 @@ const Settings = {
   QUICK_MENU_SHORTCUT: 'quick_menu_shortcut',
 };
 
+const SyncSettings = {
+  GIST_ID: 'gist_id',
+  GIST_TOKEN: 'gist_token',
+};
+
 const Positions = {
   TOP_LEFT: 'topLeft',
   TOP_CENTER: 'topCenter',
@@ -64,7 +69,7 @@ DefaultSettings[Settings.APP_THEME] = 'system';
 DefaultSettings[Settings.TRAY_ICON_THEME] = 'system';
 DefaultSettings[Settings.GOOGLE_API_KEY] = '';
 DefaultSettings[Settings.USE_EXTERNAL_BROWSER] = false;
-DefaultSettings[Settings.AUTO_LAUNCH] = void 0;
+DefaultSettings[Settings.AUTO_LAUNCH] = undefined;
 DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.APP_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
@@ -72,6 +77,8 @@ DefaultSettings[Settings.MUTE_STARTUP_SOUND] = false;
 DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
 DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
 DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';
+DefaultSettings[SyncSettings.GIST_ID] = undefined;
+DefaultSettings[SyncSettings.GIST_TOKEN] = undefined;
 
 const OS = {
   IS_DARWIN: process.platform === 'darwin',
@@ -112,5 +119,5 @@ const IsDebug = {
   'state': !IsProduction && true,
 };
 
-export { DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings };
+export { DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
 

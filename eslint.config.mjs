@@ -37,7 +37,7 @@ export default [
       '@stylistic/space-before-blocks': ['error', { functions: 'always', keywords: 'always', classes: 'always' }], // Space before {
       '@stylistic/max-len': ['warn', {
         code: 120,
-        ignorePattern: '^import ',
+        ignorePattern: '^(import|export) ',
         ignoreUrls: true,
         ignoreStrings: false,
         ignoreComments: false,

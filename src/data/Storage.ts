@@ -1,7 +1,7 @@
 import { DefaultSettings, IsDebug, Permission, Settings } from '@/data/Constants';
 import { PlainPage } from '@/model/Page';
 import PreferencesService from '@/service/PreferencesService';
-import { app, session } from 'electron';
+import { app, safeStorage, session } from 'electron';
 import Store from 'electron-store';
 
 /**
@@ -29,7 +29,7 @@ class Vault {
     const store = new Store<Record<string, unknown>>(
       app.isPackaged ? { encryptionKey: k, fileExtension: '.bin' } : undefined,
     );
-    !app.isPackaged && console.debug(`Store path: ${store.path}`);
+    !app.isPackaged && console.debug(`Store path: "${store.path}"`);
     return store;
   })();
 
@@ -66,6 +66,30 @@ class Vault {
     const data = JSON.parse(JSON.stringify(Vault.store.store));
     delete data.SyncSettings;
     return JSON.stringify(data);
+  }
+
+  private static readonly ENC_PREFIX = '$enc$';
+
+  static setAndEncrypt(key: string, value?: string): void {
+    if (value && safeStorage.isEncryptionAvailable()) {
+      value = Vault.ENC_PREFIX + safeStorage.encryptString(value).toString('base64');
+    }
+    Vault.set(key, value);
+  }
+
+  static getAndDecrypt(key: string, defaultValue?: string): string | undefined {
+    const stored = Vault.get<string>(key, defaultValue);
+    if (!stored) { return stored; }
+
+    if (!stored.startsWith(Vault.ENC_PREFIX)) {
+      return stored; // Plaintext (migration or encryption was unavailable)
+    }
+
+    try {
+      return safeStorage.decryptString(Buffer.from(stored.slice(Vault.ENC_PREFIX.length), 'base64'));
+    } catch {
+      return undefined; // Encrypted but decryption unavailable
+    }
   }
 }
 
@@ -202,16 +226,24 @@ class Storage {
     Vault.set(`Settings.${id}`, value);
   }
 
+  static getSyncSettings(id: string): string | undefined {
+    return Storage.getAndDecrypt(`SyncSettings.${id}`, DefaultSettings[id]);
+  }
+
+  static setSyncSettings(id: string, value?: string): void {
+    Storage.setAndEncrypt(`SyncSettings.${id}`, value);
+  }
+
   static getPartitionName(sessionName: string): string {
     return `persist:handbook_${sessionName}`;
   }
 
-  static getSyncSettings(): Record<string, unknown> {
-    return Vault.get('SyncSettings', {}) as Record<string, unknown>;
+  static setAndEncrypt(key: string, value?: string): void {
+    Vault.setAndEncrypt(key, value);
   }
 
-  static setSyncSettings(value: Record<string, unknown>): void {
-    Vault.set('SyncSettings', value);
+  static getAndDecrypt(key: string, defaultValue?: string): string | undefined {
+    return Vault.getAndDecrypt(key, defaultValue);
   }
 
   static import(data: string): void {

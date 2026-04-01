@@ -18,9 +18,21 @@ Common issues and solutions for Handbook.
 
 Handbook is not code-signed, so macOS may block it from opening with a message like *"Handbook can't be opened because it is from an unidentified developer"*.
 
-The steps to bypass this depend on your macOS version. For the most up-to-date instructions, refer to the official [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
+### Remove Quarantine Flag
 
-### macOS Sonoma 14+ / Sequoia 15+
+After moving Handbook to the **Applications** folder, open the Terminal and run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Handbook.app
+```
+
+This removes the quarantine flag that macOS adds to downloaded apps, allowing Handbook to open normally. If this option doesn't work, try the next method.
+
+### Via System Settings
+
+Alternatively, you can allow the app through macOS settings. The steps depend on your macOS version. For the most up-to-date instructions, refer to the official [Apple Support Guide](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
+
+#### macOS Sonoma 14+ / Sequoia 15+
 
 1. Open **Apple menu > System Settings**.
 2. Click **Privacy & Security** in the sidebar (scroll down if needed).
@@ -30,7 +42,7 @@ The steps to bypass this depend on your macOS version. For the most up-to-date i
 
 > This button is available for about an hour after attempting to open the app.
 
-### macOS Ventura 13 or Earlier
+#### macOS Ventura 13 or Earlier
 
 1. Open the **Applications** folder in Finder.
 2. Hold <kbd>Ctrl</kbd> and click the Handbook icon.

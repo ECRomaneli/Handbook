@@ -84,7 +84,7 @@ export class Page {
     if (this._view) {
       label += ' ❏';
       const wc = this._view.webContents;
-      !wc.isDestroyed() && wc.isAudioMuted() && (label += ' ✕');
+      wc && !wc.isDestroyed() && wc.isAudioMuted() && (label += ' ✕');
     }
     return label;
   }
