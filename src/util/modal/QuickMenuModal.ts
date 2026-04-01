@@ -39,14 +39,23 @@ class QuickMenuModal extends EventEmitter {
           preload: path.join(QuickMenuModal.ROOT_PATH, 'preload.js'),
         },
       })
-      .setBoundsHandler((parentBounds) => ({
-        x: parentBounds.x + parentBounds.width / 2 - QuickMenuModal.WIDTH / 2,
-        y: parentBounds.y + Math.round(parentBounds.height * 0.2),
-      }))
+      .setBoundsHandler((parentBounds) => {
+        const width = Math.min(QuickMenuModal.WIDTH, parentBounds.width - 40);
+        const height = Math.min(QuickMenuModal.HEIGHT, parentBounds.height - 40);
+        return {
+          x: parentBounds.x + parentBounds.width / 2 - width / 2,
+          y: Math.min(
+            parentBounds.y + Math.round(parentBounds.height * 0.2),
+            parentBounds.y + parentBounds.height / 2 - height / 2,
+          ),
+          width,
+          height,
+        };
+      })
       .setWindowHandler((window: BrowserWindow) => {
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
         window.on('blur', () => this.close());
-        window.setOpacity(0.97);
+        process.platform !== 'linux' && window.setOpacity(0.98);
         this.modal
           .onRenderer<[QuickMenuItem]>('quickMenu:select', (item) => this.emit('select', item))
           .onRenderer<[string]>('quickMenu:filter', (query) => this.emit('filter', query))
