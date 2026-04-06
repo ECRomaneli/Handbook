@@ -64,6 +64,14 @@ class ViewService {
     return view.webContents.isLoading();
   }
 
+  public focus(view = this.getCurrentView()): void {
+    if (!view) { console.error('Cannot focus without view.'); return; }
+    const wc = view.webContents;
+    if (!wc || wc.isDestroyed()) { console.error('Cannot focus with destroyed view.'); return; }
+
+    wc.focus();
+  }
+
   public toggleFindbar(view: WebContentsView, show: boolean): void {
     const findbar = Findbar.fromIfExists(view.webContents)!;
     show ? findbar.open() : findbar.close();

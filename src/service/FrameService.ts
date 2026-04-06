@@ -49,7 +49,7 @@ class FrameService {
 
   public toggleVisibility(): void {
     const frame = this.getFrame()!;
-    frame.isVisible() ? frame.hide() : frame.show();
+    frame.isVisible() ? this.hide() : this.show();
   }
 
   public toggleMaximize(): void {
@@ -310,6 +310,7 @@ class FrameService {
 
   public show(): void {
     this.getFrame()!.show();
+    ViewService.focus();
   }
 
   public hide(): void {
