@@ -14,7 +14,7 @@ export type SystemTheme = 'light' | 'dark';
 export type ResetBoundType = 'bounds' | 'position' | '';
 
 class AppState {
-  private _autoLauncher = new AutoLaunch({ name: 'Handbook' });
+  private readonly _autoLauncher = new AutoLaunch({ name: 'Handbook' });
   private _strings: Strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
   private _defaultAppMenu?: MenuItem[];
   private _globalShortcut = '';
@@ -22,10 +22,10 @@ class AppState {
   private _systemTheme = this.getSystemTheme();
   private _tray?: Tray;
   private _preferences?: BrowserWindow;
-  private _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private _pages: Page[] = [];
-  private _appMenuTemplate: MenuItemConstructorOptions[] = [];
+  private readonly _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
+  private readonly onViewChangeHandler = function (this: Page) { ViewPropagator.propagate(this.view); };
   private readonly contextMenu: {
     tray?: MenuItemConstructorOptions[],
     view?: MenuItemConstructorOptions[],
@@ -63,14 +63,14 @@ class AppState {
     this.currentStack.page = page;
     if (page) {
       ViewPropagator.propagate(page.view);
-      page.setViewChangeHandler(() => ViewPropagator.propagate(page.view));
+      if (!page.hasViewChangeHandler()) {
+        page.setViewChangeHandler(this.onViewChangeHandler);
+      }
     }
   }
   get currentPage(): Page | undefined { return this.currentStack.page; }
   set pages(pages: Page[]) { this._pages = pages; }
   get pages(): Page[] { return this._pages; }
-  get appMenuTemplate(): MenuItemConstructorOptions[] { return this._appMenuTemplate; }
-  set appMenuTemplate(template: MenuItemConstructorOptions[]) { this._appMenuTemplate = template; }
 
   set googleApiKey(key: string) { process.env.GOOGLE_API_KEY = key; }
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }
@@ -98,9 +98,10 @@ class AppState {
     if (process.env.NODE_ENV !== 'development') { return []; }
     const allPages = () => [this._fromClipboardPage, ...this._pages];
     const pageType = (current?: Page) => {
-      return !current ? '' :
-        !current.view ? 'no view' :
-          current.view.webContents.isDestroyed() ? 'view: destroyed' : 'view: alive';
+      if (!current) { return ''; }
+      if (!current.view) { return 'no view'; }
+      return current.label + (current.hasView ?
+        current.view.webContents && !current.view.webContents.isDestroyed() ? ': alive' : ': destroyed' : '');
     };
 
     return [
