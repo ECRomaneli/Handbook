@@ -118,6 +118,7 @@ class MenuService {
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
+        { label: s.searchOnWeb, submenu: this.getSearchMenu() },
         { label: s.window, submenu: currentPageSubmenu },
         { label: s.handbook, submenu: windowMenuItems },
       ];
@@ -279,6 +280,24 @@ class MenuService {
     });
 
     return items;
+  }
+
+  private getSearchMenu(): MenuItemConstructorOptions[] {
+    const s = AppState.strings.menu;
+    return [
+      {
+        label: s.searchOnGoogle,
+        click: () => ViewService.searchInGoogle(),
+      },
+      {
+        label: s.searchWithGemini,
+        click: () => ViewService.searchInGoogle(ViewService.getCurrentView(), true),
+      },
+      {
+        label: s.translate,
+        click: () => ViewService.translateWithGoogle(),
+      },
+    ];
   }
 }
 

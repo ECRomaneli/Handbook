@@ -99,7 +99,7 @@ class ViewService {
    * @param oldView The view to be replaced. It will be destroyed at the end of the process.
    * @param options New options. If not present, the same options are going to be used.
    */
-  recreateView(oldView: WebContentsView, options: WebContentsViewConstructorOptions) {
+  public recreateView(oldView: WebContentsView, options: WebContentsViewConstructorOptions) {
     const newView = new WebContentsView(options);
     newView.setBounds(oldView.getBounds());
     this.isMuted(oldView) && newView.webContents.setAudioMuted(true);
@@ -198,7 +198,7 @@ class ViewService {
   /**
    * Build window right-click menu.
    */
-  buildContextMenu(view: WebContentsView) {
+  public buildContextMenu(view: WebContentsView) {
     contextMenu({
       window: view,
       append: () => {
@@ -212,6 +212,37 @@ class ViewService {
         ];
       },
     });
+  }
+
+  public getSelectedText(view = this.getCurrentView()!): Promise<string> {
+    return view.webContents?.executeJavaScript('window.getSelection()?.toString()') ?? Promise.resolve('');
+  }
+
+  private openInChildWindow(url: string): void {
+    const view = this.getCurrentView();
+    if (!view) { console.error('Cannot open URL without view.'); return; }
+
+    view.webContents.executeJavaScript(`
+      window.open('${url}', '_blank', 'width=800,height=600');
+    `);
+  }
+
+  public async searchInGoogle(view = this.getCurrentView()!, aiMode = false): Promise<void> {
+    const text = await this.getSelectedText(view);
+    if (!text.trim()) { return; }
+    let googleUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
+    if (aiMode) {
+      googleUrl += '&udm=50';
+    }
+    this.openInChildWindow(googleUrl);
+  }
+
+  public async translateWithGoogle(view = this.getCurrentView()!): Promise<void> {
+    const text = await this.getSelectedText(view);
+    if (!text.trim()) { return; }
+    const appLang = AppState.language.split('-')[0];
+    const translateUrl = `https://translate.google.com/?sl=auto&tl=${appLang}&text=${encodeURIComponent(text)}`;
+    this.openInChildWindow(translateUrl);
   }
 }
 

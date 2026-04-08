@@ -15,7 +15,8 @@ export type ResetBoundType = 'bounds' | 'position' | '';
 
 class AppState {
   private readonly _autoLauncher = new AutoLaunch({ name: 'Handbook' });
-  private _strings: Strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+  private _language = Storage.getSettings<string>(Settings.APP_LANGUAGE) || app.getLocale();
+  private _strings: Strings = getLanguageStrings(this._language);
   private _defaultAppMenu?: MenuItem[];
   private _globalShortcut = '';
   private _resetBoundsType: ResetBoundType = Storage.getSettings(Settings.RESET_BOUNDS);
@@ -35,6 +36,7 @@ class AppState {
   constructor() { this.debugLifecycleStatus(); }
 
   get autoLauncher(): AutoLaunch { return this._autoLauncher; }
+  get language(): string { return this._language; }
   get strings(): Strings { return this._strings; }
   set defaultAppMenu(template: MenuItem[]) { this._defaultAppMenu = template; }
   get defaultAppMenu(): MenuItem[] { return this._defaultAppMenu!; }
@@ -76,7 +78,8 @@ class AppState {
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }
 
   public refreshStrings() {
-    this._strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+    this._language = Storage.getSettings<string>(Settings.APP_LANGUAGE) || app.getLocale();
+    this._strings = getLanguageStrings(this._language);
     this._fromClipboardPage.label = this.strings.menu.fromClipboard;
   }
 
