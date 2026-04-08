@@ -40,8 +40,11 @@ class PageService {
     AppState.currentPage = page;
     this.setupCurrentPage();
 
+    if (!Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+      FrameService.getFrame()?.isMaximized() && FrameService.toggleMaximize();
+    }
+
     if (previousPage?.view && !previousPage.persist) {
-      FrameService.getFrame()!.isMaximized() && FrameService.toggleMaximize();
       this.closePageView(previousPage);
     }
   }
@@ -206,7 +209,7 @@ class PageService {
     const view = page.view;
     page.view = undefined;
     const wc = view.webContents;
-    !wc.isDestroyed() && wc.close();
+    wc && !wc.isDestroyed() && wc.close();
   }
 
   public recreateView(page = this.getCurrentPage()!): void {
