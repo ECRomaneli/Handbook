@@ -8,10 +8,9 @@ import PageService from '@/service/PageService';
 import PreferencesService from '@/service/PreferencesService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
-import Dialog, { DialogOptions } from '@/util/modal/Dialog';
 import QuickMenuModal, { QuickMenuItem } from '@/util/modal/QuickMenuModal';
 import SearchEngine from '@ecromaneli/search-engine';
-import { app, BrowserWindow, clipboard, Menu, MenuItemConstructorOptions, shell } from 'electron';
+import { app, clipboard, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
 type MenuItem = MenuItemConstructorOptions & { submenu: MenuItemConstructorOptions[] };
 
@@ -115,19 +114,7 @@ class MenuService {
     windowMenuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
 
     menuItems.push(...windowMenuItems);
-    menuItems.push({
-      label: s.exit, click: () => {
-        const d = AppState.strings.exitDialog;
-        this.showConfirmationDialog({
-          title: d.title,
-          message: d.message,
-          confirmBtn: d.confirm,
-          cancelBtn: AppState.strings.dialog.cancel,
-          parent: null,
-          confirmAction: () => app.quit(),
-        });
-      },
-    });
+    menuItems.push({ label: s.exit, click: () => app.quit() });
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
@@ -184,37 +171,6 @@ class MenuService {
     } else if (page.url) {
       PageService.selectPage(page);
     }
-  }
-
-  private async showConfirmationDialog(
-    data: DialogOptions & {
-      parent: BrowserWindow | null,
-      confirmBtn?: string,
-      cancelBtn?: string,
-      confirmAction?: () => void,
-      cancelAction?: () => void,
-    },
-  ): Promise<void> {
-    const d = AppState.strings.dialog;
-    const result = await Dialog.show(
-      data.parent ?? null,
-      {
-        type: data.type || 'question',
-        title: data.title || d.confirmation,
-        message: data.message || d.areYouSure,
-        buttons: [data.confirmBtn ?? d.ok, data.cancelBtn ?? d.cancel],
-        defaultId: 1,
-        cancelId: 1,
-      },
-    );
-
-    setTimeout(() => {
-      if (result.response === 0) {
-        data.confirmAction && data.confirmAction();
-      } else {
-        data.cancelAction && data.cancelAction();
-      }
-    });
   }
 
   private createPageSubmenu(page: Page): MenuItemConstructorOptions[] {
