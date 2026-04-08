@@ -323,6 +323,7 @@ export const fr: Strings = {
       gistId: 'ID du Gist',
       gistIdHint: '(optionnel, détecté automatiquement depuis vos gists)',
       gistIdPlaceholder: 'Laisser vide pour créer un nouveau gist',
+      loadSettings: 'Charger les paramètres',
       hide: 'Masquer',
       show: 'Afficher',
     },

@@ -323,6 +323,7 @@ export const ptBR: Strings = {
       gistId: 'ID do Gist',
       gistIdHint: '(opcional, auto-detectado de seus gists)',
       gistIdPlaceholder: 'Deixe em branco para criar um novo gist',
+      loadSettings: 'Carregar configurações',
       hide: 'Ocultar',
       show: 'Mostrar',
     },

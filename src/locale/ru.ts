@@ -323,6 +323,7 @@ export const ru: Strings = {
       gistId: 'ID Gist',
       gistIdHint: '(необязательно, определяется автоматически из ваших gist)',
       gistIdPlaceholder: 'Оставьте пустым для создания нового gist',
+      loadSettings: 'Загрузить настройки',
       hide: 'Скрыть',
       show: 'Показать',
     },

@@ -322,6 +322,7 @@ export const en = {
       gistId: 'Gist ID',
       gistIdHint: '(optional, auto-detected from your gists)',
       gistIdPlaceholder: 'Leave empty to create a new gist',
+      loadSettings: 'Load Settings',
       hide: 'Hide',
       show: 'Show',
     },
