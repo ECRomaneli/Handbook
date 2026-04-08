@@ -14,18 +14,19 @@ export type SystemTheme = 'light' | 'dark';
 export type ResetBoundType = 'bounds' | 'position' | '';
 
 class AppState {
-  private _autoLauncher = new AutoLaunch({ name: 'Handbook' });
-  private _strings: Strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+  private readonly _autoLauncher = new AutoLaunch({ name: 'Handbook' });
+  private _language = Storage.getSettings<string>(Settings.APP_LANGUAGE) || app.getLocale();
+  private _strings: Strings = getLanguageStrings(this._language);
   private _defaultAppMenu?: MenuItem[];
   private _globalShortcut = '';
   private _resetBoundsType: ResetBoundType = Storage.getSettings(Settings.RESET_BOUNDS);
   private _systemTheme = this.getSystemTheme();
   private _tray?: Tray;
   private _preferences?: BrowserWindow;
-  private _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private _pages: Page[] = [];
-  private _appMenuTemplate: MenuItemConstructorOptions[] = [];
+  private readonly _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
+  private readonly onViewChangeHandler = function (this: Page) { ViewPropagator.propagate(this.view); };
   private readonly contextMenu: {
     tray?: MenuItemConstructorOptions[],
     view?: MenuItemConstructorOptions[],
@@ -35,6 +36,7 @@ class AppState {
   constructor() { this.debugLifecycleStatus(); }
 
   get autoLauncher(): AutoLaunch { return this._autoLauncher; }
+  get language(): string { return this._language; }
   get strings(): Strings { return this._strings; }
   set defaultAppMenu(template: MenuItem[]) { this._defaultAppMenu = template; }
   get defaultAppMenu(): MenuItem[] { return this._defaultAppMenu!; }
@@ -63,20 +65,21 @@ class AppState {
     this.currentStack.page = page;
     if (page) {
       ViewPropagator.propagate(page.view);
-      page.setViewChangeHandler(() => ViewPropagator.propagate(page.view));
+      if (!page.hasViewChangeHandler()) {
+        page.setViewChangeHandler(this.onViewChangeHandler);
+      }
     }
   }
   get currentPage(): Page | undefined { return this.currentStack.page; }
   set pages(pages: Page[]) { this._pages = pages; }
   get pages(): Page[] { return this._pages; }
-  get appMenuTemplate(): MenuItemConstructorOptions[] { return this._appMenuTemplate; }
-  set appMenuTemplate(template: MenuItemConstructorOptions[]) { this._appMenuTemplate = template; }
 
   set googleApiKey(key: string) { process.env.GOOGLE_API_KEY = key; }
   set themeSource(theme: 'light' | 'dark' | 'system') { nativeTheme.themeSource = theme; }
 
   public refreshStrings() {
-    this._strings = getLanguageStrings(Storage.getSettings(Settings.APP_LANGUAGE) || app.getLocale());
+    this._language = Storage.getSettings<string>(Settings.APP_LANGUAGE) || app.getLocale();
+    this._strings = getLanguageStrings(this._language);
     this._fromClipboardPage.label = this.strings.menu.fromClipboard;
   }
 
@@ -98,9 +101,10 @@ class AppState {
     if (process.env.NODE_ENV !== 'development') { return []; }
     const allPages = () => [this._fromClipboardPage, ...this._pages];
     const pageType = (current?: Page) => {
-      return !current ? '' :
-        !current.view ? 'no view' :
-          current.view.webContents.isDestroyed() ? 'view: destroyed' : 'view: alive';
+      if (!current) { return ''; }
+      if (!current.view) { return 'no view'; }
+      return current.label + (current.hasView ?
+        current.view.webContents && !current.view.webContents.isDestroyed() ? ': alive' : ': destroyed' : '');
     };
 
     return [

@@ -28,7 +28,7 @@ app.component('SyncTab', {
           </div>
           <span class="sync-card-description">{{ $i18n.preferences.sync.githubGistDesc }}</span>
         </div>
-        <div class="sync-card-body">
+        <div class="sync-card-body" v-if="settingsLoaded">
           <div class="sync-field">
             <label>{{ $i18n.preferences.sync.personalAccessToken }}</label>
             <div class="input-group input-group-sm">
@@ -45,11 +45,15 @@ app.component('SyncTab', {
           </div>
         </div>
         <div class="sync-card-actions">
-          <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPull">
+          <button v-if="!settingsLoaded" class="btn btn-sm btn-secondary" :disabled="loading" @click="loadSettings">
+            <span v-if="loading === 'load-settings'" class="spinner-border spinner-border-sm me-1"></span>
+            {{ $i18n.preferences.sync.loadSettings }}
+          </button>
+          <button v-if="settingsLoaded" class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPull">
             <span v-if="loading === 'gist-pull'" class="spinner-border spinner-border-sm me-1"></span>
             {{ $i18n.preferences.sync.import }}
           </button>
-          <button class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPush">
+          <button v-if="settingsLoaded" class="btn btn-sm btn-secondary" :disabled="!gist.token || loading" @click="gistPush">
             <span v-if="loading === 'gist-push'" class="spinner-border spinner-border-sm me-1"></span>
              {{ $i18n.preferences.sync.export }}
           </button>
@@ -65,19 +69,22 @@ app.component('SyncTab', {
     return {
       showToken: false,
       loading: null,
+      settingsLoaded: false,
       gist: { token: '', id: '' }
     }
   },
 
-  async created() {
-    await this.loadSettings()
-  },
-
   methods: {
     async loadSettings() {
-      const settings = await this.$remote.sync.getSettings()
-      this.gist.token = settings.gistToken || ''
-      this.gist.id = settings.gistId || ''
+      this.loading = 'load-settings'
+      try {
+        const settings = await this.$remote.sync.getSettings()
+        this.gist.token = settings.gistToken || ''
+        this.gist.id = settings.gistId || ''
+        this.settingsLoaded = true
+      } finally {
+        this.loading = null
+      }
     },
 
     saveGistSettings() {

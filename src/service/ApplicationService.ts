@@ -12,13 +12,14 @@ import SyncService from '@/service/SyncService';
 import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import { parseToAccelerator } from '@/util/EventKeyCapture';
-import Dialog from '@/util/modal/Dialog';
-import { app, globalShortcut, Menu, MenuItemConstructorOptions, Session, session, WebContentsView } from 'electron';
+import Dialog, { DialogOptions } from '@/util/modal/Dialog';
+import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Session, session, WebContentsView } from 'electron';
 
 class ApplicationService {
   private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
 
   public initialize() {
+    this.setupExitDialog();
     this.setupAutoLaunch();
     this.registerGlobalShortcut();
     this.setupAccelerators();
@@ -91,6 +92,58 @@ class ApplicationService {
         await AppState.autoLauncher.disable();
       }
     }
+  }
+
+  public disableExitDialog() {
+    app.removeAllListeners('before-quit');
+  }
+
+  private setupExitDialog() {
+    let quitting = false;
+    app.on('before-quit', (e) => {
+      if (quitting) { return; }
+      e.preventDefault();
+      const d = AppState.strings.exitDialog;
+      return this.showConfirmationDialog({
+        title: d.title,
+        message: d.message,
+        confirmBtn: d.confirm,
+        cancelBtn: AppState.strings.dialog.cancel,
+        parent: null,
+        confirmAction: () => { quitting = true; app.quit(); },
+      });
+    });
+  }
+
+  private async showConfirmationDialog(
+    data: DialogOptions & {
+      parent: BrowserWindow | null,
+      confirmBtn?: string,
+      cancelBtn?: string,
+      confirmAction?: () => void,
+      cancelAction?: () => void,
+    },
+  ): Promise<void> {
+    const d = AppState.strings.dialog;
+    const result = await Dialog.show(
+      data.parent ?? null,
+      {
+        type: data.type || 'question',
+        title: data.title || d.confirmation,
+        message: data.message || d.areYouSure,
+        buttons: [data.confirmBtn ?? d.ok, data.cancelBtn ?? d.cancel],
+        defaultId: 1,
+        cancelId: 1,
+      },
+    );
+
+    setTimeout(() => {
+      if (result.response === 0) {
+        data.confirmAction && data.confirmAction();
+      } else {
+        data.cancelAction && data.cancelAction();
+      }
+    });
   }
 
   private setupAccelerators() {

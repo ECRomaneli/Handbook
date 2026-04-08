@@ -114,6 +114,10 @@ export class Page {
     this._onViewChange = handler;
   }
 
+  public hasViewChangeHandler(): boolean {
+    return !!this._onViewChange;
+  }
+
   get hasView(): boolean {
     return !!this._view;
   }

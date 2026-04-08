@@ -41,7 +41,6 @@ class PageService {
     this.setupCurrentPage();
 
     if (previousPage?.view && !previousPage.persist) {
-      FrameService.getFrame()!.isMaximized() && FrameService.toggleMaximize();
       this.closePageView(previousPage);
     }
   }
@@ -206,7 +205,7 @@ class PageService {
     const view = page.view;
     page.view = undefined;
     const wc = view.webContents;
-    !wc.isDestroyed() && wc.close();
+    wc && !wc.isDestroyed() && wc.close();
   }
 
   public recreateView(page = this.getCurrentPage()!): void {

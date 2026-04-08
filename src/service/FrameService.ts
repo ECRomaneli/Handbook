@@ -49,7 +49,7 @@ class FrameService {
 
   public toggleVisibility(): void {
     const frame = this.getFrame()!;
-    frame.isVisible() ? frame.hide() : frame.show();
+    frame.isVisible() ? this.hide() : this.show();
   }
 
   public toggleMaximize(): void {
@@ -91,6 +91,10 @@ class FrameService {
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
+    if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+      const sharedBounds = Storage.getSharedBounds();
+      sharedBounds && frame.setBounds(sharedBounds);
+    }
     AppState.frame = frame;
   }
 
@@ -240,26 +244,30 @@ class FrameService {
     oldView?.emit('detached');
     this.setupNavbarForCurrentPage();
 
-    const bounds = PageService.getPageBounds(page);
-    this.getFrame()!.setBounds(bounds);
+    if (!Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+      frame.isMaximized() && frame.unmaximize();
+      const bounds = PageService.getPageBounds(page);
+      frame.setBounds(bounds);
+    }
+
+    this.ensureWindowVisible(frame);
     this.updateChildrenBounds();
 
     const dragHandle = Draggable.from(frame);
     const navbar = NavbarService.getView();
-    if (navbar) {
+    if (navbar && frame.contentView.children.length === 0) {
       frame.contentView.addChildView(navbar);
-      dragHandle.attach(navbar.webContents, {
-        exclude: 'button',
-      });
+      dragHandle.attach(navbar.webContents, { exclude: 'button' });
     } else {
       dragHandle.attach(newView.webContents, {
-        region: { height: Storage.getSettings(Settings.ACTION_AREA) as number },
+        region: { height: Storage.getSettings<number>(Settings.ACTION_AREA) },
         exclude: 'button, a, input, select, textarea',
       });
     }
+
     this.safeDisplay(frame, newView);
     this.buildViewFindbar(newView);
-    show && this.show();
+    show && !frame.isVisible() && this.show();
   }
 
   private safeDisplay(frame: BaseWindow, view: PageView): void {
@@ -310,6 +318,7 @@ class FrameService {
 
   public show(): void {
     this.getFrame()!.show();
+    ViewService.focus();
   }
 
   public hide(): void {
