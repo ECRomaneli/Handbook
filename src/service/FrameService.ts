@@ -91,6 +91,10 @@ class FrameService {
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
+    if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+      const sharedBounds = Storage.getSharedBounds();
+      sharedBounds && frame.setBounds(sharedBounds);
+    }
     AppState.frame = frame;
   }
 
