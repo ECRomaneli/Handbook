@@ -1,5 +1,6 @@
 import { IsProduction } from '@/data/Constants';
 import UpdatePropagator from '@/propagator/UpdatePropagator';
+import ApplicationService from '@/service/ApplicationService';
 import { app, shell } from 'electron';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 
@@ -92,6 +93,7 @@ class AutoUpdaterService {
 
   public installUpdate(): void {
     if (this.status.state !== 'downloaded') { return; }
+    ApplicationService.disableExitDialog();
     autoUpdater.quitAndInstall(false, true);
   }
 

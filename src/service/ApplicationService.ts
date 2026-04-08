@@ -94,6 +94,10 @@ class ApplicationService {
     }
   }
 
+  public disableExitDialog() {
+    app.removeAllListeners('before-quit');
+  }
+
   private setupExitDialog() {
     let quitting = false;
     app.on('before-quit', (e) => {
