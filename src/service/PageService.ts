@@ -40,10 +40,6 @@ class PageService {
     AppState.currentPage = page;
     this.setupCurrentPage();
 
-    if (!Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
-      FrameService.getFrame()?.isMaximized() && FrameService.toggleMaximize();
-    }
-
     if (previousPage?.view && !previousPage.persist) {
       this.closePageView(previousPage);
     }

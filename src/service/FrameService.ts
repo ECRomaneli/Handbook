@@ -240,8 +240,12 @@ class FrameService {
     oldView?.emit('detached');
     this.setupNavbarForCurrentPage();
 
-    const bounds = PageService.getPageBounds(page);
-    this.getFrame()!.setBounds(bounds);
+    if (!Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+      frame.isMaximized() && this.toggleMaximize();
+      const bounds = PageService.getPageBounds(page);
+      frame.setBounds(bounds);
+    }
+
     this.updateChildrenBounds();
 
     const dragHandle = Draggable.from(frame);
