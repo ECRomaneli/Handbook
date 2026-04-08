@@ -98,6 +98,26 @@ app.component('Settings', {
             data: { type: 'number', min: 0, value: await storage.getSettings(this.$const.Settings.ACTION_AREA), unit: 'px' }
           },
           {
+            id: this.$const.Settings.USE_EXTERNAL_BROWSER,
+            label: s.useExternalBrowser,
+            description: s.useExternalBrowserDesc,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
+          },
+          {
+            id: this.$const.Settings.GROUP_PAGES_BY_SESSION,
+            label: s.groupPagesBySession,
+            description: s.groupPagesBySessionDesc,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
+          },
+          {
+            id: this.$const.Settings.ALLOW_FULLSCREEN,
+            label: s.allowFullscreen,
+            description: s.allowFullscreenDesc,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
+          }
+        ],
+        [s.appearance]: [
+          {
             id: this.$const.Settings.APP_THEME,
             label: s.appTheme,
             description: s.appThemeDesc,
@@ -126,26 +146,6 @@ app.component('Settings', {
               ]
             }
           },
-          {
-            id: this.$const.Settings.USE_EXTERNAL_BROWSER,
-            label: s.useExternalBrowser,
-            description: s.useExternalBrowserDesc,
-            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.USE_EXTERNAL_BROWSER) }
-          },
-          {
-            id: this.$const.Settings.GROUP_PAGES_BY_SESSION,
-            label: s.groupPagesBySession,
-            description: s.groupPagesBySessionDesc,
-            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.GROUP_PAGES_BY_SESSION) }
-          },
-          {
-            id: this.$const.Settings.ALLOW_FULLSCREEN,
-            label: s.allowFullscreen,
-            description: s.allowFullscreenDesc,
-            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
-          }
-        ],
-        [s.appearance]: [
           {
             id: this.$const.Settings.SHOW_FRAME,
             label: s.showFrame,
