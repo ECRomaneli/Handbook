@@ -218,6 +218,8 @@ export const es: Strings = {
       groupPagesBySessionDesc: 'Organiza las páginas en la bandeja y menús contextuales agrupadas por su sesión.',
       muteStartupSound: 'Silenciar sonido de inicio',
       muteStartupSoundDesc: 'Desactiva el sonido que se reproduce cuando la aplicación se inicia.',
+      clipboardUrlSession: 'Sesión de URL del portapapeles',
+      clipboardUrlSessionDesc: 'Define la sesión utilizada por la página de URL del portapapeles. Dejar vacío para usar la sesión predeterminada.',
 
       showFrame: 'Mostrar barra de título',
       backgroundColor: 'Color de fondo',

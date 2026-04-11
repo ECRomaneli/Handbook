@@ -218,6 +218,8 @@ export const de: Strings = {
       groupPagesBySessionDesc: 'Seiten in der Taskleiste und Kontextmenüs nach Sitzung gruppiert organisieren.',
       muteStartupSound: 'Startton stummschalten',
       muteStartupSoundDesc: 'Deaktiviert den Ton, der beim Start der Anwendung abgespielt wird.',
+      clipboardUrlSession: 'Zwischenablage-URL-Sitzung',
+      clipboardUrlSessionDesc: 'Legt die Sitzung fest, die für die Zwischenablage-URL-Seite verwendet wird. Leer lassen, um die Standardsitzung zu verwenden.',
 
       showFrame: 'Titelleiste anzeigen',
       backgroundColor: 'Hintergrundfarbe',

@@ -218,6 +218,8 @@ export const ptPT: Strings = {
       groupPagesBySessionDesc: 'Organizar páginas na barra de notificações e menus de contexto agrupadas por sessão.',
       muteStartupSound: 'Silenciar som de arranque',
       muteStartupSoundDesc: 'Desativa o som reproduzido quando a aplicação é iniciada.',
+      clipboardUrlSession: 'Sessão do URL da área de transferência',
+      clipboardUrlSessionDesc: 'Define a sessão utilizada pela página de URL da área de transferência. Deixe vazio para utilizar a sessão predefinida.',
 
       showFrame: 'Mostrar barra de título',
       backgroundColor: 'Cor de fundo',

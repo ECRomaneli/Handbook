@@ -91,6 +91,17 @@ class PageService {
     });
   }
 
+  public updateClipboardUrlSession(session?: string): void {
+    if (!session) { session = Page.DEFAULT_SESSION; }
+    const currentSession = AppState.fromClipboardPage.session;
+    if (currentSession === session) { return; }
+    AppState.fromClipboardPage.session = session;
+    if (this.isCurrentPage(AppState.fromClipboardPage)) {
+      this.reopenPageView(AppState.fromClipboardPage);
+      FrameService.updateView();
+    }
+  }
+
   public updatePageAndPropagate(to: Page, from: Page): void {
     const labelChanged = to.label !== from.label;
     const urlChanged = to.url !== from.url;

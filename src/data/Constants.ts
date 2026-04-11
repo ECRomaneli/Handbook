@@ -26,6 +26,7 @@ const Settings = {
   APP_LANGUAGE: 'app_language',
   GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
   MUTE_STARTUP_SOUND: 'mute_startup_sound',
+  CLIPBOARD_URL_SESSION: 'clipboard_url_session',
   RESIZE_REFRESH_RATE: 'resize_refresh_rate',
   DRAG_REFRESH_RATE: 'drag_refresh_rate',
   QUICK_MENU_SHORTCUT: 'quick_menu_shortcut',
@@ -74,6 +75,7 @@ DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.APP_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
 DefaultSettings[Settings.MUTE_STARTUP_SOUND] = false;
+DefaultSettings[Settings.CLIPBOARD_URL_SESSION] = '';
 DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
 DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
 DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';

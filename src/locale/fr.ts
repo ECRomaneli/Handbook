@@ -218,6 +218,8 @@ export const fr: Strings = {
       groupPagesBySessionDesc: 'Organise les pages dans la barre de notification et les menus contextuels regroupées par session.',
       muteStartupSound: 'Désactiver le son de démarrage',
       muteStartupSoundDesc: 'Désactive le son joué au démarrage de l\'application.',
+      clipboardUrlSession: 'Session de l\'URL du presse-papiers',
+      clipboardUrlSessionDesc: 'Définit la session utilisée par la page URL du presse-papiers. Laisser vide pour utiliser la session par défaut.',
 
       showFrame: 'Afficher la barre de titre',
       backgroundColor: 'Couleur d\'arrière-plan',

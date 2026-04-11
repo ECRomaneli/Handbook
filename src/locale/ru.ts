@@ -218,6 +218,8 @@ export const ru: Strings = {
       groupPagesBySessionDesc: 'Организовать страницы в трее и контекстных меню с группировкой по сессии.',
       muteStartupSound: 'Отключить звук запуска',
       muteStartupSoundDesc: 'Отключает звук, воспроизводимый при запуске приложения.',
+      clipboardUrlSession: 'Сессия URL из буфера обмена',
+      clipboardUrlSessionDesc: 'Укажите сессию, используемую страницей URL из буфера обмена. Оставьте пустым для использования сессии по умолчанию.',
 
       showFrame: 'Показывать заголовок окна',
       backgroundColor: 'Цвет фона',

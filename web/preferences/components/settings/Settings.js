@@ -114,6 +114,12 @@ app.component('Settings', {
             label: s.allowFullscreen,
             description: s.allowFullscreenDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
+          },
+          {
+            id: this.$const.Settings.CLIPBOARD_URL_SESSION,
+            label: s.clipboardUrlSession,
+            description: s.clipboardUrlSessionDesc,
+            data: { type: 'text', value: await storage.getSettings(this.$const.Settings.CLIPBOARD_URL_SESSION), placeholder: s.langDefault }
           }
         ],
         [s.appearance]: [

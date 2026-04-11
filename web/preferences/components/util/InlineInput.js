@@ -7,7 +7,7 @@ app.component('InlineInput', {
             </div>
             <div>
                 <div v-if="data.type === 'text'" class="input-group input-group-sm float-end" style="width: 120px">
-                    <input type="text" class="form-control pe-0" v-model="data.bindValue" @blur="emitUpdate()" :aria-label="input.label" spellcheck="false">
+                    <input type="text" class="form-control pe-0" v-model="data.bindValue" @blur="emitUpdate()" :placeholder="data.placeholder" :aria-label="input.label" spellcheck="false">
                     <span v-if="data.unit" class="input-group-text">{{ data.unit }}</span>
                 </div>
                 <div v-if="data.type === 'bigtext'" class="input-group input-group-sm float-end mt-2">

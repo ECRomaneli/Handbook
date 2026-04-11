@@ -217,6 +217,8 @@ export const en = {
       groupPagesBySessionDesc: 'Organize pages in the tray and context menus grouped by their session.',
       muteStartupSound: 'Mute startup sound',
       muteStartupSoundDesc: 'Disable the sound that plays when the application starts.',
+      clipboardUrlSession: 'Clipboard URL session',
+      clipboardUrlSessionDesc: 'Set the session used by the Clipboard URL page. Leave empty to use the default session.',
 
       showFrame: 'Show frame',
       backgroundColor: 'Background color',

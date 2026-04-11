@@ -218,6 +218,8 @@ export const it: Strings = {
       groupPagesBySessionDesc: 'Organizza le pagine nella barra di notifica e nei menu contestuali raggruppate per sessione.',
       muteStartupSound: 'Disattiva suono di avvio',
       muteStartupSoundDesc: 'Disattiva il suono riprodotto all\'avvio dell\'applicazione.',
+      clipboardUrlSession: 'Sessione URL degli appunti',
+      clipboardUrlSessionDesc: 'Imposta la sessione utilizzata dalla pagina URL degli appunti. Lasciare vuoto per utilizzare la sessione predefinita.',
 
       showFrame: 'Mostra barra del titolo',
       backgroundColor: 'Colore di sfondo',

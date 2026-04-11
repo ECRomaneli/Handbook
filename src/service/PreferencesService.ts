@@ -6,6 +6,7 @@ import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
 import FrameService from '@/service/FrameService';
 import MenuService from '@/service/MenuService';
+import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
@@ -283,6 +284,9 @@ class PreferencesService {
         break;
       case Settings.GROUP_PAGES_BY_SESSION:
         MenuService.refreshContextMenu();
+        break;
+      case Settings.CLIPBOARD_URL_SESSION:
+        PageService.updateClipboardUrlSession(value as string);
         break;
       case Settings.QUICK_MENU_SHORTCUT:
         ApplicationService.updateQuickMenuAccelerator();
