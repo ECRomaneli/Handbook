@@ -13,7 +13,8 @@ import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import { parseToAccelerator } from '@/util/EventKeyCapture';
 import Dialog, { DialogOptions } from '@/util/modal/Dialog';
-import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Session, session, WebContentsView } from 'electron';
+import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Rectangle, Session, session, WebContentsView } from 'electron';
+import Findbar from 'electron-findbar';
 
 class ApplicationService {
   private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
@@ -24,6 +25,7 @@ class ApplicationService {
     this.registerGlobalShortcut();
     this.setupAccelerators();
     this.forceLanguageHeader();
+    this.defineFindbarDefaultPosition();
     PermissionService.denyPermissionsOnSession(session.defaultSession);
     PermissionService.setupPermissionsHandler();
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
@@ -31,6 +33,14 @@ class ApplicationService {
     AutoUpdaterService.initialize();
     SyncService.initialize();
     TrayService.initialize();
+  }
+
+  private defineFindbarDefaultPosition() {
+    Findbar.setDefaultBoundsHandler((parentBounds, findbarBounds) => {
+      const x = parentBounds.x + (parentBounds.width - findbarBounds.width) - 25;
+      const y = parentBounds.y + 25;
+      return { x, y } as Rectangle;
+    });
   }
 
   public registerGlobalShortcut() {
