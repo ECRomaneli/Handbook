@@ -42,7 +42,7 @@ class MenuService {
     }
 
     const groupBySession = Storage.getSettings<boolean>(Settings.GROUP_PAGES_BY_SESSION);
-    const validPages = PageService.getValidPages();
+    const validPages = PageService.getValidPages(true);
 
     if (groupBySession) {
       const defaultSessionLabel = AppState.strings.preferences.pages.defaultSession;
@@ -147,12 +147,12 @@ class MenuService {
 
   private getClipboardImage(): string | undefined {
     const image = clipboard.readImage();
-    return !image.isEmpty() ? image.toDataURL() : void 0;
+    return !image.isEmpty() ? image.toDataURL() : undefined;
   }
 
   private getClipboardUrl(): string | undefined {
     const cb = clipboard.readText();
-    return Page.isValidUrl(cb) ? cb : void 0;
+    return Page.isValidUrl(cb) ? cb : undefined;
   }
 
   public shouldEnableClipboardPage(): boolean {
@@ -265,7 +265,7 @@ class MenuService {
   }
 
   private getQuickMenuItems(): QuickMenuItem[] {
-    const items: QuickMenuItem[] = PageService.getValidPages()
+    const items: QuickMenuItem[] = PageService.getValidPages(true)
       .map((p: Page) => ({ id: p.id, label: p.labelWithStatus, url: p.url, session: p.session }));
 
     if (this.shouldEnableClipboardPage()) {

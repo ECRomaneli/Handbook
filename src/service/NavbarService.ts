@@ -25,7 +25,7 @@ class NavbarService {
   }
 
   public hasView(): boolean {
-    return AppState.navbar !== void 0;
+    return AppState.navbar !== undefined;
   }
 
   public createView(): WebContentsView {

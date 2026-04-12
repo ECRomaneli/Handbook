@@ -77,7 +77,7 @@ class PageService {
       if (newPages.some((np) => np.id === p.id)) { return true; }
       this.closePageView(p);
       if (this.isCurrentPage(p)) {
-        AppState.currentPage = void 0;
+        AppState.currentPage = undefined;
         FrameService.getFrame() && FrameService.forceClose(false);
       }
       return false;
@@ -190,12 +190,13 @@ class PageService {
     return AppState.pages.length > 0;
   }
 
-  public getValidPages(): Page[] {
-    return AppState.pages.filter((page) => page.isValid);
+  public getValidPages(excludeCustomPages?: boolean): Page[] {
+    return this.getAllPages(excludeCustomPages).filter((page) => page.isValid);
   }
 
   public getPageByWebContents(webContents: WebContents): Page | undefined {
-    return AppState.pages.find((page) => page.view?.webContents === webContents);
+    const rwc = ViewService.getRootWebContents(webContents);
+    return this.getAllPages().find((page) => page.view?.webContents === rwc);
   }
 
   private openPageView(page = this.getCurrentPage()!): void {
@@ -248,7 +249,7 @@ class PageService {
       Storage.getSharedBounds() : Storage.getWindowBounds(page.id!);
 
     // Verify if the stored bounds have position
-    if (bounds.x !== void 0) { return bounds as Rectangle; }
+    if (bounds.x !== undefined) { return bounds as Rectangle; }
 
     return this.getBoundsForDefaultPosition(bounds);
   }

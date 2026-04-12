@@ -27,7 +27,10 @@ class ApplicationService {
     this.forceLanguageHeader();
     this.defineFindbarDefaultPosition();
     PermissionService.denyPermissionsOnSession(session.defaultSession);
-    PermissionService.setupPermissionsHandler();
+    PermissionService.setupPermissionsHandler({
+      getSessionByWebContents: (wc) => PageService.getPageByWebContents(wc)?.session,
+      getWindow: () => FrameService.getFrame(),
+    });
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
     AppState.googleApiKey = Storage.getSettings(Settings.GOOGLE_API_KEY);
     AutoUpdaterService.initialize();

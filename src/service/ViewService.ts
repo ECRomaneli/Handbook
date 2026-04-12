@@ -13,6 +13,8 @@ import Findbar from 'electron-findbar';
 import { writeFileSync } from 'fs';
 import { EventEmitter } from 'stream';
 
+export type ChildWebContents = WebContents & { __parent__?: WebContents };
+
 class ViewService {
   public getHomeUrl(WebContentsView: WebContentsView): string {
     return WebContentsView.webContents.getURL();
@@ -169,6 +171,7 @@ class ViewService {
       });
       fixUserAgent(childWindow.webContents);
       childWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+      (childWindow.webContents as ChildWebContents).__parent__ = parent.webContents;
       this.handleChildWindows(parent, childWindow);
     })
       .setWindowOpenHandler((details) => {
@@ -243,6 +246,10 @@ class ViewService {
     const appLang = AppState.language.split('-')[0];
     const translateUrl = `https://translate.google.com/?sl=auto&tl=${appLang}&text=${encodeURIComponent(text)}`;
     this.openInChildWindow(translateUrl);
+  }
+
+  public getRootWebContents(webContents: ChildWebContents): WebContents | undefined {
+    return webContents.__parent__ ?? webContents;
   }
 }
 

@@ -29,7 +29,7 @@ export class Page {
    * @returns A new transient Page instance.
    */
   public static newTransientPage(label: string, session?: string): Page {
-    return new Page(void 0, label, void 0, void 0, session);
+    return new Page(undefined, label, undefined, undefined, session);
   }
 
   constructor(
@@ -44,7 +44,7 @@ export class Page {
     this._label = label;
     this._url = url ?? '';
     this._view = view;
-    this._session = session !== void 0 && session !== '' ? session : Page.DEFAULT_SESSION;
+    this._session = session !== undefined && session !== '' ? session : Page.DEFAULT_SESSION;
     this._persist = persist ?? false;
   }
 
