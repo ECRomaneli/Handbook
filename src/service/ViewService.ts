@@ -3,6 +3,7 @@ import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { PageView } from '@/model/Page';
 import ViewPropagator from '@/propagator/ViewPropagator';
+import FrameService from '@/service/FrameService';
 import MenuService, { ContextMenuType } from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
@@ -204,6 +205,7 @@ class ViewService {
   public buildContextMenu(view: WebContentsView) {
     contextMenu({
       window: view,
+      showSearchWithGoogle: false,
       append: () => {
         return [
           {
@@ -225,9 +227,23 @@ class ViewService {
     const view = this.getCurrentView();
     if (!view) { console.error('Cannot open URL without view.'); return; }
 
-    view.webContents.executeJavaScript(`
-      window.open('${url}', '_blank', 'width=800,height=600');
-    `);
+    const childWindow = new BrowserWindow({
+      parent: FrameService.getFrame()!,
+      width: 800,
+      height: 600,
+      alwaysOnTop: true,
+      minimizable: false,
+      enableLargerThanScreen: true,
+      skipTaskbar: true,
+      autoHideMenuBar: true,
+      acceptFirstMouse: true,
+      webPreferences: {
+        partition: Storage.getPartitionName(AppState.currentPage!.session),
+      },
+    });
+
+    view.webContents.emit('did-create-window', childWindow, { url });
+    childWindow.loadURL(url);
   }
 
   public async searchInGoogle(view = this.getCurrentView()!, aiMode = false): Promise<void> {
