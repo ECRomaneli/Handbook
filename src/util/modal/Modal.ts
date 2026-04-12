@@ -299,7 +299,7 @@ class Modal {
     const hideCascade = () => { this.window!.isVisible() && this.window!.hide(); };
     const boundsCascade = () => { this.updateBounds(parent); };
 
-    const draggable = Draggable.create(parent).attach(this.window!.webContents);
+    const draggable = Draggable.create(parent).attach(this.window!.webContents, { exclude: 'button' });
     parent.on('show', showCascade);
     parent.on('hide', hideCascade);
     parent.on('move', boundsCascade);

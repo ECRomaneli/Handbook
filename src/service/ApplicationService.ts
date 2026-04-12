@@ -77,7 +77,7 @@ class ApplicationService {
       const isEnabled = await AppState.autoLauncher.isEnabled();
       let autoLaunchEnabled = Storage.getSettings(Settings.AUTO_LAUNCH);
 
-      if (!isEnabled && autoLaunchEnabled === void 0) {
+      if (!isEnabled && autoLaunchEnabled === undefined) {
         autoLaunchEnabled = await Dialog.confirm(PreferencesService.getWindow() ?? null, {
           title: s.autoLaunchTitle,
           message: s.autoLaunchMsg,
