@@ -184,7 +184,7 @@ class ApplicationService {
         { label: m.forward, click: ifVisible(() => ViewService.goForward()), accelerator: 'CommandOrControl+Right' },
         { label: m.refresh, click: ifVisible(() => ViewService.reload()), accelerator: 'CommandOrControl+R' },
         { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
-        { label: m.navbarOpenDevTools, click: () => NavbarService.getView()?.webContents.openDevTools(), accelerator: 'CommandOrControl+Shift+I+P' },
+        { label: m.navbarOpenDevTools, click: () => NavbarService.getView()?.webContents.openDevTools(), accelerator: 'CommandOrControl+Shift+P' },
         /* eslint-enable @stylistic/max-len */
       ],
     };

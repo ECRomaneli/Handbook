@@ -184,6 +184,8 @@ class ViewService {
         return {
           action: 'allow',
           overrideBrowserWindowOptions: {
+            width: Storage.getSettings(Settings.DEFAULT_WIDTH),
+            height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
             alwaysOnTop: true,
             minimizable: false,
             fullscreenable: false,
@@ -229,8 +231,8 @@ class ViewService {
 
     const childWindow = new BrowserWindow({
       parent: FrameService.getFrame()!,
-      width: 800,
-      height: 600,
+      width: Storage.getSettings(Settings.DEFAULT_WIDTH),
+      height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
       alwaysOnTop: true,
       minimizable: false,
       enableLargerThanScreen: true,

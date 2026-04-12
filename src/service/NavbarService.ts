@@ -111,7 +111,7 @@ class NavbarService {
 
     NavbarPropagator.onRender('refresh', (): void => {
       const wc = PageService.getCurrentView()!.webContents;
-      (wc.isLoading() && wc.stop()) || wc.reload();
+      if (wc.isLoading()) { wc.stop(); } else { wc.reload(); }
     });
 
     NavbarPropagator.onRender('copy-url', (): void => {
