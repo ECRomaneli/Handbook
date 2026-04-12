@@ -255,9 +255,11 @@ class FrameService {
 
     const dragHandle = Draggable.from(frame);
     const navbar = NavbarService.getView();
-    if (navbar && frame.contentView.children.length === 0) {
-      frame.contentView.addChildView(navbar);
-      dragHandle.attach(navbar.webContents, { exclude: 'button' });
+    if (navbar) {
+      if (frame.contentView.children.length === 0) {
+        frame.contentView.addChildView(navbar);
+        dragHandle.attach(navbar.webContents, { exclude: 'button' });
+      }
     } else {
       dragHandle.attach(newView.webContents, {
         region: { height: Storage.getSettings<number>(Settings.ACTION_AREA) },
