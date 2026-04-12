@@ -36,8 +36,8 @@ class PreferencesService {
     const win = new BrowserWindow({
       icon: undefined,
       title: AppState.strings.preferences.title,
-      width: 620,
-      height: 620,
+      width: 720,
+      height: 530,
       show: false,
       frame: false,
       alwaysOnTop: true,
@@ -49,8 +49,9 @@ class PreferencesService {
     });
 
     AppState.preferences = win;
+
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
-    Draggable.from(win, { region: { height: 86 }, exclude: '.exit-btn, li', fps });
+    Draggable.from(win, { fps, selector: '.sidebar-header, .main-header' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();

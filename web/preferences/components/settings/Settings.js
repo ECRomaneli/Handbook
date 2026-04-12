@@ -2,7 +2,7 @@ app.component('Settings', {
   template: /*html*/ `
       <div id="settings-tab">
         <template v-if="inputs" v-for="(section, i) in Object.keys(inputs)" :key="section">
-            <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-3': !i, 'mt-5': i }">{{ section }}</div>
+            <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-5': i }">{{ section }}</div>
             <template v-for="(input) in inputs[section]" :key="input.id">
                 <template v-if="!input.disabled">
                     <hr class="input-divider">
