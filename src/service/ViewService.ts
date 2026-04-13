@@ -2,6 +2,7 @@ import AppState from '@/AppState';
 import { Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { PageView } from '@/model/Page';
+import FramePropagator from '@/propagator/FramePropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
 import FrameService from '@/service/FrameService';
 import MenuService, { ContextMenuType } from '@/service/MenuService';
@@ -18,6 +19,17 @@ export type ChildWebContents = WebContents & { __parent__?: WebContents };
 
 class ViewService {
   private lastContextMenuLinkUrl = '';
+
+  constructor() {
+    this.registerEvents();
+  }
+
+  private registerEvents(): void {
+    const redirectFocus = () => this.focus();
+    FramePropagator.on('show', redirectFocus);
+    ViewPropagator.on('attached', redirectFocus);
+  }
+
   public getHomeUrl(WebContentsView: WebContentsView): string {
     return WebContentsView.webContents.getURL();
   }
@@ -68,7 +80,7 @@ class ViewService {
     return view.webContents.isLoading();
   }
 
-  public focus(view = this.getCurrentView()): void {
+  private focus(view = this.getCurrentView()): void {
     if (!view) { console.error('Cannot focus without view.'); return; }
     const wc = view.webContents;
     if (!wc || wc.isDestroyed()) { console.error('Cannot focus with destroyed view.'); return; }

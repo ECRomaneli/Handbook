@@ -324,7 +324,6 @@ class FrameService {
 
   public show(): void {
     this.getFrame()!.show();
-    ViewService.focus();
   }
 
   public hide(): void {
