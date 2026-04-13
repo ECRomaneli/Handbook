@@ -88,8 +88,8 @@ app.component('QuickActionsTable', {
 
     removeItem(event, index) {
       event.stopPropagation()
-      this.list.splice(index, 1)
-      this.$emit('remove')
+      const removed = this.list.splice(index, 1)[0]
+      this.$emit('remove', removed)
     },
 
     emitUpdate() { this.$emit('update') },
