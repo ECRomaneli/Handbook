@@ -17,7 +17,7 @@ app.component('QuickActions', {
         <input type="search" class="perm-search-input" :placeholder="$i18n.preferences.quickActions.search" v-model="searchQuery" spellcheck="false">
       </div>
 
-      <quick-actions-table :items="filteredItems" :readonly="isFiltered" @update="store" @remove="store"></quick-actions-table>
+      <quick-actions-table :items="filteredItems" :readonly="isFiltered" @update="store" @remove="removeItem"></quick-actions-table>
 
       <!-- Variables reference (collapsible) -->
       <div v-if="items" class="ws-variables-section">
@@ -73,6 +73,12 @@ app.component('QuickActions', {
 
     store() {
       this.$remote.storage.setQuickActions(Vue.toRaw(this.items))
+    },
+
+    removeItem(item) {
+      const idx = this.items.findIndex(i => i.id === item.id)
+      if (idx !== -1) { this.items.splice(idx, 1) }
+      this.store()
     },
   }
 })
