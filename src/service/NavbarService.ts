@@ -7,17 +7,12 @@ import MenuService, { ContextMenuType } from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import PreferencesService from '@/service/PreferencesService';
 import ViewService from '@/service/ViewService';
-import { clipboard, MouseInputEvent, WebContents, WebContentsView } from 'electron';
+import { clipboard, WebContentsView } from 'electron';
 import path from 'node:path';
 
 class NavbarService {
   public readonly NAVBAR_HEIGHT = 40;
   public readonly NAVBAR_WEB_FOLDER = path.join(Path.WEB, 'navigation-bar');
-  private static readonly FOCUS_CASCADE_HANDLER =
-    (_: unknown, i: MouseInputEvent) => i.type === 'mouseUp' && ViewService.focus();
-  private static readonly REMOVE_FOCUS_CASCADE = function (this: WebContents) {
-    this.removeListener('before-mouse-event', NavbarService.FOCUS_CASCADE_HANDLER);
-  };
 
   constructor() {
     this.registerStateListeners();
@@ -25,7 +20,7 @@ class NavbarService {
   }
 
   public hasView(): boolean {
-    return AppState.navbar !== void 0;
+    return AppState.navbar !== undefined;
   }
 
   public createView(): WebContentsView {
@@ -37,8 +32,6 @@ class NavbarService {
       },
     });
     AppState.navbar = navbar;
-    navbar.webContents.on('before-mouse-event', NavbarService.FOCUS_CASCADE_HANDLER);
-    navbar.webContents.once('destroyed', NavbarService.REMOVE_FOCUS_CASCADE);
     navbar.webContents.loadFile(path.join(this.NAVBAR_WEB_FOLDER, 'index.html'));
     return navbar;
   }
@@ -118,7 +111,7 @@ class NavbarService {
 
     NavbarPropagator.onRender('refresh', (): void => {
       const wc = PageService.getCurrentView()!.webContents;
-      (wc.isLoading() && wc.stop()) || wc.reload();
+      if (wc.isLoading()) { wc.stop(); } else { wc.reload(); }
     });
 
     NavbarPropagator.onRender('copy-url', (): void => {

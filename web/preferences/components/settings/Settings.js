@@ -2,7 +2,7 @@ app.component('Settings', {
   template: /*html*/ `
       <div id="settings-tab">
         <template v-if="inputs" v-for="(section, i) in Object.keys(inputs)" :key="section">
-            <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-3': !i, 'mt-5': i }">{{ section }}</div>
+            <div v-if="hasEnabledInputs(section)" class="h6" :class="{ 'mt-5': i }">{{ section }}</div>
             <template v-for="(input) in inputs[section]" :key="input.id">
                 <template v-if="!input.disabled">
                     <hr class="input-divider">
@@ -114,6 +114,12 @@ app.component('Settings', {
             label: s.allowFullscreen,
             description: s.allowFullscreenDesc,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
+          },
+          {
+            id: this.$const.Settings.CLIPBOARD_URL_SESSION,
+            label: s.clipboardUrlSession,
+            description: s.clipboardUrlSessionDesc,
+            data: { type: 'text', value: await storage.getSettings(this.$const.Settings.CLIPBOARD_URL_SESSION), placeholder: s.langDefault }
           }
         ],
         [s.appearance]: [
@@ -299,6 +305,13 @@ app.component('Settings', {
                 { label: 'हिन्दी', value: 'hi' }
               ]
             }
+          },
+          {
+            id: this.$const.Settings.RIGHT_MARGIN_WHEN_MAXIMIZED,
+            label: s.rightMarginWhenMaximized,
+            description: s.rightMarginWhenMaximizedDesc,
+            data: { type: 'number', value: await storage.getSettings(this.$const.Settings.RIGHT_MARGIN_WHEN_MAXIMIZED), min: 0, max: 100, unit: 'px' },
+            disabled: !this.$const.OS.IS_WIN32
           },
           {
             id: this.$const.Settings.GOOGLE_API_KEY,

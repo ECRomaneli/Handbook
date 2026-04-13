@@ -26,9 +26,11 @@ const Settings = {
   APP_LANGUAGE: 'app_language',
   GROUP_PAGES_BY_SESSION: 'group_pages_by_session',
   MUTE_STARTUP_SOUND: 'mute_startup_sound',
+  CLIPBOARD_URL_SESSION: 'clipboard_url_session',
   RESIZE_REFRESH_RATE: 'resize_refresh_rate',
   DRAG_REFRESH_RATE: 'drag_refresh_rate',
   QUICK_MENU_SHORTCUT: 'quick_menu_shortcut',
+  RIGHT_MARGIN_WHEN_MAXIMIZED: 'right_margin_when_maximized',
 };
 
 const SyncSettings = {
@@ -74,11 +76,25 @@ DefaultSettings[Settings.PREFERRED_LANGUAGE] = '';
 DefaultSettings[Settings.APP_LANGUAGE] = '';
 DefaultSettings[Settings.GROUP_PAGES_BY_SESSION] = false;
 DefaultSettings[Settings.MUTE_STARTUP_SOUND] = false;
+DefaultSettings[Settings.CLIPBOARD_URL_SESSION] = '';
 DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
 DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
 DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';
+DefaultSettings[Settings.RIGHT_MARGIN_WHEN_MAXIMIZED] = 16;
 DefaultSettings[SyncSettings.GIST_ID] = undefined;
 DefaultSettings[SyncSettings.GIST_TOKEN] = undefined;
+
+export interface QuickAction {
+  id: string;
+  label: string;
+  url: string;
+}
+
+const DefaultQuickActions: QuickAction[] = [
+  { id: 'default-google', label: 'Google', url: 'https://www.google.com/search?q=${encodedText}' },
+  { id: 'default-google-ai', label: 'Google AI', url: 'https://www.google.com/search?q=${encodedText}&udm=50' },
+  { id: 'default-translate', label: 'Translate', url: 'https://translate.google.com/?sl=auto&tl=${language}&text=${encodedText}' },
+];
 
 const OS = {
   IS_DARWIN: process.platform === 'darwin',
@@ -119,5 +135,5 @@ const IsDebug = {
   'state': !IsProduction && true,
 };
 
-export { DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
+export { DefaultQuickActions, DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
 

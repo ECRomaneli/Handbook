@@ -43,6 +43,9 @@
     --btn-secondary-color: #1a1e24;
     --btn-secondary-hover: #d4dae0;
 
+    /* Sidebar */
+    --sidebar-background: #edf0f3;
+
     /* Scrollbar */
     --scrollbar-thumb: #888;
     --scrollbar-track: #e0e0e0;

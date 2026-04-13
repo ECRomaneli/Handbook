@@ -67,7 +67,7 @@ class ScreenShareModal {
   request(opts: ScreenShareOptions): Promise<ScreenShareSource | void> {
     return new Promise((resolve, reject) => {
       const closeHandler = (source: ScreenShareSource | void) => {
-        if (!source || !source.id) { return resolve(void 0); }
+        if (!source || !source.id) { return resolve(undefined); }
         source.shareAudio = opts.shareAudioBtn ? source.shareAudio : false;
         resolve(source);
       };
@@ -117,7 +117,7 @@ class ScreenShareModal {
         id: item.id,
         name: item.name,
         thumbnail: item.thumbnail.toDataURL(),
-        icon: item.appIcon ? item.appIcon.toDataURL() : void 0,
+        icon: item.appIcon ? item.appIcon.toDataURL() : undefined,
       };
       if (item.id.startsWith('window:')) {
         result.window.push(source);

@@ -24,7 +24,10 @@ class AppState {
   private _tray?: Tray;
   private _preferences?: BrowserWindow;
   private _pages: Page[] = [];
-  private readonly _fromClipboardPage: Page = new Page(void 0, this.strings.menu.fromClipboard);
+  private readonly _fromClipboardPage: Page = Page.newTransientPage(
+    this.strings.menu.fromClipboard,
+    Storage.getSettings<string>(Settings.CLIPBOARD_URL_SESSION),
+  );
   private readonly currentStack: { frame?: BaseWindow, navbar?: WebContentsView, page?: Page } = {};
   private readonly onViewChangeHandler = function (this: Page) { ViewPropagator.propagate(this.view); };
   private readonly contextMenu: {

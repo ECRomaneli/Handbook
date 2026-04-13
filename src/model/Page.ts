@@ -22,6 +22,16 @@ export class Page {
   private _persist: boolean;
   private _hasBounds?: true;
 
+  /**
+   * Creates a transient page that is not persisted.
+   * @param label The label of the page.
+   * @param session The session identifier for the page.
+   * @returns A new transient Page instance.
+   */
+  public static newTransientPage(label: string, session?: string): Page {
+    return new Page(undefined, label, undefined, undefined, session);
+  }
+
   constructor(
     id: string | undefined,
     label: string,
@@ -34,7 +44,7 @@ export class Page {
     this._label = label;
     this._url = url ?? '';
     this._view = view;
-    this._session = session !== void 0 && session !== '' ? session : Page.DEFAULT_SESSION;
+    this._session = session !== undefined && session !== '' ? session : Page.DEFAULT_SESSION;
     this._persist = persist ?? false;
   }
 

@@ -13,7 +13,8 @@ import TrayService from '@/service/TrayService';
 import ViewService from '@/service/ViewService';
 import { parseToAccelerator } from '@/util/EventKeyCapture';
 import Dialog, { DialogOptions } from '@/util/modal/Dialog';
-import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Session, session, WebContentsView } from 'electron';
+import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Rectangle, Session, session, WebContentsView } from 'electron';
+import Findbar from 'electron-findbar';
 
 class ApplicationService {
   private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
@@ -24,13 +25,25 @@ class ApplicationService {
     this.registerGlobalShortcut();
     this.setupAccelerators();
     this.forceLanguageHeader();
+    this.defineFindbarDefaultPosition();
     PermissionService.denyPermissionsOnSession(session.defaultSession);
-    PermissionService.setupPermissionsHandler();
+    PermissionService.setupPermissionsHandler({
+      getSessionByWebContents: (wc) => PageService.getPageByWebContents(wc)?.session,
+      getWindow: () => FrameService.getFrame(),
+    });
     AppState.themeSource = Storage.getSettings(Settings.APP_THEME);
     AppState.googleApiKey = Storage.getSettings(Settings.GOOGLE_API_KEY);
     AutoUpdaterService.initialize();
     SyncService.initialize();
     TrayService.initialize();
+  }
+
+  private defineFindbarDefaultPosition() {
+    Findbar.setDefaultBoundsHandler((parentBounds, findbarBounds) => {
+      const x = parentBounds.x + (parentBounds.width - findbarBounds.width) - 25;
+      const y = parentBounds.y + 25;
+      return { x, y } as Rectangle;
+    });
   }
 
   public registerGlobalShortcut() {
@@ -64,7 +77,7 @@ class ApplicationService {
       const isEnabled = await AppState.autoLauncher.isEnabled();
       let autoLaunchEnabled = Storage.getSettings(Settings.AUTO_LAUNCH);
 
-      if (!isEnabled && autoLaunchEnabled === void 0) {
+      if (!isEnabled && autoLaunchEnabled === undefined) {
         autoLaunchEnabled = await Dialog.confirm(PreferencesService.getWindow() ?? null, {
           title: s.autoLaunchTitle,
           message: s.autoLaunchMsg,
@@ -170,8 +183,8 @@ class ApplicationService {
         { label: m.back, click: ifVisible(() => ViewService.goBack()), accelerator: 'CommandOrControl+Left' },
         { label: m.forward, click: ifVisible(() => ViewService.goForward()), accelerator: 'CommandOrControl+Right' },
         { label: m.refresh, click: ifVisible(() => ViewService.reload()), accelerator: 'CommandOrControl+R' },
-        { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools()), accelerator: 'CommandOrControl+Shift+I' },
-        { label: m.navbarOpenDevTools, click: () => NavbarService.getView()?.webContents.openDevTools(), accelerator: 'CommandOrControl+Shift+I+P' },
+        { label: m.openDevTools, click: ifVisible((view) => view.webContents.openDevTools({ mode: 'detach' })), accelerator: 'CommandOrControl+Shift+I' },
+        { label: m.navbarOpenDevTools, click: () => NavbarService.getView()?.webContents.openDevTools({ mode: 'detach' }), accelerator: 'CommandOrControl+Shift+P' },
         /* eslint-enable @stylistic/max-len */
       ],
     };

@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { Settings } from '@/data/Constants';
+import { OS, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import ViewPropagator from '@/propagator/ViewPropagator';
 
@@ -143,13 +143,17 @@ class FrameService {
     const frame = this.getFrame()!;
     const size = frame.getSize();
     const navbar = NavbarService.getView();
+    // Apply right margin only on Windows when maximized
+    const rightMargin = OS.IS_WIN32 && frame.isMaximized()
+      ? (Storage.getSettings<number>(Settings.RIGHT_MARGIN_WHEN_MAXIMIZED))
+      : 0;
 
     if (navbar && !frame.isFullScreen()) {
       const navbarHeight = NavbarService.NAVBAR_HEIGHT;
-      navbar.setBounds({ x: 0, y: 0, width: size[0], height: navbarHeight });
-      view.setBounds({ x: 0, y: navbarHeight, width: size[0], height: size[1] - navbarHeight });
+      navbar.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: navbarHeight });
+      view.setBounds({ x: 0, y: navbarHeight, width: size[0] - rightMargin, height: size[1] - navbarHeight });
     } else {
-      view.setBounds({ x: 0, y: 0, width: size[0], height: size[1] });
+      view.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: size[1] });
     }
   }
 
@@ -255,9 +259,11 @@ class FrameService {
 
     const dragHandle = Draggable.from(frame);
     const navbar = NavbarService.getView();
-    if (navbar && frame.contentView.children.length === 0) {
-      frame.contentView.addChildView(navbar);
-      dragHandle.attach(navbar.webContents, { exclude: 'button' });
+    if (navbar) {
+      if (frame.contentView.children.length === 0) {
+        frame.contentView.addChildView(navbar);
+        dragHandle.attach(navbar.webContents, { exclude: 'button' });
+      }
     } else {
       dragHandle.attach(newView.webContents, {
         region: { height: Storage.getSettings<number>(Settings.ACTION_AREA) },
@@ -318,7 +324,6 @@ class FrameService {
 
   public show(): void {
     this.getFrame()!.show();
-    ViewService.focus();
   }
 
   public hide(): void {

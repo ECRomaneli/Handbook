@@ -3,24 +3,18 @@
  * completes before the next one starts.
  */
 class PromiseQueue {
-  #currentTask: Promise<unknown> = Promise.resolve();
+  private static readonly EMPTY_HANDLER = () => { };
+  private queue: Promise<void> = Promise.resolve();
 
   /**
    * Queues a function to be executed after previous tasks complete
    * @param promiseFn Function that returns a promise
    * @returns Promise that resolves with the function's result
    */
-  add<T>(promiseFn: () => Promise<T>): Promise<T> {
-    const task = this.#currentTask;
-    return (this.#currentTask = new Promise<T>((resolve, reject) => {
-      task.finally(() => {
-        try {
-          promiseFn().then(resolve).catch(reject);
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }));
+  push<T>(promiseFn: () => Promise<T>): Promise<T> {
+    const result = this.queue.then(promiseFn);
+    this.queue = result.then(PromiseQueue.EMPTY_HANDLER, PromiseQueue.EMPTY_HANDLER);
+    return result;
   }
 }
 

@@ -1,14 +1,12 @@
 import AppState from '@/AppState';
 import { IsDebug, Permission } from '@/data/Constants';
 import Storage from '@/data/Storage';
-import { Page } from '@/model/Page';
-import FrameService from '@/service/FrameService';
-import PageService from '@/service/PageService';
 import PreferencesService from '@/service/PreferencesService';
 import Dialog from '@/util/modal/Dialog';
 import ScreenShareModal from '@/util/modal/ScreenShareModal';
 import PromiseQueue from '@/util/PromiseQueue';
-import { app, DisplayMediaRequestHandlerHandlerRequest, FilesystemPermissionRequest, MediaAccessPermissionRequest, OpenExternalPermissionRequest, PermissionCheckHandlerHandlerDetails, PermissionRequest, Session, Streams, systemPreferences, WebContents } from 'electron';
+import WindowUtil from '@/util/WindowUtil';
+import { app, DisplayMediaRequestHandlerHandlerRequest, FilesystemPermissionRequest, MediaAccessPermissionRequest, OpenExternalPermissionRequest, PermissionCheckHandlerHandlerDetails, PermissionRequest, Response, Session, Streams, systemPreferences, WebContents } from 'electron';
 
 type CheckablePermissions = 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' |
   'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' |
@@ -20,7 +18,7 @@ type RequestablePermissions = 'clipboard-read' | 'clipboard-sanitized-write' | '
   'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'storage-access' |
   'top-level-storage-access' | 'window-management' | 'unknown' | 'fileSystem';
 
-type SecureWebContents = WebContents & { _hb_permissions?: string[] };
+type SecureWebContents = WebContents & { __TEMP_PERMISSIONS__?: string[] };
 
 type PermissionDetails =
   (PermissionRequest) |
@@ -28,27 +26,39 @@ type PermissionDetails =
   (MediaAccessPermissionRequest) |
   (OpenExternalPermissionRequest);
 
+interface DependencyProvider {
+  getSessionByWebContents(webContents: WebContents): string | undefined;
+  getWindow(): Electron.BaseWindow | undefined;
+}
+
 class PermissionService {
   private readonly isDebug = IsDebug.permissions;
   private screenShareModal: ScreenShareModal = new ScreenShareModal();
   private queue: PromiseQueue = new PromiseQueue();
+  private provider = {} as DependencyProvider;
 
-  public setupPermissionsHandler(): void {
+  public setupPermissionsHandler(dependencyProvider: DependencyProvider): void {
+    this.provider = dependencyProvider;
+    const requestPermissionsHandler = this.requestPermissions.bind(this);
+    const checkPermissionsHandler = this.checkPermissions.bind(this);
+    const shareMediaHandler = this.shareMedia.bind(this);
+    const pairingHandler = (_: unknown, c: (response: Response) => void) => c({ confirmed: false });
+
     app.prependListener('session-created', (s: Session) => {
       this.isDebug && console.debug('Session created:', s.storagePath);
-      s.setPermissionRequestHandler(this.requestPermissions.bind(this));
-      s.setPermissionCheckHandler(this.checkPermissions.bind(this));
-      s.setDisplayMediaRequestHandler(this.shareMedia.bind(this));
-      s.setBluetoothPairingHandler((_, c) => c({ confirmed: false }));
+      s.setPermissionRequestHandler(requestPermissionsHandler);
+      s.setPermissionCheckHandler(checkPermissionsHandler);
+      s.setDisplayMediaRequestHandler(shareMediaHandler);
+      s.setBluetoothPairingHandler(pairingHandler);
       // s.setDevicePermissionHandler(/* DEFAULT */)
     });
   }
 
   private async shareMedia(
     request: DisplayMediaRequestHandlerHandlerRequest, callback: (streams: Streams) => void): Promise<void> {
-    const frame = FrameService.getFrame();
+    const window = this.provider.getWindow();
 
-    if (frame === void 0) {
+    if (window === undefined) {
       console.error('The current window is no longer available.');
       return callback({});
     }
@@ -56,10 +66,10 @@ class PermissionService {
     const source = await this.screenShareModal.request({
       requesterUrl: request.securityOrigin,
       shareAudioBtn: request.audioRequested,
-      parent: frame,
+      parent: window,
     });
 
-    if (source === void 0) { return callback({}); }
+    if (source === undefined) { return callback({}); }
     const stream: Streams = { video: source };
     if (request.audioRequested && source.shareAudio) { stream.audio = 'loopback'; }
     callback(stream);
@@ -76,12 +86,12 @@ class PermissionService {
       return false;
     }
 
-    const page = PageService.getPageByWebContents(webContents!);
-    if (page === void 0) { return false; }
+    const session = this.provider.getSessionByWebContents(webContents);
+    if (session === undefined) { return false; }
 
     const url = this.createValidURL(
       details.requestingUrl, details.embeddingOrigin, details.securityOrigin, requestingOrigin);
-    if (url === void 0) {
+    if (url === undefined) {
       console.error('Permission request without URL or origin:', permission || 'unknown');
       return false;
     }
@@ -90,19 +100,29 @@ class PermissionService {
 
     permission = this.formatPermission(permission, details.mediaType);
 
-    const result = false !== this.isAllowed(page, origin, permission);
+    const result = false !== this.isAllowed(webContents, session, origin, permission);
     this.isDebug && console.debug('Permission check:', permission, 'for', origin, 'result:', result);
     return result;
   }
 
   // eslint-disable-next-line @stylistic/max-len
   private async requestPermissions(webContents: WebContents, permission: RequestablePermissions, callback: (granted: boolean) => void, details: PermissionDetails): Promise<void> {
-    const page = PageService.getPageByWebContents(webContents);
-    if (page === void 0) { return callback(false); }
+    if (!webContents || webContents.isDestroyed()) {
+      console.error('Permission request with invalid webContents');
+      console.debug(permission, details);
+      return callback(false);
+    }
+
+    const session = this.provider.getSessionByWebContents(webContents);
+    if (session === undefined) {
+      console.error('Permission request with no session');
+      console.debug(permission, details);
+      return callback(false);
+    }
 
     const url = this.createValidURL(details.requestingUrl, (details as MediaAccessPermissionRequest).securityOrigin);
 
-    if (url === void 0) {
+    if (url === undefined) {
       console.error('Permission request without URL or origin:', permission || 'unknown');
       return callback(false);
     }
@@ -119,36 +139,37 @@ class PermissionService {
         break;
       default: permissionsToRequest = [this.formatPermission(permission)];
     }
-
-    return callback(true === await this.queue.add(() => this.requestPermission(page, origin, permissionsToRequest)));
+    return callback(true === await this.queue.push(() =>
+      this.requestPermission(webContents, session, origin, permissionsToRequest)));
   }
 
-  private isAllowed(page: Page, url: string, permission: string): boolean | undefined {
-    const view = page.view!;
-    if (this.allowTemporaryPermission(view.webContents as SecureWebContents, permission)) { return true; }
+  // eslint-disable-next-line @stylistic/max-len
+  private isAllowed(webContents: SecureWebContents, session: string, url: string, permission: string): boolean | undefined {
+    if (this.allowTemporaryPermission(webContents, permission)) { return true; }
 
-    const sessionObj = page.session;
-    const status = Storage.getPermissions(sessionObj, url, permission) as string;
+    const status = Storage.getPermissions(session, url, permission) as string;
 
     if (status === Permission.Status.ALLOW) { return true; }
     if (status === Permission.Status.DENY) { return false; }
-    return void 0;
+    return undefined;
   }
 
-  private async requestPermission(page: Page, url: string, permissions: string[]): Promise<boolean> {
+  // eslint-disable-next-line @stylistic/max-len
+  private async requestPermission(webContents: WebContents, session: string, url: string, permissions: string[]): Promise<boolean> {
     const permissionsToRequest: string[] = [];
     for (const permission of permissions) {
-      const status = this.isAllowed(page, url, permission);
+      const status = this.isAllowed(webContents, session, url, permission);
       if (status === false) { return false; }
-      if (status === void 0) {
+      if (status === undefined) {
+        // TODO: Validate this
         const systemPermission = await PermissionService.checkSystemPermission(permission);
         if (systemPermission === false) { return false; }
         permissionsToRequest.push(permission);
       }
     }
     if (permissionsToRequest.length === 0) { return true; }
-    return await this.askPermissionAndSaveStatus(page, {
-      session: page.session,
+    return await this.askPermissionAndSaveStatus(webContents, {
+      session,
       url,
       permissions: permissionsToRequest,
     });
@@ -170,11 +191,11 @@ class PermissionService {
   }
 
   // eslint-disable-next-line @stylistic/max-len
-  private async askPermissionAndSaveStatus(page: Page, data: { session: string; url: string; permissions: string[] }): Promise<boolean> {
-    const parent = FrameService.getFrame();
+  private async askPermissionAndSaveStatus(webContents: WebContents, data: { session: string; url: string; permissions: string[] }): Promise<boolean> {
+    const parent = WindowUtil.getWindowFromWebContents(webContents);
 
-    if (parent === void 0) {
-      console.error('The frame is no longer available for page:', page.label);
+    if (parent === undefined) {
+      console.error('The frame is no longer available');
       return false;
     }
 
@@ -209,7 +230,7 @@ class PermissionService {
       return status === Permission.Status.ALLOW;
     }
     for (const permission of data.permissions) {
-      this.setTemporaryPermission(page.view!.webContents as SecureWebContents, permission);
+      this.setTemporaryPermission(webContents as SecureWebContents, permission);
       Storage.setPermission(data.session, data.url, permission, Permission.Status.ASK);
     }
     PreferencesService.permissionsUpdated();
@@ -217,17 +238,17 @@ class PermissionService {
   }
 
   private setTemporaryPermission(webContents: SecureWebContents, permission: string): void {
-    if (webContents._hb_permissions === void 0) {
-      webContents._hb_permissions = [];
-      webContents.once('did-navigate', () => delete webContents._hb_permissions);
+    if (webContents.__TEMP_PERMISSIONS__ === undefined) {
+      webContents.__TEMP_PERMISSIONS__ = [];
+      webContents.once('did-navigate', () => delete webContents.__TEMP_PERMISSIONS__);
     }
-    webContents._hb_permissions.push(permission);
+    webContents.__TEMP_PERMISSIONS__.push(permission);
   }
 
   private allowTemporaryPermission(webContents: SecureWebContents, permission: string): boolean {
     if (!webContents) { return false; }
-    if (webContents._hb_permissions === void 0) { return false; }
-    return webContents._hb_permissions.includes(permission);
+    if (webContents.__TEMP_PERMISSIONS__ === undefined) { return false; }
+    return webContents.__TEMP_PERMISSIONS__.includes(permission);
   }
 
   private getRequestType(details: PermissionDetails): string {
@@ -250,18 +271,18 @@ class PermissionService {
   }
 
   private formatPermission<T>(permission: T, type?: string): T {
-    if (type !== void 0) { return `${permission}: ${type}` as T; }
+    if (type !== undefined) { return `${permission}: ${type}` as T; }
     return permission;
   }
 
   private createValidURL(...urls: (string | null | undefined)[]): URL | undefined {
     try {
       const validUrlString = urls.find((url) => url != null && url !== '');
-      if (!validUrlString) { return void 0; }
+      if (!validUrlString) { return undefined; }
       return new URL(validUrlString);
     } catch (e) {
       console.warn('Failed to create URL from provided values:', e);
-      return void 0;
+      return undefined;
     }
   }
 }

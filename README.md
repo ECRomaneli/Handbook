@@ -1,6 +1,6 @@
 <p align='center'>
     <a href="https://github.com/ECRomaneli/handbook">
-        <img src="docs/img/readme/top-image.png" alt='Handbook' width="90%">
+        <img src="docs/img/readme/top-image.png" alt='Handbook' width="800px">
     </a>
 </p>
 <p align='center'>
@@ -49,7 +49,7 @@ Handbook creates **single-purpose overlay windows** (called **Pages**) that are:
 Handbook lives in your system tray. Right-click to access pages, settings, and more. Click to toggle the current page.
 
 <p align='center'>
-    <img width="250" src="docs/img/readme/tray-icon.png" alt='Tray Icon'>
+    <img width="250px" src="docs/img/readme/tray-icon.png" alt='Tray Icon'>
 </p>
 
 ### Always-On-Top Pages
@@ -61,7 +61,7 @@ Each page is a dedicated overlay window. Keep your AI open while coding, check W
 Instantly switch between pages with a searchable command palette. Type to filter, press Enter to switch. No mouse needed.
 
 <p align='center'>
-    <img src="docs/img/readme/quick-menu.gif" alt='Quick Menu' width="60%">
+    <img src="docs/img/readme/quick-menu.gif" alt='Quick Menu' width="540px">
 </p>
 
 ### Transparent & Frameless Windows
@@ -81,12 +81,23 @@ A minimal 40px navigation bar provides essential controls: back, forward, reload
 Add, reorder, and customize your pages. Set a URL, give it a label, assign a session, and choose whether the page should persist in memory when switching.
 
 <p align='center'>
-    <img width="600" src="docs/img/readme/preferences-pages.png" alt='Page Management'>
+    <img width="600px" src="docs/img/readme/preferences-pages.png" alt='Page Management'>
 </p>
 
 ### Session Sharing
 
 Pages with the same **Session ID** share cookies, cache, and login state. Log into Google once and access Gmail, Drive, and YouTube without re-authenticating. Use different sessions for personal and work accounts.
+
+
+### Quick Actions
+
+Create custom context menu shortcuts that open URLs with dynamic variables. Right-click any page to trigger actions like searching selected text on Google, translating content, or opening a link in an external service — all fully customizable.
+
+Available variables include selected text, link URL, app locale, and more. Each variable can be used raw or URL-encoded in your URL templates.
+
+<p align='center'>
+    <img width="600px" src="docs/img/readme/preferences-quick-actions.png" alt='Quick Actions'>
+</p>
 
 ### Window Customization
 
@@ -100,7 +111,7 @@ Fine-tune how your windows look and behave:
 - **Shared bounds** — All pages share the same window size and position
 
 <p align='center'>
-    <img width="600" src="docs/img/readme/preferences-settings.png" alt='Settings'>
+    <img width="600px" src="docs/img/readme/preferences-settings.png" alt='Settings'>
 </p>
 
 ### Sync & Backup
@@ -108,7 +119,7 @@ Fine-tune how your windows look and behave:
 Export your configuration as a JSON file or sync it to a **GitHub Gist** for cloud backup and cross-device sync.
 
 <p align='center'>
-    <img width="600" src="docs/img/readme/preferences-sync.png" alt='Sync Options'>
+    <img width="600px" src="docs/img/readme/preferences-sync.png" alt='Sync Options'>
 </p>
 
 ### Fine-Grained Permissions
@@ -116,7 +127,7 @@ Export your configuration as a JSON file or sync it to a **GitHub Gist** for clo
 Control permissions per page — clipboard, geolocation, camera, microphone, notifications, and more. Grant, deny, or prompt on a per-URL, per-session basis.
 
 <p align='center'>
-    <img width="600" src="docs/img/readme/preferences-permissions.png" alt='Permissions'>
+    <img width="600px" src="docs/img/readme/preferences-permissions.png" alt='Permissions'>
 </p>
 
 ### Themes & Localization
@@ -126,7 +137,7 @@ Control permissions per page — clipboard, geolocation, camera, microphone, not
 - **Tray icon themes**: Light, Dark, and Gray
 
 <p align='center'>
-    <img width="60%" src="docs/img/readme/language-and-theme.gif" alt='Language and themes'>
+    <img width="540px" src="docs/img/readme/language-and-theme.gif" alt='Language and themes'>
 </p>
 
 

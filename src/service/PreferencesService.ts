@@ -1,11 +1,12 @@
 import AppState from '@/AppState';
-import { OS, Path, Permission, Positions, Settings } from '@/data/Constants';
+import { OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
 import ApplicationService from '@/service/ApplicationService';
 import FrameService from '@/service/FrameService';
 import MenuService from '@/service/MenuService';
+import PageService from '@/service/PageService';
 import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
@@ -35,8 +36,8 @@ class PreferencesService {
     const win = new BrowserWindow({
       icon: undefined,
       title: AppState.strings.preferences.title,
-      width: 620,
-      height: 620,
+      width: 720,
+      height: 530,
       show: false,
       frame: false,
       alwaysOnTop: true,
@@ -48,8 +49,9 @@ class PreferencesService {
     });
 
     AppState.preferences = win;
+
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
-    Draggable.from(win, { region: { height: 86 }, exclude: '.exit-btn, li', fps });
+    Draggable.from(win, { fps, selector: '.sidebar-header, .main-header', exclude: '.exit-btn' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();
@@ -141,6 +143,13 @@ class PreferencesService {
     });
 
     PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
+
+    PreferencesPropagator.handleRender('get-quick-actions', (): QuickAction[] => Storage.getQuickActions());
+
+    PreferencesPropagator.onRender('quick-actions-updated', (_, items: QuickAction[]): void => {
+      Storage.setQuickActions(items);
+      MenuService.refreshContextMenu();
+    });
 
     PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
       Storage.getSettings(id),
@@ -283,6 +292,9 @@ class PreferencesService {
         break;
       case Settings.GROUP_PAGES_BY_SESSION:
         MenuService.refreshContextMenu();
+        break;
+      case Settings.CLIPBOARD_URL_SESSION:
+        PageService.updateClipboardUrlSession(value as string);
         break;
       case Settings.QUICK_MENU_SHORTCUT:
         ApplicationService.updateQuickMenuAccelerator();
