@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { OS, Path, Permission, Positions, Settings } from '@/data/Constants';
+import { OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
@@ -143,6 +143,13 @@ class PreferencesService {
     });
 
     PreferencesPropagator.handleRender('get-pages', (): PlainPage[] => Storage.getPages());
+
+    PreferencesPropagator.handleRender('get-quick-actions', (): QuickAction[] => Storage.getQuickActions());
+
+    PreferencesPropagator.onRender('quick-actions-updated', (_, items: QuickAction[]): void => {
+      Storage.setQuickActions(items);
+      MenuService.refreshContextMenu();
+    });
 
     PreferencesPropagator.handleRender('get-settings', (_e: IpcMainInvokeEvent, id: string): unknown =>
       Storage.getSettings(id),

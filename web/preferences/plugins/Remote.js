@@ -9,6 +9,9 @@ app.use({
         setPages: (pages) => { ipcRenderer.send('preferences:pages-updated', pages) },
         onPagesUpdated: (callback) => { ipcRenderer.on('preferences:pages-updated', (_, pages) => { callback(pages) }) },
 
+        getQuickActions: () => ipcRenderer.invoke('preferences:get-quick-actions'),
+        setQuickActions: (items) => { ipcRenderer.send('preferences:quick-actions-updated', items) },
+
         getSettings: (id) => ipcRenderer.invoke('preferences:get-settings', id),
         setSettings: (id, newValue) => { ipcRenderer.send('preferences:settings-updated', id, newValue) },
 

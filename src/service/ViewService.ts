@@ -17,6 +17,7 @@ import { EventEmitter } from 'stream';
 export type ChildWebContents = WebContents & { __parent__?: WebContents };
 
 class ViewService {
+  private lastContextMenuLinkUrl = '';
   public getHomeUrl(WebContentsView: WebContentsView): string {
     return WebContentsView.webContents.getURL();
   }
@@ -208,7 +209,8 @@ class ViewService {
     contextMenu({
       window: view,
       showSearchWithGoogle: false,
-      append: () => {
+      append: (_, parameters) => {
+        this.lastContextMenuLinkUrl = parameters.linkURL;
         return [
           {
             label: AppState.strings.menu.save,
@@ -248,22 +250,22 @@ class ViewService {
     childWindow.loadURL(url);
   }
 
-  public async searchInGoogle(view = this.getCurrentView()!, aiMode = false): Promise<void> {
+  public async openQuickAction(urlTemplate: string, view = this.getCurrentView()!): Promise<void> {
     const text = await this.getSelectedText(view);
-    if (!text.trim()) { return; }
-    let googleUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-    if (aiMode) {
-      googleUrl += '&udm=50';
-    }
-    this.openInChildWindow(googleUrl);
-  }
+    const locale = AppState.language;
+    const parts = locale.split('-');
+    const variables: Record<string, string> = {
+      language: parts[0],
+      region: parts[1] ?? '',
+      locale,
+      encodedText: encodeURIComponent(text),
+      text,
+      encodedLink: encodeURIComponent(this.lastContextMenuLinkUrl),
+      link: this.lastContextMenuLinkUrl,
+    };
 
-  public async translateWithGoogle(view = this.getCurrentView()!): Promise<void> {
-    const text = await this.getSelectedText(view);
-    if (!text.trim()) { return; }
-    const appLang = AppState.language.split('-')[0];
-    const translateUrl = `https://translate.google.com/?sl=auto&tl=${appLang}&text=${encodeURIComponent(text)}`;
-    this.openInChildWindow(translateUrl);
+    const url = urlTemplate.replace(/\$\{ *(\w+) *\}/g, (_, key) => variables[key] ?? '');
+    this.openInChildWindow(url);
   }
 
   public getRootWebContents(webContents: ChildWebContents): WebContents | undefined {

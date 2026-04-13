@@ -118,7 +118,7 @@ class MenuService {
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
-        { label: s.searchOnWeb, submenu: this.getSearchMenu() },
+        { label: s.quickActions, submenu: this.getSearchMenu() },
         { label: s.window, submenu: currentPageSubmenu },
         { label: s.handbook, submenu: windowMenuItems },
       ];
@@ -283,21 +283,13 @@ class MenuService {
   }
 
   private getSearchMenu(): MenuItemConstructorOptions[] {
-    const s = AppState.strings.menu;
-    return [
-      {
-        label: s.searchOnGoogle,
-        click: () => ViewService.searchInGoogle(),
-      },
-      {
-        label: s.searchWithGemini,
-        click: () => ViewService.searchInGoogle(ViewService.getCurrentView(), true),
-      },
-      {
-        label: s.translate,
-        click: () => ViewService.translateWithGoogle(),
-      },
-    ];
+    const items = Storage.getQuickActions();
+    return items
+      .filter((item) => item.label && item.url)
+      .map((item) => ({
+        label: item.label,
+        click: () => ViewService.openQuickAction(item.url),
+      }));
   }
 }
 

@@ -1,4 +1,4 @@
-import { DefaultSettings, IsDebug, Permission, Settings } from '@/data/Constants';
+import { DefaultQuickActions, DefaultSettings, IsDebug, Permission, QuickAction, Settings } from '@/data/Constants';
 import { PlainPage } from '@/model/Page';
 import PreferencesService from '@/service/PreferencesService';
 import { app, safeStorage, session } from 'electron';
@@ -252,6 +252,14 @@ class Storage {
 
   static export(): string {
     return Vault.export();
+  }
+
+  static getQuickActions(): QuickAction[] {
+    return Vault.get('QuickActions', DefaultQuickActions)!;
+  }
+
+  static setQuickActions(items: QuickAction[]): void {
+    Vault.set('QuickActions', items);
   }
 }
 

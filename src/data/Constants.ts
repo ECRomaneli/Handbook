@@ -82,6 +82,18 @@ DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';
 DefaultSettings[SyncSettings.GIST_ID] = undefined;
 DefaultSettings[SyncSettings.GIST_TOKEN] = undefined;
 
+export interface QuickAction {
+  id: string;
+  label: string;
+  url: string;
+}
+
+const DefaultQuickActions: QuickAction[] = [
+  { id: 'default-google', label: 'Google', url: 'https://www.google.com/search?q=${encodedText}' },
+  { id: 'default-google-ai', label: 'Google AI', url: 'https://www.google.com/search?q=${encodedText}&udm=50' },
+  { id: 'default-translate', label: 'Translate', url: 'https://translate.google.com/?sl=auto&tl=${language}&text=${encodedText}' },
+];
+
 const OS = {
   IS_DARWIN: process.platform === 'darwin',
   IS_LINUX: process.platform === 'linux',
@@ -121,5 +133,5 @@ const IsDebug = {
   'state': !IsProduction && true,
 };
 
-export { DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
+export { DefaultQuickActions, DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
 

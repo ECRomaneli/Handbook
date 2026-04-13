@@ -19,6 +19,10 @@ const app = Vue.createApp({
                     <span class="icon sidebar-icon icon-pages"></span>
                     <span>{{ $i18n.preferences.tabs.pages }}</span>
                 </li>
+                <li class="sidebar-item" :class="{ active: tab === 'quick-actions' }" @click="tab = 'quick-actions'">
+                    <span class="icon sidebar-icon icon-quick-actions"></span>
+                    <span>{{ $i18n.preferences.tabs.quickActions }}</span>
+                </li>
                 <li class="sidebar-item" :class="{ active: tab === 'permissions' }" @click="tab = 'permissions'">
                     <span class="icon sidebar-icon icon-shield"></span>
                     <span>{{ $i18n.preferences.tabs.permissions }}</span>
@@ -49,6 +53,9 @@ const app = Vue.createApp({
                 <div class="tab-pane" :class="{ active: tab === 'pages' }">
                     <pages @navigate="navigateToTab"></pages>
                 </div>
+                <div class="tab-pane" :class="{ active: tab === 'quick-actions' }">
+                    <quick-actions></quick-actions>
+                </div>
                 <div class="tab-pane" :class="{ active: tab === 'permissions' }">
                     <permissions></permissions>
                 </div>
@@ -58,6 +65,7 @@ const app = Vue.createApp({
                 <div class="tab-pane" :class="{ active: tab === 'sync' }">
                     <sync-tab></sync-tab>
                 </div>
+
                 <div class="tab-pane" :class="{ active: tab === 'about' }">
                     <about-tab v-if="tab === 'about'"></about-tab>
                 </div>

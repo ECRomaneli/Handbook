@@ -1,9 +1,9 @@
 app.component('PageTable', {
   template: /*html*/ `
-    <div class="page-list" ref="list">
+    <div class="item-list" ref="list">
       <div v-for="(page, index) in list" :key="page.id || index"
-           class="page-card page-item"
-           :class="{ 'page-card-drop-target': dropTargetIndex === index, 'selected': selectedId === page.id }"
+           class="item-card item-entry"
+           :class="{ 'item-card-drop-target': dropTargetIndex === index, 'selected': selectedId === page.id }"
            :draggable="!readonly && draggable"
            @click="this.selectedId !== page.id && (this.selectedId = page.id)"
            @dragstart="drag($event, index)"
@@ -12,43 +12,43 @@ app.component('PageTable', {
            @dragend="dragEnd"
            @drop="drop(index)">
 
-        <div class="page-card-handle" :class="{ 'page-card-handle-disabled': readonly }" :title="!readonly ? $i18n.preferences.pages.drag : undefined" @mouseover="draggable = true" @mouseleave="draggable = false">
+        <div class="item-card-handle" :class="{ 'item-card-handle-disabled': readonly }" :title="!readonly ? $i18n.preferences.pages.drag : undefined" @mouseover="draggable = true" @mouseleave="draggable = false">
           <i class="icon icon-grip"></i>
         </div>
 
-        <div class="page-card-content">
-          <div class="page-card-top">
-            <div class="page-card-field page-card-field-grow">
-              <label class="page-card-label">{{ $i18n.preferences.pages.label }}</label>
-              <input type="text" v-model="page.label" :placeholder="$i18n.preferences.pages.labelPlaceholder" class="page-card-input page-card-input-title"
+        <div class="item-card-content">
+          <div class="item-card-top">
+            <div class="item-card-field item-card-field-grow">
+              <label class="item-card-label">{{ $i18n.preferences.pages.label }}</label>
+              <input type="text" v-model="page.label" :placeholder="$i18n.preferences.pages.labelPlaceholder" class="item-card-input item-card-input-title"
                  @blur="emitUpdate(page)" spellcheck="false">
             </div>
-            <div class="page-card-field page-card-field-session">
-              <label class="page-card-label">{{ $i18n.preferences.pages.sessionId }}</label>
-              <input type="text" v-model="page.session" :placeholder="$i18n.preferences.pages.defaultSession" class="page-card-input"
+            <div class="item-card-field item-card-field-session">
+              <label class="item-card-label">{{ $i18n.preferences.pages.sessionId }}</label>
+              <input type="text" v-model="page.session" :placeholder="$i18n.preferences.pages.defaultSession" class="item-card-input"
                 @blur="emitUpdate(page)" spellcheck="false">
             </div>
           </div>
-          <div class="page-card-bottom">
-            <div class="page-card-field page-card-field-grow">
-              <label class="page-card-label">{{ $i18n.preferences.pages.url }}</label>
-              <input type="text" v-model="page.url" :placeholder="$i18n.preferences.pages.urlPlaceholder" class="page-card-input page-card-input-url"
+          <div class="item-card-bottom">
+            <div class="item-card-field item-card-field-grow">
+              <label class="item-card-label">{{ $i18n.preferences.pages.url }}</label>
+              <input type="text" v-model="page.url" :placeholder="$i18n.preferences.pages.urlPlaceholder" class="item-card-input item-card-input-url"
                 @blur="emitUpdate(page)" spellcheck="false">
             </div>
           </div>
         </div>
 
-        <div class="page-card-actions">
-          <button class="page-card-action-btn" :class="{ 'page-card-pin-active': page.persist }" :title="$i18n.preferences.pages.persistTooltip" @click="persistPage($event,page)">
+        <div class="item-card-actions">
+          <button class="item-card-action-btn" :class="{ 'item-card-pin-active': page.persist }" :title="$i18n.preferences.pages.persistTooltip" @click="persistPage($event,page)">
             <i class="icon" :class="page.persist ? 'icon-pin-filled' : 'icon-pin'"></i>
           </button>
-          <button class="page-card-action-btn page-card-remove-btn" :title="$i18n.preferences.pages.remove" @click="removePage($event, index)">
+          <button class="item-card-action-btn item-card-remove-btn" :title="$i18n.preferences.pages.remove" @click="removePage($event, index)">
             <i class="icon icon-trash"></i>
           </button>
         </div>
       </div>
 
-      <div v-if="!readonly" tabindex="-1" class="page-card page-card-add" @click="addPage()">
+      <div v-if="!readonly" tabindex="-1" class="item-card item-card-add" @click="addPage()">
         <i class="icon icon-plus"></i>
         <span>{{ $i18n.preferences.pages.addPage }}</span>
       </div>
@@ -61,7 +61,7 @@ app.component('PageTable', {
     readonly: { type: Boolean, default: false },
   },
   mounted() {
-    this._deselectHandler = (e) => { this.selectedId !== null && !e.target.closest('.page-card') && (this.selectedId = null) }
+    this._deselectHandler = (e) => { this.selectedId !== null && !e.target.closest('.item-card') && (this.selectedId = null) }
     document.addEventListener('click', this._deselectHandler)
   },
   unmounted() {
@@ -89,7 +89,7 @@ app.component('PageTable', {
       this.list.push(newPage)
       this.selectedId = newPage.id
       this.$nextTick(() => {
-        const inputs = this.$el.querySelectorAll('.page-item')
+        const inputs = this.$el.querySelectorAll('.item-entry')
         inputs[inputs.length - 1].getElementsByTagName('input')[0].focus()
       })
     },
