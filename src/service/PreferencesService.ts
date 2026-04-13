@@ -51,7 +51,7 @@ class PreferencesService {
     AppState.preferences = win;
 
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
-    Draggable.from(win, { fps, selector: '.sidebar-header, .main-header' });
+    Draggable.from(win, { fps, selector: '.sidebar-header, .main-header', exclude: '.exit-btn' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.buildContextMenu();

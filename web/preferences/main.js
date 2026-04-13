@@ -12,7 +12,7 @@ const app = Vue.createApp({
   template: /*html*/ `
         <nav class="sidebar">
             <div class="sidebar-header">
-                <span class="sidebar-title">{{ $i18n.preferences.title }}</span>
+                <span class="sidebar-title">Handbook</span>
             </div>
             <ul class="sidebar-menu">
                 <li class="sidebar-item" :class="{ active: tab === 'pages' }" @click="tab = 'pages'">
