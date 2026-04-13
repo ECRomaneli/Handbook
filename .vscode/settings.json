@@ -10,11 +10,9 @@
     "source.removeUnusedImports": "explicit"
   },
   "files.trimTrailingWhitespace": true,
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.suggest.autoImports": true,
-  "javascript.preferences.quoteStyle": "single",
-  "typescript.preferences.quoteStyle": "single",
-  "javascript.suggest.autoImports": true,
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "js/ts.suggest.autoImports": true,
+  "js/ts.preferences.quoteStyle": "single",
   "[typescript]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true
