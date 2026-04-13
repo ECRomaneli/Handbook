@@ -307,6 +307,13 @@ app.component('Settings', {
             }
           },
           {
+            id: this.$const.Settings.RIGHT_MARGIN_WHEN_MAXIMIZED,
+            label: s.rightMarginWhenMaximized,
+            description: s.rightMarginWhenMaximizedDesc,
+            data: { type: 'number', value: await storage.getSettings(this.$const.Settings.RIGHT_MARGIN_WHEN_MAXIMIZED), min: 0, max: 100, unit: 'px' },
+            disabled: !this.$const.OS.IS_WIN32
+          },
+          {
             id: this.$const.Settings.GOOGLE_API_KEY,
             label: s.googleApiKey,
             description: s.googleApiKeyDesc,

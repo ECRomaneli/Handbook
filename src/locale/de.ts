@@ -258,6 +258,8 @@ export const de: Strings = {
       preferredLanguageDesc: 'Eine bevorzugte Sprache für Webseiten über den "Accept-Language"-Header erzwingen. „Anwendung“ folgt der Anwendungssprache. Erfordert einen Neustart, um auf bestehende Sitzungen zu wirken.',
       googleApiKey: 'Google API-Schlüssel',
       googleApiKeyDesc: 'Geben Sie einen Google Maps API-Schlüssel für genaue Geolokalisierung an. Ohne ihn können Standortanfragen fehlschlagen oder ungenaue Daten liefern. Holen Sie sich einen Schlüssel von der Google Cloud Console mit aktivierter Geolocation-API.',
+      rightMarginWhenMaximized: 'Rechter Rand bei Maximierung',
+      rightMarginWhenMaximizedDesc: 'Windows entfernt Pixel von den Fensterrändern beim Maximieren. Diese Einstellung fügt einen rechten Rand als Workaround hinzu, um zu verhindern, dass Inhalte den Rand erreichen.',
 
       resizeRefreshRate: 'Aktualisierungsrate bei Größenänderung',
       resizeRefreshRateDesc: 'Legt die maximale Aktualisierungsrate bei der Größenänderung von Fenstern fest. „Automatisch" verwendet die Systemvorgabe.',

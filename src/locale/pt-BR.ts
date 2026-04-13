@@ -257,8 +257,9 @@ export const ptBR: Strings = {
       preferredLanguage: 'Idioma preferido',
       preferredLanguageDesc: 'Force um idioma preferido para páginas da web via cabeçalho "Accept-Language". "Aplicação" segue o idioma da aplicação. Requer reinicialização para ter efeito em sessões existentes.',
       googleApiKey: 'Chave da API do Google',
-      googleApiKeyDesc: 'Forneça uma chave da API do Google Maps para geolocalização precisa. Sem ela, solicitações de localização podem falhar ou retornar dados imprecisos. Obtenha uma chave do Google Cloud Console com a API de Geolocalização ativada.',
-
+      googleApiKeyDesc: 'Forneça uma chave de API do Google Maps para geolocalização precisa. Sem ela, as solicitações de localização podem falhar ou retornar dados imprecisos. Obtenha uma chave no Console do Google Cloud com a API de Geolocalização ativada.',
+      rightMarginWhenMaximized: 'Margem direita quando maximizado',
+      rightMarginWhenMaximizedDesc: 'O Windows remove pixels das bordas da janela ao maximizá-la. Esta configuração adiciona uma margem direita como solução para evitar que o conteúdo atinja a borda.',
       resizeRefreshRate: 'Taxa de atualização ao redimensionar',
       resizeRefreshRateDesc: 'Define a taxa de atualização máxima ao redimensionar janelas. "Auto" usa o padrão do sistema.',
       dragRefreshRate: 'Taxa de atualização ao arrastar',

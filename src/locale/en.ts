@@ -257,6 +257,8 @@ export const en = {
       preferredLanguageDesc: 'Force a preferred language for web pages via Accept-Language header. "Application" follows the app language setting. Requires restart to take effect on existing sessions.',
       googleApiKey: 'Google API key',
       googleApiKeyDesc: 'Provide a Google Maps API key for accurate geolocation. Without it, location requests may fail or return inaccurate data. Get a key from the Google Cloud Console with Geolocation API enabled.',
+      rightMarginWhenMaximized: 'Right margin when maximized',
+      rightMarginWhenMaximizedDesc: 'Windows removes pixels from window edges when maximizing. This setting adds a right side margin as a workaround to prevent content from reaching the edge.',
 
       resizeRefreshRate: 'Resize refresh rate',
       resizeRefreshRateDesc: 'Sets the maximum refresh rate when resizing windows. "Auto" uses the system default.',

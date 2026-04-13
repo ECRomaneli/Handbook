@@ -258,7 +258,8 @@ export const it: Strings = {
       preferredLanguageDesc: 'Forza una lingua preferita per le pagine web tramite l\'intestazione "Accept-Language". "Applicazione" segue la lingua dell\'applicazione. Richiede un riavvio per avere effetto sulle sessioni esistenti.',
       googleApiKey: 'Chiave API Google',
       googleApiKeyDesc: 'Fornisci una chiave API di Google Maps per una geolocalizzazione precisa. Senza di essa, le richieste di posizione potrebbero fallire o restituire dati imprecisi. Ottieni una chiave dalla Google Cloud Console con l\'API di Geolocalizzazione abilitata.',
-
+      rightMarginWhenMaximized: 'Margine destro quando massimizzato',
+      rightMarginWhenMaximizedDesc: 'Windows rimuove i pixel dai bordi della finestra quando la massimizza. Questo impostazione aggiunge un margine destro come soluzione alternativa per impedire ai contenuti di raggiungere il bordo.',
       resizeRefreshRate: 'Frequenza di aggiornamento al ridimensionamento',
       resizeRefreshRateDesc: 'Imposta la frequenza di aggiornamento massima durante il ridimensionamento delle finestre. "Auto" utilizza il valore predefinito del sistema.',
       dragRefreshRate: 'Frequenza di aggiornamento al trascinamento',
