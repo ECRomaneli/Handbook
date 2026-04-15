@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motion — Easing Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0d1117;
+      padding: 32px 48px 0;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    h1 span {
+      color: #58a6ff;
+    }
+
+    .subtitle {
+      color: #8b949e;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 28px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 16px 24px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 13px;
+      color: #8b949e;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .control-group input {
+      width: 90px;
+      padding: 8px 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .control-group input:focus {
+      border-color: #58a6ff;
+    }
+
+    .control-group .unit {
+      font-size: 12px;
+      color: #484f58;
+      font-weight: 500;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    button {
+      padding: 8px 20px;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: #f85149;
+      border-color: #f8514933;
+    }
+
+    .btn-cancel:hover {
+      background: #f8514915;
+      border-color: #f85149;
+    }
+
+    .btn-play {
+      background: #238636;
+      color: #fff;
+      border-color: #238636;
+    }
+
+    .btn-play:hover {
+      background: #2ea043;
+    }
+
+    /* Cards grid */
+    .cards-wrapper {
+      padding: 0 48px 32px;
+    }
+
+    .family-section {
+      margin-bottom: 24px;
+    }
+
+    .family-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #484f58;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 14px 16px;
+      transition: border-color 0.15s;
+    }
+
+    .card:hover {
+      border-color: #484f58;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .effect-name {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      color: #79c0ff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .effect-name:hover {
+      color: #a5d6ff;
+      text-decoration: underline;
+    }
+
+    .effect-value {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: #484f58;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    /* Progress bar */
+    .bar-container {
+      width: 100%;
+      height: 20px;
+      background: #21262d;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #f85149, #d29922, #3fb950);
+      transition: none;
+      position: relative;
+    }
+
+    .bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1><span>Motion</span> — Easing Test</h1>
+    <p class="subtitle">Visual test for all easing effects with configurable duration and FPS</p>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="duration">Duration</label>
+        <input type="number" id="duration" value="1500" min="0" step="100">
+        <span class="unit">ms</span>
+      </div>
+      <div class="control-group">
+        <label for="fps">FPS</label>
+        <input type="number" id="fps" value="" min="1" max="240" placeholder="auto">
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-cancel" onclick="cancelAll()">Interromper</button>
+      <button class="btn-play" onclick="playAll()">&#9654; Atualizar</button>
+    </div>
+  </div>
+
+  <div class="cards-wrapper" id="cards-wrapper"></div>
+
+  <script>
+    // ─── Motion (inline) ────────────────────────────────────────────────
+
+    const EASING = {
+      'linear': (t) => t,
+      'ease-in': (t) => 1 - Math.cos((t * Math.PI) / 2),
+      'ease-out': (t) => Math.sin((t * Math.PI) / 2),
+      'ease-in-out': (t) => -(Math.cos(Math.PI * t) - 1) / 2,
+      'ease-in-quad': (t) => t * t,
+      'ease-out-quad': (t) => t * (2 - t),
+      'ease-in-out-quad': (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+      'ease-in-cubic': (t) => t * t * t,
+      'ease-out-cubic': (t) => (--t) * t * t + 1,
+      'ease-in-out-cubic': (t) => t < 0.5 ? 4 * t * t * t : 1 + (--t) * 2 * (2 * t * t),
+      'ease-in-quart': (t) => t * t * t * t,
+      'ease-out-quart': (t) => 1 - (--t) * t * t * t,
+      'ease-in-out-quart': (t) => t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t,
+      'ease-in-expo': (t) => t === 0 ? 0 : Math.pow(2, 10 * (t - 1)),
+      'ease-out-expo': (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
+      'ease-in-out-expo': (t) => {
+        if (t === 0 || t === 1) return t;
+        return t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+      },
+      'ease-in-circ': (t) => 1 - Math.sqrt(1 - t * t),
+      'ease-out-circ': (t) => Math.sqrt(1 - (--t) * t),
+      'ease-in-out-circ': (t) => t < 0.5
+        ? (1 - Math.sqrt(1 - 4 * t * t)) / 2
+        : (Math.sqrt(1 - (-2 * t + 2) ** 2) + 1) / 2,
+      'ease-in-back': (t) => { const c = 1.70158; return t * t * ((c + 1) * t - c); },
+      'ease-out-back': (t) => { const c = 1.70158; return 1 + (--t) * t * ((c + 1) * t + c); },
+      'ease-in-out-back': (t) => {
+        const c = 1.70158 * 1.525;
+        return t < 0.5
+          ? (2 * t) ** 2 * ((c + 1) * 2 * t - c) / 2
+          : ((2 * t - 2) ** 2 * ((c + 1) * (2 * t - 2) + c) + 2) / 2;
+      },
+      'ease-in-elastic': (t) => {
+        if (t === 0 || t === 1) return t;
+        return -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * ((2 * Math.PI) / 3));
+      },
+      'ease-out-elastic': (t) => {
+        if (t === 0 || t === 1) return t;
+        return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
+      },
+      'ease-in-out-elastic': (t) => {
+        if (t === 0 || t === 1) return t;
+        const p = (2 * Math.PI) / 4.5;
+        return t < 0.5
+          ? -Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * p) / 2
+          : Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * p) / 2 + 1;
+      },
+      'ease-out-bounce': (t) => {
+        const n = 7.5625, d = 2.75;
+        if (t < 1 / d) return n * t * t;
+        if (t < 2 / d) return n * (t -= 1.5 / d) * t + 0.75;
+        if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + 0.9375;
+        return n * (t -= 2.625 / d) * t + 0.984375;
+      },
+      'ease-in-bounce': (t) => 1 - EASING['ease-out-bounce'](1 - t),
+      'ease-in-out-bounce': (t) => t < 0.5
+        ? (1 - EASING['ease-out-bounce'](1 - 2 * t)) / 2
+        : (1 + EASING['ease-out-bounce'](2 * t - 1)) / 2,
+    };
+
+    class Motion {
+      static running = new Map();
+
+      static animate(callback, options = {}) {
+        const { id, effect = 'ease-in-out', duration = 300, range = [0, 1], fps } = options;
+        const [from, to] = range;
+        const delta = to - from;
+        const easingFn = EASING[effect];
+        const frameInterval = fps ? 1000 / fps : 0;
+
+        if (id) this.cancel(id);
+
+        if (!duration || !delta) { callback(to); return; }
+
+        let animationId;
+        let cancelled = false;
+        let lastFrameTime = performance.now();
+
+        const cancel = () => {
+          cancelled = true;
+          cancelAnimationFrame(animationId);
+          id && this.running.delete(id);
+        };
+
+        if (id) this.running.set(id, cancel);
+
+        const start = performance.now();
+
+        const step = (now) => {
+          if (cancelled) return;
+
+          if (frameInterval && now - lastFrameTime < frameInterval) {
+            animationId = requestAnimationFrame(step);
+            return;
+          }
+
+          lastFrameTime = now;
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+
+          if (progress >= 1) {
+            callback(to);
+            id && this.running.delete(id);
+          } else {
+            callback(from + delta * easingFn(progress));
+            animationId = requestAnimationFrame(step);
+          }
+        };
+
+        animationId = requestAnimationFrame(step);
+      }
+
+      static cancel(id) { this.running.get(id)?.(); }
+
+      static cancelAll() {
+        this.running.forEach((cancel) => cancel());
+        this.running.clear();
+      }
+    }
+
+    // ─── Cards Grid ──────────────────────────────────────────────────
+
+    const FAMILIES = [
+      { name: 'Linear', effects: ['linear'] },
+      { name: 'Sine', effects: ['ease-in', 'ease-out', 'ease-in-out'] },
+      { name: 'Quad', effects: ['ease-in-quad', 'ease-out-quad', 'ease-in-out-quad'] },
+      { name: 'Cubic', effects: ['ease-in-cubic', 'ease-out-cubic', 'ease-in-out-cubic'] },
+      { name: 'Quart', effects: ['ease-in-quart', 'ease-out-quart', 'ease-in-out-quart'] },
+      { name: 'Expo', effects: ['ease-in-expo', 'ease-out-expo', 'ease-in-out-expo'] },
+      { name: 'Circ', effects: ['ease-in-circ', 'ease-out-circ', 'ease-in-out-circ'] },
+      { name: 'Back', effects: ['ease-in-back', 'ease-out-back', 'ease-in-out-back'] },
+      { name: 'Elastic', effects: ['ease-in-elastic', 'ease-out-elastic', 'ease-in-out-elastic'] },
+      { name: 'Bounce', effects: ['ease-in-bounce', 'ease-out-bounce', 'ease-in-out-bounce'] },
+    ];
+
+    const wrapper = document.getElementById('cards-wrapper');
+    const bars = {};
+    const values = {};
+
+    FAMILIES.forEach((family) => {
+      const section = document.createElement('div');
+      section.className = 'family-section';
+      section.innerHTML = `<div class="family-label">${family.name}</div>`;
+
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
+
+      family.effects.forEach((effect) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="effect-name" onclick="playSingle('${effect}')">${effect}</span>
+            <span class="effect-value">0%</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill"></div>
+          </div>`;
+        grid.appendChild(card);
+        bars[effect] = card.querySelector('.bar-fill');
+        values[effect] = card.querySelector('.effect-value');
+      });
+
+      section.appendChild(grid);
+      wrapper.appendChild(section);
+    });
+
+    // ─── Actions ────────────────────────────────────────────────────────
+
+    function getConfig() {
+      const duration = parseInt(document.getElementById('duration').value) || 1500;
+      const fpsVal = document.getElementById('fps').value;
+      const fps = fpsVal ? parseInt(fpsVal) : undefined;
+      return { duration, fps };
+    }
+
+    function playAll() {
+      const { duration, fps } = getConfig();
+
+      Object.entries(bars).forEach(([effect, bar]) => {
+        bar.style.width = '0%';
+        values[effect].textContent = '0%';
+        Motion.animate((value) => {
+          const v = Math.max(0, value);
+          bar.style.width = v + '%';
+          values[effect].textContent = Math.round(v) + '%';
+        }, {
+          id: effect,
+          effect,
+          duration,
+          fps,
+          range: [0, 100],
+        });
+      });
+    }
+
+    function playSingle(effect) {
+      const { duration, fps } = getConfig();
+      const bar = bars[effect];
+      bar.style.width = '0%';
+      values[effect].textContent = '0%';
+      Motion.animate((value) => {
+        const v = Math.max(0, value);
+        bar.style.width = v + '%';
+        values[effect].textContent = Math.round(v) + '%';
+      }, { id: effect, effect, duration, fps, range: [0, 100] });
+    }
+
+    function cancelAll() {
+      Motion.cancelAll();
+    }
+
+    // Auto-play on load
+    playAll();
+  </script>
+
+</body>
+
+</html>
