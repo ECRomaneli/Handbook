@@ -52,6 +52,7 @@ export const en = {
     copyLink: 'Copy Link',
     openInBrowser: 'Open in Browser',
     createPageFromUrl: 'Create Page from URL',
+    openAnonymously: 'Open Anonymously',
     openDevTools: 'Open DevTools',
     navbarOpenDevTools: 'Open Navbar DevTools',
     permissions: 'Permissions',

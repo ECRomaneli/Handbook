@@ -198,6 +198,7 @@ class MenuService {
         { label: s.copyUrl, click: () => clipboard.writeText(wc.getURL()) },
         { label: s.openInBrowser, click: () => { shell.openExternal(wc.getURL()); } },
         { label: s.createPageFromUrl, click: () => { PageService.createNewPageFromCurrentUrl(); } },
+        { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
         { type: 'separator' },
         { label: s.openDevTools, click: () => wc.openDevTools() },
         { label: s.permissions, click: () => PreferencesService.openPermissions(wc.getURL()) },

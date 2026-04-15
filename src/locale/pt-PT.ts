@@ -52,6 +52,7 @@ export const ptPT: Strings = {
     copyLink: 'Copiar Ligação',
     openInBrowser: 'Abrir no Navegador',
     createPageFromUrl: 'Criar Página a partir do URL',
+    openAnonymously: 'Abrir Anonimamente',
     openDevTools: 'Abrir DevTools',
     navbarOpenDevTools: 'Abrir DevTools da Barra de Navegação',
     permissions: 'Permissões',

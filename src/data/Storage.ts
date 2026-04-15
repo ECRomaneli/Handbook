@@ -234,8 +234,8 @@ class Storage {
     Storage.setAndEncrypt(`SyncSettings.${id}`, value);
   }
 
-  static getPartitionName(sessionName: string): string {
-    return `persist:handbook_${sessionName}`;
+  static getPartitionName(sessionName: string, persistent = true): string {
+    return persistent ? `persist:handbook_${sessionName}` : `handbook_${sessionName}`;
   }
 
   static setAndEncrypt(key: string, value?: string): void {

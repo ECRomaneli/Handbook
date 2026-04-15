@@ -222,6 +222,11 @@ class FrameService {
     this.recreateFrame();
   }
 
+  public reopenAnonymously() {
+    PageService.recreateView(PageService.getCurrentPage()!, true);
+    this.updateView(true);
+  }
+
   public recreateAllWindows() {
     PageService.recreateAllViews();
     this.recreateFrame();

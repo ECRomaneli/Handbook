@@ -52,6 +52,7 @@ export const ru: Strings = {
     copyLink: 'Копировать Ссылку',
     openInBrowser: 'Открыть в Браузере',
     createPageFromUrl: 'Создать Страницу из URL',
+    openAnonymously: 'Открыть Анонимно',
     openDevTools: 'Открыть DevTools',
     navbarOpenDevTools: 'Открыть DevTools Панели Навигации',
     permissions: 'Разрешения',

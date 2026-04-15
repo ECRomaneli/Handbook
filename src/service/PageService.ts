@@ -220,10 +220,10 @@ class PageService {
     wc && !wc.isDestroyed() && wc.close();
   }
 
-  public recreateView(page = this.getCurrentPage()!): void {
+  public recreateView(page = this.getCurrentPage()!, openAnonymously?: true): void {
     if (!page.view) { throw new Error('No view to recreate.'); }
     const oldView = page.view;
-    const newView = ViewService.recreateView(oldView, this.createViewOptions(page));
+    const newView = ViewService.recreateView(oldView, this.createViewOptions(page, openAnonymously));
     page.view = newView;
     oldView.removeAllListeners();
     oldView.webContents.removeAllListeners();
@@ -313,12 +313,11 @@ class PageService {
     return bounds;
   }
 
-  private createViewOptions(page: Page): WebContentsViewConstructorOptions {
-    return {
-      webPreferences: {
-        partition: Storage.getPartitionName(page.session),
-      },
-    };
+  private createViewOptions(page: Page, isAnonymous?: true): WebContentsViewConstructorOptions {
+    const partition = isAnonymous ?
+      Storage.getPartitionName(`anonymous_${Date.now()}`, false) :
+      Storage.getPartitionName(page.session);
+    return { webPreferences: { partition } };
   }
 }
 

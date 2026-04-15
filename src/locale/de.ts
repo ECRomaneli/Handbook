@@ -52,6 +52,7 @@ export const de: Strings = {
     copyLink: 'Link Kopieren',
     openInBrowser: 'Im Browser Öffnen',
     createPageFromUrl: 'Seite aus URL Erstellen',
+    openAnonymously: 'Anonym Öffnen',
     openDevTools: 'DevTools Öffnen',
     navbarOpenDevTools: 'Navigationsleiste DevTools Öffnen',
     permissions: 'Berechtigungen',
