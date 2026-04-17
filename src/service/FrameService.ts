@@ -12,6 +12,7 @@ import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
 import { BaseWindow, BaseWindowConstructorOptions, Event, Input, WebContents, WebContentsView, screen } from 'electron';
 import { Draggable } from 'electron-draggable';
 import Findbar from 'electron-findbar';
+import DeltaMove from 'delta-move';
 import { EventEmitter } from 'node:stream';
 
 class FrameService {
@@ -28,6 +29,16 @@ class FrameService {
     autoHideMenuBar: true,
   };
 
+  private navbarVisible = false;
+  private hoverLeaveTimeout: NodeJS.Timeout | undefined;
+
+  private getShowFrameMode(): string {
+    const value = Storage.getSettings(Settings.SHOW_FRAME);
+    if (value === true) { return 'always'; }
+    if (value === false) { return 'never'; }
+    return value as string;
+  }
+
   constructor() {
     this.registerStateListeners();
     this.registerInstanceEvents();
@@ -37,6 +48,9 @@ class FrameService {
   private registerCustomViewEvents(): void {
     FramePropagator.on('show', () => { ViewService.getCurrentView()!.emit('show'); });
     FramePropagator.on('hide', () => { ViewService.getCurrentView()!.emit('hide'); });
+
+    ViewPropagator.onCurrentView('mouse-enter', () => this.onMouseEnterFrame());
+    ViewPropagator.onCurrentView('mouse-leave', () => this.onMouseLeaveFrame());
   }
 
   private getFrameOptions(): BaseWindowConstructorOptions {
@@ -150,8 +164,15 @@ class FrameService {
 
     if (navbar && !frame.isFullScreen()) {
       const navbarHeight = NavbarService.NAVBAR_HEIGHT;
-      navbar.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: navbarHeight });
-      view.setBounds({ x: 0, y: navbarHeight, width: size[0] - rightMargin, height: size[1] - navbarHeight });
+      const showFrame = this.getShowFrameMode();
+
+      if (showFrame === 'hover' && !this.navbarVisible) {
+        navbar.setBounds({ x: 0, y: -navbarHeight, width: size[0] - rightMargin, height: navbarHeight });
+        view.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: size[1] });
+      } else {
+        navbar.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: navbarHeight });
+        view.setBounds({ x: 0, y: navbarHeight, width: size[0] - rightMargin, height: size[1] - navbarHeight });
+      }
     } else {
       view.setBounds({ x: 0, y: 0, width: size[0] - rightMargin, height: size[1] });
     }
@@ -336,16 +357,82 @@ class FrameService {
   }
 
   public setupNavbarForCurrentPage(frame = this.getFrame()!): void {
-    if (!Storage.getSettings(Settings.SHOW_FRAME)) {
+    const showFrame = this.getShowFrameMode();
+
+    if (showFrame === 'never') {
       if (NavbarService.hasView()) {
         frame.contentView.removeChildView(NavbarService.getView()!);
       }
       NavbarService.close();
+      this.navbarVisible = false;
       return;
     }
 
     NavbarService.hasView() || NavbarService.createView();
     NavbarService.onLoadChangeView();
+
+    if (showFrame === 'hover') {
+      this.navbarVisible = false;
+      this.registerNavbarMouseEvents();
+    } else {
+      this.navbarVisible = true;
+    }
+  }
+
+  private registerNavbarMouseEvents(): void {
+    const navbar = NavbarService.getView();
+    if (!navbar) { return; }
+
+    // @ts-expect-error Electron v41+ before-mouse-event
+    navbar.webContents.on('before-mouse-event', (_e: unknown, mouseEvent: { type: string }) => {
+      if (mouseEvent.type === 'mouseEnter') {
+        this.onMouseEnterFrame();
+      } else if (mouseEvent.type === 'mouseLeave') {
+        this.onMouseLeaveFrame();
+      }
+    });
+  }
+
+  private onMouseEnterFrame(): void {
+    if (this.getShowFrameMode() !== 'hover') { return; }
+    if (this.hoverLeaveTimeout) { clearTimeout(this.hoverLeaveTimeout); this.hoverLeaveTimeout = undefined; }
+    if (!this.navbarVisible) { this.animateNavbar(true); }
+  }
+
+  private onMouseLeaveFrame(): void {
+    if (this.getShowFrameMode() !== 'hover') { return; }
+    if (this.hoverLeaveTimeout) { clearTimeout(this.hoverLeaveTimeout); }
+    this.hoverLeaveTimeout = setTimeout(() => {
+      this.hoverLeaveTimeout = undefined;
+      if (this.navbarVisible) { this.animateNavbar(false); }
+    }, 100);
+  }
+
+  private animateNavbar(show: boolean): void {
+    const frame = this.getFrame();
+    const navbar = NavbarService.getView();
+    const view = ViewService.getCurrentView();
+    if (!frame || frame.isDestroyed() || !navbar || !view) { return; }
+
+    const navbarHeight = NavbarService.NAVBAR_HEIGHT;
+    const size = frame.getSize();
+    const rightMargin = OS.IS_WIN32 && frame.isMaximized()
+      ? Storage.getSettings<number>(Settings.RIGHT_MARGIN_WHEN_MAXIMIZED)
+      : 0;
+    const width = size[0] - rightMargin;
+    const height = size[1];
+
+    this.navbarVisible = show;
+
+    const range: [number, number] = show ? [0, navbarHeight] : [navbarHeight, 0];
+
+    DeltaMove.animate((y) => {
+      if (frame.isDestroyed()) { return; }
+      navbar.setBounds({ x: 0, y: y - navbarHeight, width, height: navbarHeight });
+      view.setBounds({ x: 0, y, width, height: height - y });
+    }, {
+      id: 'navbar-hover', duration: 200, range, effect: 'ease-out',
+    }).catch(() => { /* animation cancelled or replaced */ });
   }
 
   public isFocused(): boolean {

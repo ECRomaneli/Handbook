@@ -223,6 +223,10 @@ export const es: Strings = {
       clipboardUrlSessionDesc: 'Define la sesión utilizada por la página de URL del portapapeles. Dejar vacío para usar la sesión predeterminada.',
 
       showFrame: 'Mostrar barra de título',
+      showFrameDesc: 'Controla la visibilidad de la barra de navegación.',
+      showFrameAlways: 'Siempre',
+      showFrameNever: 'Nunca',
+      showFrameOnHover: 'Al pasar el ratón',
       backgroundColor: 'Color de fondo',
       backgroundColorDesc: 'Color de fondo para ventanas en carga.',
       focusOpacity: 'Opacidad cuando está enfocado',

@@ -223,6 +223,10 @@ export const ru: Strings = {
       clipboardUrlSessionDesc: 'Укажите сессию, используемую страницей URL из буфера обмена. Оставьте пустым для использования сессии по умолчанию.',
 
       showFrame: 'Показывать заголовок окна',
+      showFrameDesc: 'Управляет видимостью панели навигации.',
+      showFrameAlways: 'Всегда',
+      showFrameNever: 'Никогда',
+      showFrameOnHover: 'При наведении',
       backgroundColor: 'Цвет фона',
       backgroundColorDesc: 'Цвет фона для загружающихся окон.',
       focusOpacity: 'Прозрачность в фокусе',

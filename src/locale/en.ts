@@ -222,6 +222,10 @@ export const en = {
       clipboardUrlSessionDesc: 'Set the session used by the Clipboard URL page. Leave empty to use the default session.',
 
       showFrame: 'Show frame',
+      showFrameDesc: 'Controls the visibility of the navigation bar.',
+      showFrameAlways: 'Always',
+      showFrameNever: 'Never',
+      showFrameOnHover: 'On hover',
       backgroundColor: 'Background color',
       backgroundColorDesc: 'Background color for loading windows.',
       focusOpacity: 'Opacity when focused',

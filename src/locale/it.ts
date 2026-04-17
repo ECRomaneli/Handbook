@@ -223,6 +223,10 @@ export const it: Strings = {
       clipboardUrlSessionDesc: 'Imposta la sessione utilizzata dalla pagina URL degli appunti. Lasciare vuoto per utilizzare la sessione predefinita.',
 
       showFrame: 'Mostra barra del titolo',
+      showFrameDesc: 'Controlla la visibilità della barra di navigazione.',
+      showFrameAlways: 'Sempre',
+      showFrameNever: 'Mai',
+      showFrameOnHover: 'Al passaggio del mouse',
       backgroundColor: 'Colore di sfondo',
       backgroundColorDesc: 'Colore di sfondo per le finestre in caricamento.',
       focusOpacity: 'Opacità con focus',

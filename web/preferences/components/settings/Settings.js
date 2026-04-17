@@ -51,6 +51,9 @@ app.component('Settings', {
         options.push({ label: s.screenPositions[value], value: value })
       })
 
+      const showFrameRaw = await storage.getSettings(this.$const.Settings.SHOW_FRAME)
+      const showFrameValue = showFrameRaw === true ? 'always' : showFrameRaw === false ? 'never' : showFrameRaw
+
       this.inputs = {
         [s.general]: [
           {
@@ -155,7 +158,15 @@ app.component('Settings', {
           {
             id: this.$const.Settings.SHOW_FRAME,
             label: s.showFrame,
-            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
+            description: s.showFrameDesc,
+            data: {
+              type: 'select', value: showFrameValue,
+              options: [
+                { label: s.showFrameAlways, value: 'always' },
+                { label: s.showFrameOnHover, value: 'hover' },
+                { label: s.showFrameNever, value: 'never' }
+              ]
+            }
           },
           {
             id: this.$const.Settings.BACKGROUND_COLOR,

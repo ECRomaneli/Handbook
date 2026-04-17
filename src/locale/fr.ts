@@ -223,6 +223,10 @@ export const fr: Strings = {
       clipboardUrlSessionDesc: 'Définit la session utilisée par la page URL du presse-papiers. Laisser vide pour utiliser la session par défaut.',
 
       showFrame: 'Afficher la barre de titre',
+      showFrameDesc: 'Contrôle la visibilité de la barre de navigation.',
+      showFrameAlways: 'Toujours',
+      showFrameNever: 'Jamais',
+      showFrameOnHover: 'Au survol',
       backgroundColor: 'Couleur d\'arrière-plan',
       backgroundColorDesc: 'Couleur d\'arrière-plan pour les fenêtres en chargement.',
       focusOpacity: 'Opacité quand focalisé',

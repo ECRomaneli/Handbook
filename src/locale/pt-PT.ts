@@ -223,6 +223,10 @@ export const ptPT: Strings = {
       clipboardUrlSessionDesc: 'Define a sessão utilizada pela página de URL da área de transferência. Deixe vazio para utilizar a sessão predefinida.',
 
       showFrame: 'Mostrar barra de título',
+      showFrameDesc: 'Controla a visibilidade da barra de navegação.',
+      showFrameAlways: 'Sempre',
+      showFrameNever: 'Nunca',
+      showFrameOnHover: 'Ao passar o rato',
       backgroundColor: 'Cor de fundo',
       backgroundColorDesc: 'Cor de fundo para janelas em carregamento.',
       focusOpacity: 'Opacidade com foco',

@@ -52,7 +52,7 @@ const Positions = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DefaultSettings: Record<string, any> = {};
-DefaultSettings[Settings.SHOW_FRAME] = true;
+DefaultSettings[Settings.SHOW_FRAME] = 'always';
 DefaultSettings[Settings.BACKGROUND_COLOR] = '#171717';
 DefaultSettings[Settings.FOCUS_OPACITY] = 100;
 DefaultSettings[Settings.BLUR_OPACITY] = 90;

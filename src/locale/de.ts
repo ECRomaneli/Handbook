@@ -223,6 +223,10 @@ export const de: Strings = {
       clipboardUrlSessionDesc: 'Legt die Sitzung fest, die für die Zwischenablage-URL-Seite verwendet wird. Leer lassen, um die Standardsitzung zu verwenden.',
 
       showFrame: 'Titelleiste anzeigen',
+      showFrameDesc: 'Steuert die Sichtbarkeit der Navigationsleiste.',
+      showFrameAlways: 'Immer',
+      showFrameNever: 'Nie',
+      showFrameOnHover: 'Beim Hovern',
       backgroundColor: 'Hintergrundfarbe',
       backgroundColorDesc: 'Hintergrundfarbe für ladende Fenster.',
       focusOpacity: 'Deckkraft bei Fokus',
