@@ -29,6 +29,9 @@ class FrameService {
     autoHideMenuBar: true,
   };
 
+  private static readonly NAVBAR_HIDE_DELAY_MS = 100;
+  private static readonly NAVBAR_ANIMATION_DURATION_MS = 200;
+
   private navbarVisible = false;
   private hoverLeaveTimeout: NodeJS.Timeout | undefined;
 
@@ -37,6 +40,13 @@ class FrameService {
     if (value === true) { return 'always'; }
     if (value === false) { return 'never'; }
     return value as string;
+  }
+
+  private clearHoverTimeout(): void {
+    if (this.hoverLeaveTimeout) {
+      clearTimeout(this.hoverLeaveTimeout);
+      this.hoverLeaveTimeout = undefined;
+    }
   }
 
   constructor() {
@@ -395,17 +405,17 @@ class FrameService {
 
   private onMouseEnterFrame(): void {
     if (this.getShowFrameMode() !== 'hover') { return; }
-    if (this.hoverLeaveTimeout) { clearTimeout(this.hoverLeaveTimeout); this.hoverLeaveTimeout = undefined; }
+    this.clearHoverTimeout();
     if (!this.navbarVisible) { this.animateNavbar(true); }
   }
 
   private onMouseLeaveFrame(): void {
     if (this.getShowFrameMode() !== 'hover') { return; }
-    if (this.hoverLeaveTimeout) { clearTimeout(this.hoverLeaveTimeout); }
+    this.clearHoverTimeout();
     this.hoverLeaveTimeout = setTimeout(() => {
       this.hoverLeaveTimeout = undefined;
       if (this.navbarVisible) { this.animateNavbar(false); }
-    }, 100);
+    }, FrameService.NAVBAR_HIDE_DELAY_MS);
   }
 
   private animateNavbar(show: boolean): void {
@@ -431,7 +441,8 @@ class FrameService {
       navbar.setBounds({ x: 0, y: y - navbarHeight, width, height: navbarHeight });
       view.setBounds({ x: 0, y, width, height: height - y });
     }, {
-      id: 'navbar-hover', duration: 200, range, effect: 'ease-out',
+      id: 'navbar-hover', duration: FrameService.NAVBAR_ANIMATION_DURATION_MS,
+      range, effect: 'ease-out',
     }).catch(() => { /* animation cancelled or replaced */ });
   }
 
