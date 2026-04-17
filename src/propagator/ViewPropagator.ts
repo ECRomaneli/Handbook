@@ -14,7 +14,7 @@ export class ViewPropagator extends Propagator<WebContentsView> {
     });
     // @ts-expect-error Electron v41+ before-mouse-event
     wc.on('before-mouse-event', (_e: unknown, mouseEvent: { type: string }) => {
-      if (mouseEvent.type === 'mouseEnter') {
+      if (mouseEvent.type === 'mouseMove') {
         this.emitCurrentEvent(wc, 'mouse-enter');
       } else if (mouseEvent.type === 'mouseLeave') {
         this.emitCurrentEvent(wc, 'mouse-leave');

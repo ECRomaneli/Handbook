@@ -395,7 +395,7 @@ class FrameService {
 
     // @ts-expect-error Electron v41+ before-mouse-event
     navbar.webContents.on('before-mouse-event', (_e: unknown, mouseEvent: { type: string }) => {
-      if (mouseEvent.type === 'mouseEnter') {
+      if (mouseEvent.type === 'mouseMove') {
         this.onMouseEnterFrame();
       } else if (mouseEvent.type === 'mouseLeave') {
         this.onMouseLeaveFrame();
