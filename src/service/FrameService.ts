@@ -157,6 +157,11 @@ class FrameService {
     }
   }
 
+  public toggleNavbar(): void {
+    Storage.setSettings(Settings.SHOW_FRAME, !Storage.getSettings(Settings.SHOW_FRAME));
+    this.recreateFrame();
+  }
+
   /**
    * Ensure the window title bar is visible (not off-screen at the top)
    * @param frame The frame to ensure visibility for. If not provided, the current frame will be used.

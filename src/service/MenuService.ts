@@ -118,10 +118,16 @@ class MenuService {
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
-        { label: s.quickActions, submenu: this.getSearchMenu() },
+        { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
+        { type: 'separator' },
         { label: s.window, submenu: currentPageSubmenu },
         { label: s.handbook, submenu: windowMenuItems },
       ];
+
+      const quickActions = this.getQuickActions();
+      if (quickActions.length > 0) {
+        AppState.viewContextMenu.unshift({ label: s.quickActions, submenu: quickActions });
+      }
     }
 
     AppState.navbarContextMenu = windowMenuItems;
@@ -198,7 +204,6 @@ class MenuService {
         { label: s.copyUrl, click: () => clipboard.writeText(wc.getURL()) },
         { label: s.openInBrowser, click: () => { shell.openExternal(wc.getURL()); } },
         { label: s.createPageFromUrl, click: () => { PageService.createNewPageFromCurrentUrl(); } },
-        { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
         { type: 'separator' },
         { label: s.openDevTools, click: () => wc.openDevTools() },
         { label: s.permissions, click: () => PreferencesService.openPermissions(wc.getURL()) },
@@ -283,7 +288,7 @@ class MenuService {
     return items;
   }
 
-  private getSearchMenu(): MenuItemConstructorOptions[] {
+  private getQuickActions(): MenuItemConstructorOptions[] {
     const items = Storage.getQuickActions();
     return items
       .filter((item) => item.label && item.url)
