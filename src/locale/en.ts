@@ -52,6 +52,7 @@ export const en = {
     copyLink: 'Copy Link',
     openInBrowser: 'Open in Browser',
     createPageFromUrl: 'Create Page from URL',
+    openAnonymously: 'Open Anonymously',
     openDevTools: 'Open DevTools',
     navbarOpenDevTools: 'Open Navbar DevTools',
     permissions: 'Permissions',
@@ -62,6 +63,7 @@ export const en = {
     handbook: 'Handbook',
     listPages: 'List Pages',
     muteUnmute: 'Mute / Unmute',
+    navbar: 'Navigation Bar',
   },
 
   dialog: {
@@ -221,7 +223,7 @@ export const en = {
       clipboardUrlSession: 'Clipboard URL session',
       clipboardUrlSessionDesc: 'Set the session used by the Clipboard URL page. Leave empty to use the default session.',
 
-      showFrame: 'Show frame',
+      showNavbar: 'Show navbar',
       backgroundColor: 'Background color',
       backgroundColorDesc: 'Background color for loading windows.',
       focusOpacity: 'Opacity when focused',

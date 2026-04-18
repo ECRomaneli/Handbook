@@ -15,6 +15,7 @@ export class FramePropagator extends Propagator<BaseWindow> {
     emitter.on('hide', () => { this.emit('hide'); });
     emitter.on('focus', () => { this.emit('focus'); });
     emitter.on('blur', () => { this.emit('blur'); });
+    emitter.on('closed', () => { this.emit('closed'); });
     // @ts-expect-error Custom event triggered by modals including the findbar
     emitter.on('modal-focus', () => { this.emit('modal-focus'); });
     // @ts-expect-error Custom event triggered by modals including the findbar

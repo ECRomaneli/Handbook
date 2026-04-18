@@ -52,6 +52,7 @@ export const ru: Strings = {
     copyLink: 'Копировать Ссылку',
     openInBrowser: 'Открыть в Браузере',
     createPageFromUrl: 'Создать Страницу из URL',
+    openAnonymously: 'Открыть Анонимно',
     openDevTools: 'Открыть DevTools',
     navbarOpenDevTools: 'Открыть DevTools Панели Навигации',
     permissions: 'Разрешения',
@@ -62,6 +63,7 @@ export const ru: Strings = {
     handbook: 'Handbook',
     listPages: 'Список Страниц',
     muteUnmute: 'Включить/Выключить Звук',
+    navbar: 'Панель Навигации',
     quickMenu: 'Быстрое Меню',
   },
 
@@ -222,7 +224,7 @@ export const ru: Strings = {
       clipboardUrlSession: 'Сессия URL из буфера обмена',
       clipboardUrlSessionDesc: 'Укажите сессию, используемую страницей URL из буфера обмена. Оставьте пустым для использования сессии по умолчанию.',
 
-      showFrame: 'Показывать заголовок окна',
+      showNavbar: 'Показывать панель навигации',
       backgroundColor: 'Цвет фона',
       backgroundColorDesc: 'Цвет фона для загружающихся окон.',
       focusOpacity: 'Прозрачность в фокусе',

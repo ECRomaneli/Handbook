@@ -12,6 +12,18 @@ class WindowUtil {
     }
     return undefined;
   }
+
+  /**
+   * Fix the webcontents userAgent removing the app tag. Some websites disallow features based on this.
+   * @param {WebContents} webContents
+   */
+  public static fixUserAgent(webContents: WebContents): void {
+    webContents.setUserAgent(webContents.getUserAgent().replace(/ handbook[^ ]+/i, ''));
+  }
+
+  public static setDefaultAlwaysOnTopSettings(window: BaseWindow): void {
+    window.setAlwaysOnTop(true, 'modal-panel', 1);
+  }
 }
 
 export default WindowUtil;

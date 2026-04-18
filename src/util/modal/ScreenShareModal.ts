@@ -50,6 +50,7 @@ class ScreenShareModal {
         movable: true,
         resizable: false,
         show: false,
+        backgroundColor: '#222222',
         transparent: process.platform === 'linux',
         webPreferences: {
           preload: path.join(ScreenShareModal.ROOT_PATH, 'preload.js'),
@@ -58,6 +59,7 @@ class ScreenShareModal {
       .setWindowHandler((window: BrowserWindow) => {
         // window.webContents.openDevTools()
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        window.setAlwaysOnTop(true, 'modal-panel', 2);
         this.onceClose(() => { this.modal.close(); });
         this.sendData(this.options!);
         window.show();

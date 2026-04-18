@@ -1,14 +1,14 @@
 import AppState from '@/AppState';
-import { Settings } from '@/data/Constants';
+import { DefaultBackgroundColor, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { PageView } from '@/model/Page';
 import FramePropagator from '@/propagator/FramePropagator';
 import ViewPropagator from '@/propagator/ViewPropagator';
-import FrameService from '@/service/FrameService';
 import MenuService, { ContextMenuType } from '@/service/MenuService';
 import PageService from '@/service/PageService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
 import { getExtensionForMime, getFiltersForMime } from '@/util/MimeTypes';
+import WindowUtil from '@/util/WindowUtil';
 import { BrowserWindow, clipboard, dialog, shell, WebContents, WebContentsView, WebContentsViewConstructorOptions } from 'electron';
 import contextMenu from 'electron-context-menu';
 import Findbar from 'electron-findbar';
@@ -41,7 +41,7 @@ class ViewService {
   }
 
   private configureView(view: WebContentsView): void {
-    fixUserAgent(view.webContents);
+    WindowUtil.fixUserAgent(view.webContents);
     this.buildContextMenu(view);
     this.handleChildWindows(view);
   }
@@ -152,6 +152,7 @@ class ViewService {
       findbar.setWindowOptions({ alwaysOnTop: true });
       findbar.setWindowHandler((findbar: BrowserWindow) => {
         findbar.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        WindowUtil.setDefaultAlwaysOnTopSettings(findbar);
       });
 
       childWindow.webContents.on('before-input-event', (e, input) => {
@@ -183,7 +184,8 @@ class ViewService {
           { label: AppState.strings.menu.openDevTools, click: () => childWindow.webContents.openDevTools() },
         ],
       });
-      fixUserAgent(childWindow.webContents);
+      WindowUtil.fixUserAgent(childWindow.webContents);
+      WindowUtil.setDefaultAlwaysOnTopSettings(childWindow);
       childWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
       (childWindow.webContents as ChildWebContents).__parent__ = parent.webContents;
       this.handleChildWindows(parent, childWindow);
@@ -206,6 +208,7 @@ class ViewService {
             skipTaskbar: true,
             autoHideMenuBar: true,
             acceptFirstMouse: true,
+            backgroundColor: DefaultBackgroundColor,
             webPreferences: {
               partition: Storage.getPartitionName(AppState.currentPage!.session),
             },
@@ -244,7 +247,6 @@ class ViewService {
     if (!view) { console.error('Cannot open URL without view.'); return; }
 
     const childWindow = new BrowserWindow({
-      parent: FrameService.getFrame()!,
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
       height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
       alwaysOnTop: true,
@@ -331,14 +333,6 @@ async function saveBase64ToFile(base64Data: string, suggestedName?: string) {
     console.error('Error saving base64 data:', error);
     return false;
   }
-}
-
-/**
- * Fix the webcontents userAgent removing the app tag. Some websites disallow features based on this.
- * @param {WebContents} webContents
- */
-function fixUserAgent(webContents: WebContents): void {
-  webContents.setUserAgent(webContents.getUserAgent().replace(/ handbook[^ ]+/i, ''));
 }
 
 function getFormatedDateString() {

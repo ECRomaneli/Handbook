@@ -154,7 +154,7 @@ app.component('Settings', {
           },
           {
             id: this.$const.Settings.SHOW_FRAME,
-            label: s.showFrame,
+            label: s.showNavbar,
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.SHOW_FRAME) }
           },
           {

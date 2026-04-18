@@ -127,6 +127,8 @@ const Permission = {
   },
 };
 
+const DefaultBackgroundColor = '#222222';
+
 const IsProduction = process.env.NODE_ENV === 'production';
 const IsDebug = {
   'propagator': !IsProduction && !true,
@@ -135,5 +137,5 @@ const IsDebug = {
   'state': !IsProduction && true,
 };
 
-export { DefaultQuickActions, DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
+export { DefaultBackgroundColor, DefaultQuickActions, DefaultSettings, IsDebug, IsProduction, OS, Path, Permission, Positions, Settings, SyncSettings };
 

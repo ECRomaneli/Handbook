@@ -52,6 +52,7 @@ export const ptPT: Strings = {
     copyLink: 'Copiar Ligação',
     openInBrowser: 'Abrir no Navegador',
     createPageFromUrl: 'Criar Página a partir do URL',
+    openAnonymously: 'Abrir Anonimamente',
     openDevTools: 'Abrir DevTools',
     navbarOpenDevTools: 'Abrir DevTools da Barra de Navegação',
     permissions: 'Permissões',
@@ -62,6 +63,7 @@ export const ptPT: Strings = {
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
     muteUnmute: 'Ativar/Desativar Som',
+    navbar: 'Barra de Navegação',
     quickMenu: 'Menu Rápido',
   },
 
@@ -222,7 +224,7 @@ export const ptPT: Strings = {
       clipboardUrlSession: 'Sessão do URL da área de transferência',
       clipboardUrlSessionDesc: 'Define a sessão utilizada pela página de URL da área de transferência. Deixe vazio para utilizar a sessão predefinida.',
 
-      showFrame: 'Mostrar barra de título',
+      showNavbar: 'Mostrar barra de navegação',
       backgroundColor: 'Cor de fundo',
       backgroundColorDesc: 'Cor de fundo para janelas em carregamento.',
       focusOpacity: 'Opacidade com foco',

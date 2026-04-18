@@ -9,6 +9,7 @@ import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
 import ViewService from '@/service/ViewService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
+import WindowUtil from '@/util/WindowUtil';
 import { BaseWindow, BaseWindowConstructorOptions, Event, Input, WebContents, WebContentsView, screen } from 'electron';
 import { Draggable } from 'electron-draggable';
 import Findbar from 'electron-findbar';
@@ -16,7 +17,6 @@ import { EventEmitter } from 'node:stream';
 
 class FrameService {
   private readonly WINDOW_OPTIONS: BaseWindowConstructorOptions = {
-    icon: undefined,
     frame: false,
     show: false,
     alwaysOnTop: true,
@@ -89,6 +89,7 @@ class FrameService {
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    WindowUtil.setDefaultAlwaysOnTopSettings(frame);
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
     if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
@@ -157,6 +158,11 @@ class FrameService {
     }
   }
 
+  public toggleNavbar(): void {
+    Storage.setSettings(Settings.SHOW_FRAME, !Storage.getSettings(Settings.SHOW_FRAME));
+    this.recreateFrame();
+  }
+
   /**
    * Ensure the window title bar is visible (not off-screen at the top)
    * @param frame The frame to ensure visibility for. If not provided, the current frame will be used.
@@ -220,6 +226,11 @@ class FrameService {
   public recreateWindow() {
     PageService.recreateView();
     this.recreateFrame();
+  }
+
+  public reopenAnonymously() {
+    PageService.recreateView(PageService.getCurrentPage()!, true);
+    this.updateView(true);
   }
 
   public recreateAllWindows() {

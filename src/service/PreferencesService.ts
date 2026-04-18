@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
+import { DefaultBackgroundColor, OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
@@ -11,6 +11,7 @@ import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
+import WindowUtil from '@/util/WindowUtil';
 import { BrowserWindow, HandlerDetails, Input, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
 import { Draggable } from 'electron-draggable';
@@ -41,6 +42,7 @@ class PreferencesService {
       show: false,
       frame: false,
       alwaysOnTop: true,
+      backgroundColor: DefaultBackgroundColor,
       transparent: OS.IS_LINUX,
       webPreferences: {
         nodeIntegration: true,
@@ -54,6 +56,7 @@ class PreferencesService {
     Draggable.from(win, { fps, selector: '.sidebar-header, .main-header', exclude: '.exit-btn' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    WindowUtil.setDefaultAlwaysOnTopSettings(win);
     this.buildContextMenu();
     win.webContents.setWindowOpenHandler(PreferencesService.openExternal);
     win.loadFile(path.join(Path.WEB, 'preferences', 'index.html'));

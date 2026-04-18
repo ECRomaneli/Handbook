@@ -52,6 +52,7 @@ export const es: Strings = {
     copyLink: 'Copiar Enlace',
     openInBrowser: 'Abrir en el Navegador',
     createPageFromUrl: 'Crear Página desde URL',
+    openAnonymously: 'Abrir Anónimamente',
     openDevTools: 'Abrir DevTools',
     navbarOpenDevTools: 'Abrir DevTools de la Barra de Navegación',
     permissions: 'Permisos',
@@ -62,6 +63,7 @@ export const es: Strings = {
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
     muteUnmute: 'Activar/Desactivar Sonido',
+    navbar: 'Barra de Navegación',
     quickMenu: 'Menú Rápido',
   },
 
@@ -222,7 +224,7 @@ export const es: Strings = {
       clipboardUrlSession: 'Sesión de URL del portapapeles',
       clipboardUrlSessionDesc: 'Define la sesión utilizada por la página de URL del portapapeles. Dejar vacío para usar la sesión predeterminada.',
 
-      showFrame: 'Mostrar barra de título',
+      showNavbar: 'Mostrar barra de navegación',
       backgroundColor: 'Color de fondo',
       backgroundColorDesc: 'Color de fondo para ventanas en carga.',
       focusOpacity: 'Opacidad cuando está enfocado',

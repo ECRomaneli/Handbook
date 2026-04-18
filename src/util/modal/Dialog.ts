@@ -81,12 +81,14 @@ class Dialog {
         movable: true,
         resizable: false,
         show: false,
+        backgroundColor: '#222222',
         transparent: process.platform === 'linux',
         webPreferences: { preload: path.join(Dialog.ROOT_PATH, 'preload.js') },
       })
       .setWindowHandler((window: BrowserWindow) => {
         // window.webContents.openDevTools()
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        window.setAlwaysOnTop(true, 'modal-panel', 2);
         if (this.options?.textWidth) {
           Dialog.setWidth(window, this.options.textWidth);
         }

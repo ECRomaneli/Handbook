@@ -70,7 +70,7 @@ Configure window opacity for focused and blurred states. Windows become semi-tra
 
 ### Navigation Bar
 
-A minimal 40px navigation bar provides essential controls: back, forward, reload, URL display, mute toggle, and find-in-page — without the bloat of a full browser. The navigation bar can also be disabled by turning off the `frame` in the "Preferences".
+A minimal 40px navigation bar provides essential controls: back, forward, reload, URL display, mute toggle, and find-in-page — without the bloat of a full browser. The navigation bar can also be disabled by turning it off in the "Preferences".
 
 <p align='center'>
     <img src="docs/img/readme/navbar.png" alt='Page Management'>
@@ -106,7 +106,7 @@ Fine-tune how your windows look and behave:
 - **Position** — 9 preset screen positions (corners, edges, center)
 - **Size** — Custom default width and height
 - **Opacity** — Separate focus and blur opacity levels
-- **Frame** — Show or hide the native window frame
+- **Navbar** — Show or hide the navigation bar for a more minimal look
 - **Shortcuts** — Global hotkeys to toggle visibility from anywhere
 - **Shared bounds** — All pages share the same window size and position
 
