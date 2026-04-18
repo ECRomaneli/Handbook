@@ -11,6 +11,7 @@ import TrayService from '@/service/TrayService';
 import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
+import WindowUtil from '@/util/WindowUtil';
 import { BrowserWindow, HandlerDetails, Input, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
 import { Draggable } from 'electron-draggable';
@@ -55,6 +56,7 @@ class PreferencesService {
     Draggable.from(win, { fps, selector: '.sidebar-header, .main-header', exclude: '.exit-btn' });
 
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    WindowUtil.setDefaultAlwaysOnTopSettings(win);
     this.buildContextMenu();
     win.webContents.setWindowOpenHandler(PreferencesService.openExternal);
     win.loadFile(path.join(Path.WEB, 'preferences', 'index.html'));

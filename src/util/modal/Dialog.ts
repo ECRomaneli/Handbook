@@ -88,6 +88,7 @@ class Dialog {
       .setWindowHandler((window: BrowserWindow) => {
         // window.webContents.openDevTools()
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        window.setAlwaysOnTop(true, 'modal-panel', 2);
         if (this.options?.textWidth) {
           Dialog.setWidth(window, this.options.textWidth);
         }

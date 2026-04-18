@@ -59,6 +59,7 @@ class ScreenShareModal {
       .setWindowHandler((window: BrowserWindow) => {
         // window.webContents.openDevTools()
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        window.setAlwaysOnTop(true, 'modal-panel', 2);
         this.onceClose(() => { this.modal.close(); });
         this.sendData(this.options!);
         window.show();

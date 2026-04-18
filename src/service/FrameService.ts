@@ -9,6 +9,7 @@ import NavbarService from '@/service/NavbarService';
 import PageService from '@/service/PageService';
 import ViewService from '@/service/ViewService';
 import { getAcceleratorByEvent } from '@/util/EventKeyCapture';
+import WindowUtil from '@/util/WindowUtil';
 import { BaseWindow, BaseWindowConstructorOptions, Event, Input, WebContents, WebContentsView, screen } from 'electron';
 import { Draggable } from 'electron-draggable';
 import Findbar from 'electron-findbar';
@@ -88,7 +89,7 @@ class FrameService {
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    frame.setAlwaysOnTop(true, 'modal-panel', 1);
+    WindowUtil.setDefaultAlwaysOnTopSettings(frame);
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
     if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {

@@ -55,6 +55,7 @@ class QuickMenuModal extends EventEmitter {
       })
       .setWindowHandler((window: BrowserWindow) => {
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+        window.setAlwaysOnTop(true, 'modal-panel', 2);
         window.on('blur', () => this.close());
         process.platform !== 'linux' && window.setOpacity(0.98);
         this.modal
