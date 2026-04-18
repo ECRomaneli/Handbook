@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { Settings } from '@/data/Constants';
+import { DefaultBackgroundColor, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { PageView } from '@/model/Page';
 import FramePropagator from '@/propagator/FramePropagator';
@@ -206,6 +206,7 @@ class ViewService {
             skipTaskbar: true,
             autoHideMenuBar: true,
             acceptFirstMouse: true,
+            backgroundColor: DefaultBackgroundColor,
             webPreferences: {
               partition: Storage.getPartitionName(AppState.currentPage!.session),
             },

@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
+import { DefaultBackgroundColor, OS, Path, Permission, Positions, QuickAction, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import { Page, PlainPage } from '@/model/Page';
 import PreferencesPropagator from '@/propagator/PreferencesPropagator';
@@ -41,6 +41,7 @@ class PreferencesService {
       show: false,
       frame: false,
       alwaysOnTop: true,
+      backgroundColor: DefaultBackgroundColor,
       transparent: OS.IS_LINUX,
       webPreferences: {
         nodeIntegration: true,

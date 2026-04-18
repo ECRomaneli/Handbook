@@ -81,6 +81,7 @@ class Dialog {
         movable: true,
         resizable: false,
         show: false,
+        backgroundColor: '#222222',
         transparent: process.platform === 'linux',
         webPreferences: { preload: path.join(Dialog.ROOT_PATH, 'preload.js') },
       })

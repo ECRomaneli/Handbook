@@ -50,6 +50,7 @@ class ScreenShareModal {
         movable: true,
         resizable: false,
         show: false,
+        backgroundColor: '#222222',
         transparent: process.platform === 'linux',
         webPreferences: {
           preload: path.join(ScreenShareModal.ROOT_PATH, 'preload.js'),

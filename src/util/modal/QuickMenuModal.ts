@@ -35,6 +35,7 @@ class QuickMenuModal extends EventEmitter {
         resizable: false,
         show: false,
         transparent: true,
+        backgroundColor: '#222222',
         webPreferences: {
           preload: path.join(QuickMenuModal.ROOT_PATH, 'preload.js'),
         },
