@@ -54,7 +54,7 @@
     "auto-launch": "^5.0.6",
     "electron-context-menu": "^4.1.2",
     "electron-draggable": "^1.6.1",
-    "electron-findbar": "^3.7.0",
+    "electron-findbar": "^3.7.2",
     "electron-store": "^11.0.2",
     "electron-updater": "^6.8.3",
     "vue": "^3.5.32"

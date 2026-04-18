@@ -63,7 +63,7 @@ export const en = {
     handbook: 'Handbook',
     listPages: 'List Pages',
     muteUnmute: 'Mute / Unmute',
-    navbar: 'Navbar',
+    navbar: 'Navigation Bar',
   },
 
   dialog: {
