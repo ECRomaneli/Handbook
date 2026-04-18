@@ -119,6 +119,11 @@ class MenuService {
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
         { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
+        {
+          type: 'checkbox', label: s.navbar,
+          checked: !!Storage.getSettings(Settings.SHOW_FRAME),
+          click: () => { FrameService.toggleNavbar(); },
+        },
         { type: 'separator' },
         { label: s.window, submenu: currentPageSubmenu },
         { label: s.handbook, submenu: windowMenuItems },

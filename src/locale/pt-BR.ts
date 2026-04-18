@@ -63,6 +63,7 @@ export const ptBR: Strings = {
     handbook: 'Handbook',
     listPages: 'Listar Páginas',
     muteUnmute: 'Ativar/Desativar Som',
+    navbar: 'Barra de Navegação',
     quickMenu: 'Menu Rápido',
   },
 
@@ -223,7 +224,7 @@ export const ptBR: Strings = {
       clipboardUrlSession: 'Sessão da URL da área de transferência',
       clipboardUrlSessionDesc: 'Define a sessão utilizada pela página de URL da área de transferência. Deixe vazio para usar a sessão padrão.',
 
-      showFrame: 'Mostrar barra de título',
+      showNavbar: 'Mostrar barra de navegação',
       backgroundColor: 'Cor de fundo',
       backgroundColorDesc: 'Cor de fundo para janelas em carregamento.',
       focusOpacity: 'Opacidade quando focado',

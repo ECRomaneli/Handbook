@@ -63,6 +63,7 @@ export const en = {
     handbook: 'Handbook',
     listPages: 'List Pages',
     muteUnmute: 'Mute / Unmute',
+    navbar: 'Navbar',
   },
 
   dialog: {
@@ -222,7 +223,7 @@ export const en = {
       clipboardUrlSession: 'Clipboard URL session',
       clipboardUrlSessionDesc: 'Set the session used by the Clipboard URL page. Leave empty to use the default session.',
 
-      showFrame: 'Show frame',
+      showNavbar: 'Show navbar',
       backgroundColor: 'Background color',
       backgroundColorDesc: 'Background color for loading windows.',
       focusOpacity: 'Opacity when focused',

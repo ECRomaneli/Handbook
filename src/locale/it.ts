@@ -63,6 +63,7 @@ export const it: Strings = {
     handbook: 'Handbook',
     listPages: 'Elenco Pagine',
     muteUnmute: 'Attiva/Disattiva Audio',
+    navbar: 'Barra di Navigazione',
     quickMenu: 'Menu Rapido',
   },
 
@@ -223,7 +224,7 @@ export const it: Strings = {
       clipboardUrlSession: 'Sessione URL degli appunti',
       clipboardUrlSessionDesc: 'Imposta la sessione utilizzata dalla pagina URL degli appunti. Lasciare vuoto per utilizzare la sessione predefinita.',
 
-      showFrame: 'Mostra barra del titolo',
+      showNavbar: 'Mostra barra di navigazione',
       backgroundColor: 'Colore di sfondo',
       backgroundColorDesc: 'Colore di sfondo per le finestre in caricamento.',
       focusOpacity: 'Opacità con focus',

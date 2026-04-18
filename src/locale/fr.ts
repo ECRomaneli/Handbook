@@ -63,6 +63,7 @@ export const fr: Strings = {
     handbook: 'Handbook',
     listPages: 'Lister les Pages',
     muteUnmute: 'Activer/Désactiver le Son',
+    navbar: 'Barre de Navigation',
     quickMenu: 'Menu Rapide',
   },
 
@@ -223,7 +224,7 @@ export const fr: Strings = {
       clipboardUrlSession: 'Session de l\'URL du presse-papiers',
       clipboardUrlSessionDesc: 'Définit la session utilisée par la page URL du presse-papiers. Laisser vide pour utiliser la session par défaut.',
 
-      showFrame: 'Afficher la barre de titre',
+      showNavbar: 'Afficher la barre de navigation',
       backgroundColor: 'Couleur d\'arrière-plan',
       backgroundColorDesc: 'Couleur d\'arrière-plan pour les fenêtres en chargement.',
       focusOpacity: 'Opacité quand focalisé',

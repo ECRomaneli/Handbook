@@ -63,6 +63,7 @@ export const de: Strings = {
     handbook: 'Handbook',
     listPages: 'Seiten Auflisten',
     muteUnmute: 'Ton Aktivieren/Deaktivieren',
+    navbar: 'Navigationsleiste',
     quickMenu: 'Schnellmenü',
   },
 
@@ -223,7 +224,7 @@ export const de: Strings = {
       clipboardUrlSession: 'Zwischenablage-URL-Sitzung',
       clipboardUrlSessionDesc: 'Legt die Sitzung fest, die für die Zwischenablage-URL-Seite verwendet wird. Leer lassen, um die Standardsitzung zu verwenden.',
 
-      showFrame: 'Titelleiste anzeigen',
+      showNavbar: 'Navigationsleiste anzeigen',
       backgroundColor: 'Hintergrundfarbe',
       backgroundColorDesc: 'Hintergrundfarbe für ladende Fenster.',
       focusOpacity: 'Deckkraft bei Fokus',
