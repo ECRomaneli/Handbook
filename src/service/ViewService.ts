@@ -245,7 +245,6 @@ class ViewService {
     if (!view) { console.error('Cannot open URL without view.'); return; }
 
     const childWindow = new BrowserWindow({
-      parent: FrameService.getFrame()!,
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
       height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
       alwaysOnTop: true,
