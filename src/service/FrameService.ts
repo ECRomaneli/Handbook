@@ -16,7 +16,6 @@ import { EventEmitter } from 'node:stream';
 
 class FrameService {
   private readonly WINDOW_OPTIONS: BaseWindowConstructorOptions = {
-    icon: undefined,
     frame: false,
     show: false,
     alwaysOnTop: true,
@@ -89,6 +88,7 @@ class FrameService {
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    frame.setAlwaysOnTop(true, 'modal-panel', 1);
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
     if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
