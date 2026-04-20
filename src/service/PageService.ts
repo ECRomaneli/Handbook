@@ -27,7 +27,13 @@ class PageService {
       return;
     }
 
-    FrameService.toggleVisibility();
+    const frame = FrameService.getFrame();
+    if (!frame) {
+      console.warn('This flow is not standard and should only be called whenever the frame was closed outside of normal flow.');
+      FrameService.updateView(true);
+    } else {
+      FrameService.toggleVisibility();
+    }
   }
 
   public selectPage(page = this.getCurrentPage()): void {

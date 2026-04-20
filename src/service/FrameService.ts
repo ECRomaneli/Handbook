@@ -219,7 +219,6 @@ class FrameService {
   public recreateFrame() {
     const isVisible = this.isVisible();
     this.forceClose(false);
-    this.createFrame();
     this.updateView(isVisible);
   }
 
