@@ -11,7 +11,7 @@ import { clipboard, WebContentsView } from 'electron';
 import path from 'node:path';
 
 class NavbarService {
-  public readonly NAVBAR_HEIGHT = 35;
+  public readonly NAVBAR_HEIGHT = 36;
   public readonly NAVBAR_WEB_FOLDER = path.join(Path.WEB, 'navigation-bar');
 
   constructor() {
