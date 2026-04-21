@@ -53,17 +53,17 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: calc(100% - 42px);
+  height: inherit;
+  line-height: var(--font-size);
 }
 
 #permissions {
   width: 13px;
-  height: 13px;
   margin-right: -4px;
 }
 
 #copy-link {
   width: 13px;
-  height: 13px;
   margin-left: -4px;
 }
 
@@ -124,6 +124,7 @@ span {
   justify-content: center;
   gap: var(--spacing);
   overflow: hidden;
+  height: 16px;
 }
 
 .divider {
