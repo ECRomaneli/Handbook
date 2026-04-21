@@ -32,13 +32,13 @@ class MenuService {
   }
 
   public refreshContextMenu(): void {
+    const trayMenuItems: MenuItemConstructorOptions[] = [];
     const menuItems: MenuItemConstructorOptions[] = [];
-    const windowMenuItems: MenuItemConstructorOptions[] = [];
     const s = AppState.strings.menu;
 
     if (OS.IS_LINUX) {
-      menuItems.push({ label: s.showHidePage, click: () => PageService.setupOrTogglePage() });
-      menuItems.push({ type: 'separator' });
+      trayMenuItems.push({ label: s.showHidePage, click: () => PageService.setupOrTogglePage() });
+      trayMenuItems.push({ type: 'separator' });
     }
 
     const groupBySession = Storage.getSettings<boolean>(Settings.GROUP_PAGES_BY_SESSION);
@@ -53,13 +53,13 @@ class MenuService {
         sessionMap.get(session)!.push(p);
       });
       sessionMap.forEach((pages, session) => {
-        windowMenuItems.push({ label: session, submenu: pages.map(this.createMenuPageItem) });
+        menuItems.push({ label: session, submenu: pages.map(this.createMenuPageItem) });
       });
     } else {
-      validPages.forEach((p) => windowMenuItems.push(this.createMenuPageItem(p)));
+      validPages.forEach((p) => menuItems.push(this.createMenuPageItem(p)));
     }
 
-    windowMenuItems.push({
+    menuItems.push({
       id: 'clipboard-url',
       type: 'checkbox',
       checked: PageService.isCurrentPage(AppState.fromClipboardPage),
@@ -67,14 +67,14 @@ class MenuService {
       click: () => this.onClipboardPageClick(),
     });
 
-    windowMenuItems.push({ type: 'separator' });
+    menuItems.push({ type: 'separator' });
 
     const activePages = PageService.getAllActivePages();
     let currentPageSubmenu;
 
     if (activePages.length > 0) {
       const activePagesMenu: MenuItem = { label: s.activePages, submenu: [] };
-      windowMenuItems.push(activePagesMenu);
+      menuItems.push(activePagesMenu);
 
       // If there is a current page, create its submenu.
       // Void Scenario: The old current page was removed
@@ -95,26 +95,23 @@ class MenuService {
           activePagesMenu.submenu.push({ label: p.labelWithStatus, submenu: this.createPageSubmenu(p) });
         });
 
-        windowMenuItems.push({
+        menuItems.push({
           label: s.closeOtherPages, click: () =>
             otherActivePages.forEach((p) => PageService.closePageView(p)),
         });
       }
     }
 
-    windowMenuItems.push({
+    menuItems.push({
       label: s.closeAllPages, enabled: !!activePages.length, click: () => {
         FrameService.getFrame() && FrameService.forceClose(false);
         activePages.forEach((p) => PageService.closePageView(p));
       },
     });
 
-    windowMenuItems.push({ type: 'separator' });
+    menuItems.push({ type: 'separator' });
 
-    windowMenuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
-
-    menuItems.push(...windowMenuItems);
-    menuItems.push({ label: s.exit, click: () => app.quit() });
+    menuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
 
     if (currentPageSubmenu) {
       AppState.viewContextMenu = [
@@ -126,7 +123,7 @@ class MenuService {
         },
         { type: 'separator' },
         { label: s.window, submenu: currentPageSubmenu },
-        { label: s.handbook, submenu: windowMenuItems },
+        { label: s.handbook, submenu: menuItems },
       ];
 
       const quickActions = this.getQuickActions();
@@ -135,8 +132,11 @@ class MenuService {
       }
     }
 
-    AppState.navbarContextMenu = windowMenuItems;
-    AppState.trayContextMenu = menuItems;
+    trayMenuItems.push(...menuItems);
+    trayMenuItems.push({ label: s.exit, click: () => app.quit() });
+
+    AppState.navbarContextMenu = menuItems;
+    AppState.trayContextMenu = trayMenuItems;
 
     TrayService.updateLinuxTrayContextMenu();
   }
