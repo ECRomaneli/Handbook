@@ -234,6 +234,8 @@ export const en = {
       keepOpacityDesc: 'Ignore the blur opacity if the window is maximized.',
       allowFullscreen: 'Allow fullscreen',
       allowFullscreenDesc: 'Allow the window to enter fullscreen mode. If disabled, the media, when in fullscreen, will fit the window.',
+      contentProtection: 'Content protection',
+      contentProtectionDesc: 'Prevent the app window content from being captured by screen sharing or screenshot tools.',
 
       resetBounds: 'Reset bounds to defaults on restart',
       resetBoundsDesc: 'On restart the app, reset windows to default state. Choose "None" to disable it.',

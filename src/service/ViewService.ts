@@ -151,6 +151,7 @@ class ViewService {
       const findbar = Findbar.from(childWindow);
       findbar.setWindowOptions({ alwaysOnTop: true });
       findbar.setWindowHandler((findbar: BrowserWindow) => {
+        findbar.setContentProtection(AppState.contentProtection);
         findbar.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
         WindowUtil.setDefaultAlwaysOnTopSettings(findbar);
       });
@@ -184,6 +185,7 @@ class ViewService {
           { label: AppState.strings.menu.openDevTools, click: () => childWindow.webContents.openDevTools() },
         ],
       });
+      childWindow.setContentProtection(AppState.contentProtection);
       WindowUtil.fixUserAgent(childWindow.webContents);
       WindowUtil.setDefaultAlwaysOnTopSettings(childWindow);
       childWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });

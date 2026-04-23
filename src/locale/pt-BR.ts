@@ -235,6 +235,8 @@ export const ptBR: Strings = {
       keepOpacityDesc: 'Ignore a opacidade de desfoque se a janela estiver maximizada.',
       allowFullscreen: 'Permitir tela cheia',
       allowFullscreenDesc: 'Permite que a janela entre em modo tela cheia. Se desabilitado, a mídia em tela cheia se ajustará à janela.',
+      contentProtection: 'Proteção de conteúdo',
+      contentProtectionDesc: 'Impede que o conteúdo das janelas do aplicativo seja capturado por ferramentas de compartilhamento de tela ou captura de tela.',
 
       resetBounds: 'Redefinir padrões na reinicialização',
       resetBoundsDesc: 'Na reinicialização do aplicativo, redefina as janelas para o estado padrão. Escolha "Nenhum" para desabilitá-lo.',

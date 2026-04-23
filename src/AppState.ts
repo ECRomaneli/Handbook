@@ -20,6 +20,7 @@ class AppState {
   private _defaultAppMenu?: MenuItem[];
   private _globalShortcut = '';
   private _resetBoundsType: ResetBoundType = Storage.getSettings(Settings.RESET_BOUNDS);
+  private _contentProtection = Storage.getSettings<boolean>(Settings.CONTENT_PROTECTION);
   private _systemTheme = this.getSystemTheme();
   private _tray?: Tray;
   private _preferences?: BrowserWindow;
@@ -47,6 +48,8 @@ class AppState {
   set globalShortcut(shortcut: string) { this._globalShortcut = shortcut; }
   set resetBoundsType(type: ResetBoundType) { this._resetBoundsType = type; }
   get resetBoundsType(): ResetBoundType { return this._resetBoundsType; }
+  set contentProtection(enabled: boolean) { this._contentProtection = enabled; }
+  get contentProtection(): boolean { return this._contentProtection; }
   set systemTheme(theme: SystemTheme) { this._systemTheme = theme; }
   get systemTheme(): SystemTheme { return this._systemTheme; }
   set trayContextMenu(menu: MenuItemConstructorOptions[] | undefined) { this.contextMenu.tray = menu; }
