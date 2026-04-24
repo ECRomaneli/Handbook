@@ -114,13 +114,10 @@ class MenuService {
     menuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
 
     if (currentPageSubmenu) {
+      const navbarPrefix = !!Storage.getSettings<boolean>(Settings.SHOW_FRAME) ? "✓ " : "";
       AppState.viewContextMenu = [
         { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
-        {
-          type: 'checkbox', label: s.navbar,
-          checked: !!Storage.getSettings(Settings.SHOW_FRAME),
-          click: () => { FrameService.toggleNavbar(); },
-        },
+        { label: navbarPrefix + s.navbar, click: () => { FrameService.toggleNavbar(); } },
         { type: 'separator' },
         { label: s.window, submenu: currentPageSubmenu },
         { label: s.handbook, submenu: menuItems },
