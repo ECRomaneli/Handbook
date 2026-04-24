@@ -116,6 +116,13 @@ app.component('Settings', {
             data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.ALLOW_FULLSCREEN) }
           },
           {
+            id: this.$const.Settings.CONTENT_PROTECTION,
+            label: s.contentProtection,
+            description: s.contentProtectionDesc,
+            disabled: this.$const.OS.IS_LINUX,
+            data: { type: 'bool', value: await storage.getSettings(this.$const.Settings.CONTENT_PROTECTION) }
+          },
+          {
             id: this.$const.Settings.CLIPBOARD_URL_SESSION,
             label: s.clipboardUrlSession,
             description: s.clipboardUrlSessionDesc,

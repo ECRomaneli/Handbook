@@ -31,6 +31,7 @@ const Settings = {
   DRAG_REFRESH_RATE: 'drag_refresh_rate',
   QUICK_MENU_SHORTCUT: 'quick_menu_shortcut',
   RIGHT_MARGIN_WHEN_MAXIMIZED: 'right_margin_when_maximized',
+  CONTENT_PROTECTION: 'content_protection',
 };
 
 const SyncSettings = {
@@ -81,6 +82,7 @@ DefaultSettings[Settings.RESIZE_REFRESH_RATE] = '';
 DefaultSettings[Settings.DRAG_REFRESH_RATE] = '';
 DefaultSettings[Settings.QUICK_MENU_SHORTCUT] = 'CmdOrCtrl+P';
 DefaultSettings[Settings.RIGHT_MARGIN_WHEN_MAXIMIZED] = 16;
+DefaultSettings[Settings.CONTENT_PROTECTION] = false;
 DefaultSettings[SyncSettings.GIST_ID] = undefined;
 DefaultSettings[SyncSettings.GIST_TOKEN] = undefined;
 

@@ -1,3 +1,4 @@
+import AppState from '@/AppState';
 import { Path } from '@/data/Constants';
 import Modal from '@/util/modal/Modal';
 import { BaseWindow, BrowserWindow } from 'electron';
@@ -54,6 +55,7 @@ class QuickMenuModal extends EventEmitter {
         };
       })
       .setWindowHandler((window: BrowserWindow) => {
+        window.setContentProtection(AppState.contentProtection);
         window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
         window.setAlwaysOnTop(true, 'modal-panel', 2);
         window.on('blur', () => this.close());

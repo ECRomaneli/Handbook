@@ -88,6 +88,7 @@ class FrameService {
 
   private createFrame() {
     const frame = new BaseWindow(this.getFrameOptions());
+    frame.setContentProtection(AppState.contentProtection);
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     WindowUtil.setDefaultAlwaysOnTopSettings(frame);
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;

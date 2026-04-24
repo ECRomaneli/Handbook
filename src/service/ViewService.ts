@@ -151,6 +151,7 @@ class ViewService {
       const findbar = Findbar.from(childWindow);
       findbar.setWindowOptions({ alwaysOnTop: true });
       findbar.setWindowHandler((findbar: BrowserWindow) => {
+        findbar.setContentProtection(AppState.contentProtection);
         findbar.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
         WindowUtil.setDefaultAlwaysOnTopSettings(findbar);
       });
@@ -184,6 +185,7 @@ class ViewService {
           { label: AppState.strings.menu.openDevTools, click: () => childWindow.webContents.openDevTools() },
         ],
       });
+      childWindow.setContentProtection(AppState.contentProtection);
       WindowUtil.fixUserAgent(childWindow.webContents);
       WindowUtil.setDefaultAlwaysOnTopSettings(childWindow);
       childWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
@@ -262,6 +264,23 @@ class ViewService {
 
     view.webContents.emit('did-create-window', childWindow, { url });
     childWindow.loadURL(url);
+  }
+
+  public async printToPdf(view = this.getCurrentView()!): Promise<void> {
+    try {
+      const buffer = await view.webContents.printToPDF({ printBackground: true });
+      const title = view.webContents.getTitle().replace(/[/\\?%*:|"<>]/g, '-') || 'page';
+      const result = await dialog.showSaveDialog({
+        title: AppState.strings.dialog.saveFile,
+        defaultPath: `${title}.pdf`,
+        filters: [{ name: 'PDF', extensions: ['pdf'] }],
+      });
+      if (!result.canceled && result.filePath) {
+        writeFileSync(result.filePath, buffer);
+      }
+    } catch (error) {
+      console.error('Error printing to PDF:', error);
+    }
   }
 
   public async openQuickAction(urlTemplate: string, view = this.getCurrentView()!): Promise<void> {

@@ -12,7 +12,7 @@ import DialogUtil from '@/util/DialogUtil';
 import { getOSKeyCombinationByEvent, parseToAccelerator, parseToOSKeyCombination } from '@/util/EventKeyCapture';
 import Dialog from '@/util/modal/Dialog';
 import WindowUtil from '@/util/WindowUtil';
-import { BrowserWindow, HandlerDetails, Input, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
+import { BaseWindow, BrowserWindow, HandlerDetails, Input, IpcMainInvokeEvent, WebContents, app, shell } from 'electron';
 import contextMenu from 'electron-context-menu';
 import { Draggable } from 'electron-draggable';
 import path from 'node:path';
@@ -54,7 +54,7 @@ class PreferencesService {
 
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(win, { fps, selector: '.sidebar-header, .main-header', exclude: '.exit-btn' });
-
+    win.setContentProtection(AppState.contentProtection);
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     WindowUtil.setDefaultAlwaysOnTopSettings(win);
     this.buildContextMenu();
@@ -298,6 +298,10 @@ class PreferencesService {
         break;
       case Settings.CLIPBOARD_URL_SESSION:
         PageService.updateClipboardUrlSession(value as string);
+        break;
+      case Settings.CONTENT_PROTECTION:
+        AppState.contentProtection = value as boolean;
+        BaseWindow.getAllWindows().forEach((window) => window.setContentProtection(value as boolean));
         break;
       case Settings.QUICK_MENU_SHORTCUT:
         ApplicationService.updateQuickMenuAccelerator();

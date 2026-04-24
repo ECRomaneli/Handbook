@@ -65,6 +65,7 @@ export const es: Strings = {
     muteUnmute: 'Activar/Desactivar Sonido',
     navbar: 'Barra de Navegación',
     quickMenu: 'Menú Rápido',
+    printToPdf: 'Imprimir en PDF...',
   },
 
   dialog: {
@@ -235,6 +236,8 @@ export const es: Strings = {
       keepOpacityDesc: 'Ignorar la opacidad de desenfoque si la ventana está maximizada.',
       allowFullscreen: 'Permitir pantalla completa',
       allowFullscreenDesc: 'Permite que la ventana entre en modo pantalla completa. Si está deshabilitado, el contenido en pantalla completa se ajustará a la ventana.',
+      contentProtection: 'Protección de contenido',
+      contentProtectionDesc: 'Evita que el contenido de las ventanas de la aplicación sea capturado por herramientas de pantalla compartida o capturas de pantalla.',
 
       resetBounds: 'Restablecer valores estándar al reiniciar',
       resetBoundsDesc: 'Al reiniciar la aplicación, restablece las ventanas al estado estándar. Elige "Ninguno" para deshabilitarlo.',

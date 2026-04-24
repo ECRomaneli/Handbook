@@ -65,6 +65,7 @@ export const fr: Strings = {
     muteUnmute: 'Activer/Désactiver le Son',
     navbar: 'Barre de Navigation',
     quickMenu: 'Menu Rapide',
+    printToPdf: 'Imprimer en PDF...',
   },
 
   dialog: {
@@ -235,6 +236,8 @@ export const fr: Strings = {
       keepOpacityDesc: 'Ignorer l\'opacité de défocalisation si la fenêtre est maximisée.',
       allowFullscreen: 'Autoriser le plein écran',
       allowFullscreenDesc: 'Permet à la fenêtre de passer en mode plein écran. Si désactivé, le contenu en plein écran s\'ajustera à la fenêtre.',
+      contentProtection: 'Protection du contenu',
+      contentProtectionDesc: 'Empêche la capture du contenu des fenêtres de l\'application par des outils de partage d\'écran ou de capture d\'écran.',
 
       resetBounds: 'Réinitialiser les valeurs par défaut au redémarrage',
       resetBoundsDesc: 'Au redémarrage de l\'application, réinitialise les fenêtres à l\'état par défaut. Choisissez "Aucun" pour désactiver.',

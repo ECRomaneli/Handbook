@@ -65,6 +65,7 @@ export const it: Strings = {
     muteUnmute: 'Attiva/Disattiva Audio',
     navbar: 'Barra di Navigazione',
     quickMenu: 'Menu Rapido',
+    printToPdf: 'Stampa in PDF...',
   },
 
   dialog: {
@@ -235,6 +236,8 @@ export const it: Strings = {
       keepOpacityDesc: 'Ignora l\'opacità di sfocatura se la finestra è massimizzata.',
       allowFullscreen: 'Consenti schermo intero',
       allowFullscreenDesc: 'Consente alla finestra di entrare in modalità schermo intero. Se disabilitato, il contenuto a schermo intero si adatterà alla finestra.',
+      contentProtection: 'Protezione dei contenuti',
+      contentProtectionDesc: 'Impedisce che il contenuto delle finestre dell\'app venga acquisito tramite condivisione schermo o strumenti di screenshot.',
 
       resetBounds: 'Ripristina valori predefiniti al riavvio',
       resetBoundsDesc: 'Al riavvio dell\'app, ripristina le finestre allo stato predefinito. Scegli "Nessuno" per disabilitarlo.',

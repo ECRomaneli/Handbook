@@ -65,6 +65,7 @@ export const ptPT: Strings = {
     muteUnmute: 'Ativar/Desativar Som',
     navbar: 'Barra de Navegação',
     quickMenu: 'Menu Rápido',
+    printToPdf: 'Imprimir em PDF...',
   },
 
   dialog: {
@@ -235,6 +236,8 @@ export const ptPT: Strings = {
       keepOpacityDesc: 'Ignorar a opacidade de desfocagem se a janela estiver maximizada.',
       allowFullscreen: 'Permitir ecrã inteiro',
       allowFullscreenDesc: 'Permite que a janela entre em modo de ecrã inteiro. Se desativado, o conteúdo em ecrã inteiro ajustar-se-á à janela.',
+      contentProtection: 'Proteção de conteúdo',
+      contentProtectionDesc: 'Impede que o conteúdo das janelas da aplicação seja capturado por ferramentas de partilha de ecrã ou de captura de ecrã.',
 
       resetBounds: 'Repor predefinições ao reiniciar',
       resetBoundsDesc: 'Ao reiniciar a aplicação, repõe as janelas no estado predefinido. Escolha "Nenhum" para desativar.',

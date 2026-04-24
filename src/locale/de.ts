@@ -65,6 +65,7 @@ export const de: Strings = {
     muteUnmute: 'Ton Aktivieren/Deaktivieren',
     navbar: 'Navigationsleiste',
     quickMenu: 'Schnellmenü',
+    printToPdf: 'Als PDF drucken...',
   },
 
   dialog: {
@@ -235,6 +236,8 @@ export const de: Strings = {
       keepOpacityDesc: 'Die Unschärfe-Deckkraft ignorieren, wenn das Fenster maximiert ist.',
       allowFullscreen: 'Vollbild erlauben',
       allowFullscreenDesc: 'Erlaubt dem Fenster den Vollbildmodus. Wenn deaktiviert, wird der Inhalt im Vollbild an das Fenster angepasst.',
+      contentProtection: 'Inhaltsschutz',
+      contentProtectionDesc: 'Verhindert, dass Fensterinhalte der App durch Bildschirmfreigabe- oder Screenshot-Tools erfasst werden.',
 
       resetBounds: 'Standardwerte beim Neustart wiederherstellen',
       resetBoundsDesc: 'Beim Neustart der App die Fenster auf den Standardzustand zurücksetzen. Wählen Sie "Keine", um dies zu deaktivieren.',
