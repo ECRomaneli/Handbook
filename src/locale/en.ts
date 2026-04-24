@@ -64,6 +64,7 @@ export const en = {
     listPages: 'List Pages',
     muteUnmute: 'Mute / Unmute',
     navbar: 'Navigation Bar',
+    printToPdf: 'Print to PDF...',
   },
 
   dialog: {

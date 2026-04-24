@@ -266,6 +266,23 @@ class ViewService {
     childWindow.loadURL(url);
   }
 
+  public async printToPdf(view = this.getCurrentView()!): Promise<void> {
+    try {
+      const buffer = await view.webContents.printToPDF({ printBackground: true });
+      const title = view.webContents.getTitle().replace(/[/\\?%*:|"<>]/g, '-') || 'page';
+      const result = await dialog.showSaveDialog({
+        title: AppState.strings.dialog.saveFile,
+        defaultPath: `${title}.pdf`,
+        filters: [{ name: 'PDF', extensions: ['pdf'] }],
+      });
+      if (!result.canceled && result.filePath) {
+        writeFileSync(result.filePath, buffer);
+      }
+    } catch (error) {
+      console.error('Error printing to PDF:', error);
+    }
+  }
+
   public async openQuickAction(urlTemplate: string, view = this.getCurrentView()!): Promise<void> {
     const text = await this.getSelectedText(view);
     const locale = AppState.language;

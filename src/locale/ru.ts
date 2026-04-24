@@ -65,6 +65,7 @@ export const ru: Strings = {
     muteUnmute: 'Включить/Выключить Звук',
     navbar: 'Панель Навигации',
     quickMenu: 'Быстрое Меню',
+    printToPdf: 'Печать в PDF...',
   },
 
   dialog: {

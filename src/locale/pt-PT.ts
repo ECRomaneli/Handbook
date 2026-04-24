@@ -65,6 +65,7 @@ export const ptPT: Strings = {
     muteUnmute: 'Ativar/Desativar Som',
     navbar: 'Barra de Navegação',
     quickMenu: 'Menu Rápido',
+    printToPdf: 'Imprimir em PDF...',
   },
 
   dialog: {

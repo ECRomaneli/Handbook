@@ -114,7 +114,7 @@ class MenuService {
     menuItems.push({ label: s.preferences, click: () => PreferencesService.open() });
 
     if (currentPageSubmenu) {
-      const navbarPrefix = !!Storage.getSettings<boolean>(Settings.SHOW_FRAME) ? "✓ " : "";
+      const navbarPrefix = Storage.getSettings<boolean>(Settings.SHOW_FRAME) ? '✓ ' : '';
       AppState.viewContextMenu = [
         { label: s.openAnonymously, click: () => { FrameService.reopenAnonymously(); } },
         { label: navbarPrefix + s.navbar, click: () => { FrameService.toggleNavbar(); } },
@@ -206,6 +206,7 @@ class MenuService {
         { label: s.copyUrl, click: () => clipboard.writeText(wc.getURL()) },
         { label: s.openInBrowser, click: () => { shell.openExternal(wc.getURL()); } },
         { label: s.createPageFromUrl, click: () => { PageService.createNewPageFromCurrentUrl(); } },
+        { label: s.printToPdf, click: () => { ViewService.printToPdf(); } },
         { type: 'separator' },
         { label: s.openDevTools, click: () => wc.openDevTools() },
         { label: s.permissions, click: () => PreferencesService.openPermissions(wc.getURL()) },

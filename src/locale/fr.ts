@@ -65,6 +65,7 @@ export const fr: Strings = {
     muteUnmute: 'Activer/Désactiver le Son',
     navbar: 'Barre de Navigation',
     quickMenu: 'Menu Rapide',
+    printToPdf: 'Imprimer en PDF...',
   },
 
   dialog: {
