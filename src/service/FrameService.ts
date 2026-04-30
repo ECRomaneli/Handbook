@@ -81,23 +81,15 @@ class FrameService {
     this.getFrame()!.emit('blur');
   }
 
-  private getOrCreateFrame(): BaseWindow {
-    if (!this.getFrame()) { this.createFrame(); }
-    return this.getFrame()!;
-  }
-
-  private createFrame() {
+  private createFrame(): BaseWindow {
     const frame = new BaseWindow(this.getFrameOptions());
     frame.setContentProtection(AppState.contentProtection);
     frame.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     WindowUtil.setDefaultAlwaysOnTopSettings(frame);
     const fps = Storage.getSettings(Settings.DRAG_REFRESH_RATE) as number || null;
     Draggable.from(frame, { maximize: true, fps });
-    if (Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
-      const sharedBounds = Storage.getSharedBounds();
-      sharedBounds && frame.setBounds(sharedBounds);
-    }
     AppState.frame = frame;
+    return frame;
   }
 
   private registerStateListeners(): void {
@@ -254,12 +246,16 @@ class FrameService {
 
     if (newView === oldView) { return; }
 
-    const frame = this.getOrCreateFrame();
+    let frame = this.getFrame();
+    const hasFrame = !!frame;
+
+    !frame && (frame = this.createFrame());
+
     oldView && frame.contentView.removeChildView(oldView);
     oldView?.emit('detached');
     this.setupNavbarForCurrentPage();
 
-    if (!Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
+    if (!hasFrame || !Storage.getSettings<boolean>(Settings.SHARE_BOUNDS)) {
       frame.isMaximized() && frame.unmaximize();
       const bounds = PageService.getPageBounds(page);
       frame.setBounds(bounds);
