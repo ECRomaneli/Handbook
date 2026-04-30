@@ -290,7 +290,7 @@ class PageService {
      * @returns Window bounds.
      */
   private getBoundsForDefaultPosition(windowSize: Size): Rectangle {
-    const bounds = { width: windowSize.width, height: windowSize.height } as Rectangle;
+    const bounds = { width: windowSize.width, height: windowSize.height, x: 0, y: 0 };
 
     // Get user position preference
     const position = Storage.getSettings(Settings.DEFAULT_POSITION);
