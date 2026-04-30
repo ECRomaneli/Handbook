@@ -41,8 +41,7 @@ class NavbarService {
   }
 
   private getCurrentUrl(): string {
-    const currentView = PageService.getCurrentView();
-    return currentView ? currentView.webContents.getURL() : '';
+    return PageService.getCurrentView()?.webContents.getURL() || PageService.getCurrentHomeUrl();
   }
 
   public sendLabel(label = AppState.currentPage!.label): void {
@@ -78,7 +77,7 @@ class NavbarService {
   private sendDidNavigate(): void {
     const wc = PageService.getCurrentView()!.webContents;
     NavbarPropagator.sendToRender('did-navigate', {
-      url: this.getCurrentUrl() || PageService.getCurrentHomeUrl(),
+      url: this.getCurrentUrl(),
       canGoBack: wc.navigationHistory.canGoBack(),
       canGoForward: wc.navigationHistory.canGoForward(),
     });

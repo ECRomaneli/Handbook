@@ -1,18 +1,8 @@
 import { DefaultQuickActions, DefaultSettings, IsDebug, Permission, QuickAction, Settings } from '@/data/Constants';
 import { PlainPage } from '@/model/Page';
 import PreferencesService from '@/service/PreferencesService';
-import { app, safeStorage, session } from 'electron';
+import { app, Rectangle, safeStorage, session } from 'electron';
 import Store from 'electron-store';
-
-/**
- * Bounds interface for window dimensions
- */
-interface Bounds {
-  width: number;
-  height: number;
-  x?: number;
-  y?: number;
-}
 
 type AllPermissions = Record<string, SessionPermissions>;
 type SessionPermissions = Record<string, UrlPermissions>;
@@ -97,11 +87,13 @@ class Vault {
  * Storage class - manages application data persistence
  */
 class Storage {
-  static getSharedBounds(): Bounds {
+  static getSharedBounds(): Rectangle {
     return Vault.get('SharedBounds', {
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
       height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
-    } as Bounds)!;
+      x: 0,
+      y: 0,
+    })!;
   }
 
   static getSharedSize(): { width: number; height: number } {
@@ -109,18 +101,20 @@ class Storage {
     return { width: bounds.width, height: bounds.height };
   }
 
-  static setSharedBounds(value: Bounds): void {
+  static setSharedBounds(value: Rectangle): void {
     Vault.set('SharedBounds', value);
   }
 
-  static getWindowBounds(id: string | number): Bounds {
+  static getWindowBounds(id: string | number): Rectangle {
     return Vault.get(`WindowBounds.${id}`, {
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
       height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
-    } as Bounds)!;
+      x: 0,
+      y: 0,
+    })!;
   }
 
-  static setWindowBounds(id: string | number, value: Bounds): void {
+  static setWindowBounds(id: string | number, value: Rectangle): void {
     Vault.set(`WindowBounds.${id}`, value);
   }
 
@@ -150,11 +144,13 @@ class Storage {
     Storage.setPages(pages);
   }
 
-  static getDefaultSize(): Bounds {
+  static getDefaultSize(): Rectangle {
     return {
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
       height: Storage.getSettings(Settings.DEFAULT_HEIGHT),
-    } as Bounds;
+      x: 0,
+      y: 0,
+    };
   }
 
   static getPermissions(
