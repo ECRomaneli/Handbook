@@ -76,7 +76,7 @@ app.component('Permissions', {
       </div>
     </div>
     `,
-  inject: ['$remote', '$image', '$const', '$i18n', '$searchEngine'],
+  inject: ['$remote', '$const', '$i18n', '$searchEngine'],
   data() {
     return {
       permissions: null,

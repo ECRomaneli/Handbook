@@ -78,7 +78,7 @@ app.component('Updates', {
             </div>
         </div>
     `,
-  inject: ['$remote', '$image', '$i18n'],
+  inject: ['$remote', '$i18n'],
   data() {
     return {
       status: {

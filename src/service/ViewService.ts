@@ -257,6 +257,7 @@ class ViewService {
       skipTaskbar: true,
       autoHideMenuBar: true,
       acceptFirstMouse: true,
+      backgroundColor: DefaultBackgroundColor,
       webPreferences: {
         partition: Storage.getPartitionName(AppState.currentPage!.session),
       },

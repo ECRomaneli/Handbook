@@ -55,7 +55,7 @@ app.component('PageTable', {
     </div>
     `,
   emits: ['update', 'remove'],
-  inject: ['$image', '$clone', '$i18n'],
+  inject: ['$clone', '$i18n'],
   props: {
     pages: Array,
     readonly: { type: Boolean, default: false },

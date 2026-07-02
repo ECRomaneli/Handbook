@@ -100,9 +100,14 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
+            from: 'node_modules/bootstrap/dist/css/bootstrap.min.css',
+            to: 'vendor/bootstrap.min.css',
+            noErrorOnMissing: false,
+          },
+          {
             from: 'web',
             to: '.',
-            noErrorOnMissing: true,
+            noErrorOnMissing: false,
             transform: isProduction
               ? async (content, absoluteFrom) => {
                 const ext = path.extname(absoluteFrom).toLowerCase();
