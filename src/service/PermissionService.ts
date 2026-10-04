@@ -8,15 +8,9 @@ import PromiseQueue from '@/util/PromiseQueue';
 import WindowUtil from '@/util/WindowUtil';
 import { app, DisplayMediaRequestHandlerHandlerRequest, FilesystemPermissionRequest, MediaAccessPermissionRequest, OpenExternalPermissionRequest, PermissionCheckHandlerHandlerDetails, PermissionRequest, Response, Session, Streams, systemPreferences, WebContents } from 'electron';
 
-type CheckablePermissions = 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' |
-  'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' |
-  'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read' |
-  'fileSystem' | 'background-sync';
+type CheckablePermissions = Parameters<NonNullable<Parameters<Session['setPermissionCheckHandler']>[0]>>[1];
 
-type RequestablePermissions = 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' |
-  'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' |
-  'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'storage-access' |
-  'top-level-storage-access' | 'window-management' | 'unknown' | 'fileSystem';
+type RequestablePermissions = Parameters<NonNullable<Parameters<Session['setPermissionRequestHandler']>[0]>>[1];
 
 type SecureWebContents = WebContents & { __TEMP_PERMISSIONS__?: string[] };
 
