@@ -44,6 +44,7 @@ class PageService {
     const previousPage = this.getCurrentPage();
 
     AppState.currentPage = page;
+    page?.id && Storage.setLastPageId(page.id);
     this.setupCurrentPage();
 
     if (previousPage?.view && !previousPage.persist) {
@@ -95,6 +96,19 @@ class PageService {
       this.updatePageAndPropagate(page, newPage);
       return page;
     });
+
+    this.restoreLastPage();
+  }
+
+  /**
+   * Select (without opening) the last visited page, if there is no current page.
+   */
+  private restoreLastPage(): void {
+    if (this.getCurrentPage()) { return; }
+    const lastPageId = Storage.getLastPageId();
+    if (!lastPageId) { return; }
+    const lastPage = this.getValidPages(true).find((p) => p.id === lastPageId);
+    if (lastPage) { AppState.currentPage = lastPage; }
   }
 
   public updateClipboardUrlSession(session?: string): void {
