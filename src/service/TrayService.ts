@@ -41,9 +41,9 @@ class TrayService {
       return;
     }
 
-    const popUpMenu = () => {
+    const popUpMenu = async () => {
       const contextMenu = MenuService.buildContextMenu(ContextMenuType.TRAY);
-      contextMenu.getMenuItemById('clipboard-url')!.visible = MenuService.shouldEnableClipboardPage();
+      contextMenu.getMenuItemById('clipboard-url')!.visible = await MenuService.shouldEnableClipboardPage();
       this.getTray().popUpContextMenu(contextMenu);
     };
 

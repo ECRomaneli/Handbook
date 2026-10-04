@@ -153,24 +153,41 @@ class MenuService {
     return Menu.buildFromTemplate(this.getContextMenu(type));
   }
 
-  private getClipboardImage(): string | undefined {
-    const image = clipboard.readImage();
-    return !image.isEmpty() ? image.toDataURL() : undefined;
+  private async getClipboardImage(): Promise<string | undefined> {
+    try {
+      const items = await clipboard.read();
+      for (const item of items) {
+        const type = item.types.find((t) => t === 'image/png') ?? item.types.find((t) => t === 'image/jpeg');
+        if (!type) { continue; }
+
+        const blob = await item.getType(type);
+        const buffer = Buffer.from(await blob.arrayBuffer());
+        if (buffer.length) { return `data:${type};base64,${buffer.toString('base64')}`; }
+      }
+    } catch (error) {
+      console.error('Failed to read image from clipboard:', error);
+    }
+    return undefined;
   }
 
-  private getClipboardUrl(): string | undefined {
-    const cb = clipboard.readText();
-    return Page.isValidUrl(cb) ? cb : undefined;
+  private async getClipboardUrl(): Promise<string | undefined> {
+    try {
+      const cb = await clipboard.readText();
+      return Page.isValidUrl(cb) ? cb : undefined;
+    } catch (error) {
+      console.error('Failed to read text from clipboard:', error);
+      return undefined;
+    }
   }
 
-  public shouldEnableClipboardPage(): boolean {
+  public async shouldEnableClipboardPage(): Promise<boolean> {
     return PageService.isCurrentPage(AppState.fromClipboardPage) ||
-      !!this.getClipboardUrl() ||
-      !!this.getClipboardImage();
+      !!(await this.getClipboardUrl()) ||
+      !!(await this.getClipboardImage());
   }
 
-  public onClipboardPageClick() {
-    const url = this.getClipboardImage() ?? this.getClipboardUrl();
+  public async onClipboardPageClick(): Promise<void> {
+    const url = (await this.getClipboardImage()) ?? (await this.getClipboardUrl());
 
     const page = AppState.fromClipboardPage;
     const wasChanged = PageService.changeUrl(page, url);
@@ -229,13 +246,13 @@ class MenuService {
     };
   }
 
-  public toggleQuickMenu(): void {
+  public async toggleQuickMenu(): Promise<void> {
     if (this.quickMenu.isOpen()) {
       this.quickMenu.close();
     } else {
       const frame = FrameService.getFrame();
       this.quickMenu.open({
-        items: this.getQuickMenuItems(),
+        items: await this.getQuickMenuItems(),
         strings: AppState.strings.quickMenu,
       }, frame);
     }
@@ -257,8 +274,8 @@ class MenuService {
       }
     });
 
-    this.quickMenu.on('filter', (query: string) => {
-      const allItems = this.getQuickMenuItems();
+    this.quickMenu.on('filter', async (query: string) => {
+      const allItems = await this.getQuickMenuItems();
       let filtered: QuickMenuItem[];
 
       if (!query || !query.trim()) {
@@ -273,11 +290,11 @@ class MenuService {
     });
   }
 
-  private getQuickMenuItems(): QuickMenuItem[] {
+  private async getQuickMenuItems(): Promise<QuickMenuItem[]> {
     const items: QuickMenuItem[] = PageService.getValidPages(true)
       .map((p: Page) => ({ id: p.id, label: p.labelWithStatus, url: p.url, session: p.session }));
 
-    if (this.shouldEnableClipboardPage()) {
+    if (await this.shouldEnableClipboardPage()) {
       const p = AppState.fromClipboardPage;
       items.push({ id: p.id!, label: p.labelWithStatus, url: p.url, session: p.session });
     }

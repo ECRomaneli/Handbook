@@ -144,6 +144,14 @@ class Storage {
     Storage.setPages(pages);
   }
 
+  static getLastPageId(): string | undefined {
+    return Vault.get<string | undefined>('LastPageId');
+  }
+
+  static setLastPageId(id: string): void {
+    Vault.set('LastPageId', id);
+  }
+
   static getDefaultSize(): Rectangle {
     return {
       width: Storage.getSettings(Settings.DEFAULT_WIDTH),
