@@ -3,6 +3,7 @@
   "version": "1.0.0-debug",
   "description": "Create small, movable, and easily concealable windows for quick use.",
   "homepage": "https://github.com/ecromaneli/handbook",
+  "desktopName": "com.github.ecromaneli.handbook.desktop",
   "author": {
     "name": "Emerson Capuchi Romaneli",
     "email": "emerson.romaneli@gmail.com"
@@ -60,5 +61,8 @@
     "electron-store": "^11.0.2",
     "electron-updater": "^6.8.9",
     "vue": "^3.5.43"
+  },
+  "optionalDependencies": {
+    "wayland-global-shortcut": "^0.1.0"
   }
 }
