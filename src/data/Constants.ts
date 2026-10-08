@@ -98,10 +98,14 @@ const DefaultQuickActions: QuickAction[] = [
   { id: 'default-translate', label: 'Translate', url: 'https://translate.google.com/?sl=auto&tl=${language}&text=${encodedText}' },
 ];
 
+const IS_LINUX = process.platform === 'linux';
 const OS = {
   IS_DARWIN: process.platform === 'darwin',
-  IS_LINUX: process.platform === 'linux',
+  IS_LINUX,
   IS_WIN32: process.platform === 'win32',
+  IS_XWAYLAND: IS_LINUX
+    && process.argv.includes('--ozone-platform=x11')
+    && (process.env.XDG_SESSION_TYPE === 'wayland' || !!process.env.WAYLAND_DISPLAY),
 };
 
 const ROOT = app.getAppPath();

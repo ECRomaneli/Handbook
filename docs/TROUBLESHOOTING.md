@@ -94,6 +94,15 @@ Global shortcuts may fail if:
 - **OS permissions** — On macOS, ensure Handbook has accessibility permissions: **System Settings > Privacy & Security > Accessibility**.
 - **The shortcut is invalid** — Use Electron-compatible accelerator format (e.g., `CmdOrCtrl+Shift+H`).
 
+### Linux (Wayland)
+
+On Wayland sessions, Handbook runs through XWayland and registers the global shortcut using the desktop's **Global Shortcuts portal** (`xdg-desktop-portal`):
+
+- **GNOME** shows a confirmation dialog the first time the shortcut is registered. The shortcut only works after you accept it.
+- The key combination can be changed afterwards in your desktop's shortcut settings. The key shown in Handbook's preferences may then differ from the one actually in use.
+- **Linux packages only** — the portal identifies the app by its installed `com.github.ecromaneli.handbook.desktop` file. When running from source or from an unpacked build, the portal may reject the shortcut.
+- `AltGr` combinations are not supported by the portal.
+
 ---
 
 ## Opacity Not Working (Linux)

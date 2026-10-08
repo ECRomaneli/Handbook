@@ -1,5 +1,5 @@
 import AppState from '@/AppState';
-import { Settings } from '@/data/Constants';
+import { OS, Settings } from '@/data/Constants';
 import Storage from '@/data/Storage';
 import AutoUpdaterService from '@/service/AutoUpdaterService';
 import FrameService from '@/service/FrameService';
@@ -16,8 +16,19 @@ import Dialog, { DialogOptions } from '@/util/modal/Dialog';
 import { app, BrowserWindow, globalShortcut, Menu, MenuItemConstructorOptions, Rectangle, Session, session, WebContentsView } from 'electron';
 import Findbar from 'electron-findbar';
 
+// Common subset of Electron's globalShortcut and wayland-global-shortcut, which returns promises instead.
+type GlobalShortcut = {
+  register(accelerator: string, callback: () => void, options?: { description?: string }): boolean | Promise<boolean>;
+  unregister(accelerator: string): void | Promise<void>;
+};
+
 class ApplicationService {
   private static readonly ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
+  // wayland-global-shortcut is a Linux-only optional dependency, so it is only loaded under XWayland.
+  private readonly globalShortcut: GlobalShortcut = OS.IS_XWAYLAND
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    ? new (require('wayland-global-shortcut') as typeof import('wayland-global-shortcut')).WaylandGlobalShortcut()
+    : globalShortcut;
 
   public initialize() {
     this.setupExitDialog();
@@ -46,14 +57,24 @@ class ApplicationService {
     });
   }
 
-  public registerGlobalShortcut() {
-    if (AppState.globalShortcut) { globalShortcut.unregister(AppState.globalShortcut); }
+  public async registerGlobalShortcut() {
+    if (AppState.globalShortcut) {
+      try {
+        await this.globalShortcut.unregister(AppState.globalShortcut);
+      } catch (e) {
+        console.error('Failed to unregister the shortcut: ', e);
+      }
+    }
 
     AppState.globalShortcut = Storage.getSettings(Settings.GLOBAL_SHORTCUT);
     if (!AppState.globalShortcut) { return; }
 
     try {
-      const ok = globalShortcut.register(AppState.globalShortcut, () => { PageService.setupOrTogglePage(); });
+      const ok = await this.globalShortcut.register(
+        AppState.globalShortcut,
+        () => { PageService.setupOrTogglePage(); },
+        { description: AppState.strings.preferences.settings.globalShortcut },
+      );
       if (!ok) { throw new Error('Not registered'); }
     } catch (e) {
       console.error('Failed to create the shortcut: ', e);
