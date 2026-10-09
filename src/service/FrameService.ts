@@ -93,21 +93,23 @@ class FrameService {
   }
 
   private registerStateListeners(): void {
-    FramePropagator.on('modal-focus',
-      () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100));
-    FramePropagator.on('modal-blur',
-      () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.BLUR_OPACITY) / 100));
-    FramePropagator.on('focus',
-      () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100));
+    if (!OS.IS_LINUX) {
+      FramePropagator.on('modal-focus',
+        () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100));
+      FramePropagator.on('modal-blur',
+        () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.BLUR_OPACITY) / 100));
+      FramePropagator.on('focus',
+        () => this.getFrame()!.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100));
 
-    FramePropagator.on('blur', () => {
-      const frame = this.getFrame()!;
-      if (frame.isMaximized() && Storage.getSettings<boolean>(Settings.KEEP_OPACITY_WHEN_MAXIMIZED)) {
-        frame.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100);
-      } else {
-        frame.setOpacity(Storage.getSettings<number>(Settings.BLUR_OPACITY) / 100);
-      }
-    });
+      FramePropagator.on('blur', () => {
+        const frame = this.getFrame()!;
+        if (frame.isMaximized() && Storage.getSettings<boolean>(Settings.KEEP_OPACITY_WHEN_MAXIMIZED)) {
+          frame.setOpacity(Storage.getSettings<number>(Settings.FOCUS_OPACITY) / 100);
+        } else {
+          frame.setOpacity(Storage.getSettings<number>(Settings.BLUR_OPACITY) / 100);
+        }
+      });
+    }
 
     FramePropagator.on('resize', () => this.updateChildrenBounds());
     FramePropagator.on('closed', () => { AppState.frame = undefined; });
@@ -269,6 +271,7 @@ class FrameService {
     if (navbar) {
       if (frame.contentView.children.length === 0) {
         frame.contentView.addChildView(navbar);
+        OS.IS_LINUX && this.refreshViewBounds(navbar);
         dragHandle.attach(navbar.webContents, { exclude: 'button' });
       }
     } else {
@@ -281,6 +284,16 @@ class FrameService {
     this.safeDisplay(frame, newView);
     this.buildViewFindbar(newView);
     show && !frame.isVisible() && this.show();
+  }
+
+  /**
+   * On X11, a view whose bounds were set before being attached may stop repainting and receiving hover events.
+   * Resizing it after attaching forces a refresh.
+   */
+  private refreshViewBounds(view: WebContentsView): void {
+    const bounds = view.getBounds();
+    view.setBounds({ ...bounds, height: bounds.height + 1 });
+    view.setBounds(bounds);
   }
 
   private safeDisplay(frame: BaseWindow, view: PageView): void {

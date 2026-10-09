@@ -61,6 +61,8 @@ class TrayService {
   private registerTrayEvents() {
     TrayPropagator.on('click', () => PageService.setupOrTogglePage());
     StatePropagator.onChange(() => { this.updateTrayIcon(); });
+    // On login, the desktop settings may only become available after the app starts
+    nativeTheme.on('updated', () => { this.updateTrayIcon(); });
   }
 
   private getTrayIconPath(theme: 'light' | 'dark', open: boolean): string {

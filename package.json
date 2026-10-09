@@ -63,6 +63,6 @@
     "vue": "^3.5.43"
   },
   "optionalDependencies": {
-    "wayland-global-shortcut": "^0.1.0"
+    "wayland-global-shortcut": "^0.2.0"
   }
 }
