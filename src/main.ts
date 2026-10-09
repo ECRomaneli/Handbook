@@ -1,3 +1,4 @@
+import { spawn } from 'child_process';
 import { app, globalShortcut } from 'electron';
 
 function guaranteeSingleInstance(): boolean {
@@ -12,12 +13,14 @@ function guaranteeSingleInstance(): boolean {
 // Wayland does not support always-on-top, window positioning, global shortcuts, etc.
 // Relaunch under XWayland when running on a Wayland session, unless the user chose a platform explicitly.
 // The ozone platform is initialized before this script runs, so appendSwitch is not enough.
+// app.relaunch() is avoided because its relauncher sets no_new_privs, breaking pkexec for the auto-updater.
 function relaunchOnX11IfWayland(): boolean {
   if (process.platform !== 'linux') { return false; }
   if (process.argv.some((arg) => arg.startsWith('--ozone-platform'))) { return false; }
   const isWayland = process.env.XDG_SESSION_TYPE === 'wayland' || !!process.env.WAYLAND_DISPLAY;
   if (!isWayland || !process.env.DISPLAY) { return false; }
-  app.relaunch({ args: [...process.argv.slice(1), '--ozone-platform=x11'] });
+  const args = [...process.argv.slice(1), '--ozone-platform=x11'];
+  spawn(process.execPath, args, { detached: true, stdio: 'ignore' }).unref();
   app.exit(0);
   return true;
 }
